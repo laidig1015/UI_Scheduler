@@ -28,7 +28,7 @@ a {
     }
 
     a:hover {
-        background-color: #c7d1d6;
+        background-color: #e2e2e2;
     }
 
 header, footer, hgroup,
@@ -155,11 +155,11 @@ footer {
 }
 
     #login a {
-        background-color: #d3dce0;
+        background-color: #e2e2e2;
         margin-left: 10px;
         margin-right: 3px;
         padding: 2px 3px;
-        text-decoration: none;
+        text-decoration: none;        
     }
 
     #login a.username {
