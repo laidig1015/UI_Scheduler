@@ -10,8 +10,7 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
         [TestMethod]
         public void getCourse()
         {
-            string result;
-            result = MauiWrapper.getCourse("055:032");
+            string result = MauiWrapper.getCourse("055:032");
         }
     }
 }
