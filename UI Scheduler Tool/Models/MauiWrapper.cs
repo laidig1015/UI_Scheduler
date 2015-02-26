@@ -13,7 +13,7 @@ namespace UI_Scheduler_Tool.Models
         {
 
             string result = "Not Found";
-            string test_course_number = "55:032";
+            string test_course_number = "055:032";
             string mainUrl = "https://api.maui.uiowa.edu/maui/api/pub/registrar/course/" + course_number;
             WebRequest courseRequest;
             courseRequest = WebRequest.Create(mainUrl);
