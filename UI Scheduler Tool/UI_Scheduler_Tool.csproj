@@ -254,7 +254,7 @@
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\uiowaschedule.pubxml" />
     <None Include="Properties\PublishProfiles\uiowascheduler.pubxml" />
-    <None Include="Properties\PublishProfiles\uiowascheduling.pubxml" />
+    <None Include="Properties\PublishProfiles\uischeduler %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\uischeduler.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Images\logo.png" />
