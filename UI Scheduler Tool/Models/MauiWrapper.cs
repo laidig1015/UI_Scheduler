@@ -9,7 +9,7 @@ namespace UI_Scheduler_Tool.Models
 {
     public static class MauiWrapper
     {
-        public static string getCourse(string course)
+        public static string GetCourse(string course)
         {
             string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/course/" + course;
             return GetJsonFromURL(url);
@@ -18,6 +18,24 @@ namespace UI_Scheduler_Tool.Models
         public static string GetMinors()
         {
             string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/program-of-study/minors";
+            return GetJsonFromURL(url);
+        }
+
+        public static string GetProgramsOfStudyByNatKey(string natKey)
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/program-of-study/college/nk/" + natKey;
+            return GetJsonFromURL(url);
+        }
+
+        public static string GetProgramOfStudyByProgramNatKey(string natKey)
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/program-of-study/by-program/" + natKey;
+            return GetJsonFromURL(url);
+        }
+
+        public static string GetProgramOfStudyByID(string id)
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/program-of-study/" + id;
             return GetJsonFromURL(url);
         }
 

@@ -11,8 +11,12 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
         public void getCourse()
         {
             string result;
-            result = MauiWrapper.getCourse("055:032");
+            result = MauiWrapper.GetCourse("055:032");
             result = MauiWrapper.GetMinors();
+            result = MauiWrapper.GetProgramsOfStudyByNatKey("R");
+            result = MauiWrapper.GetProgramOfStudyByProgramNatKey("ANTH");
+            result = MauiWrapper.GetProgramOfStudyByID("305");
+            Console.WriteLine();
         }
     }
 }
