@@ -16,7 +16,6 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
             result = MauiWrapper.GetProgramsOfStudyByNatKey("R");
             result = MauiWrapper.GetProgramOfStudyByProgramNatKey("ANTH");
             result = MauiWrapper.GetProgramOfStudyByID("305");
-            Console.WriteLine();
         }
     }
 }

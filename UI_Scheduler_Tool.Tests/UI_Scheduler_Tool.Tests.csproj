@@ -129,7 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UI Scheduler Tool\UI_Scheduler_Tool.csproj">
-      <Project>{79B5741A-3F79-45F7-A591-CDC605B1525D}</Project>
+      <Project>{79b5741a-3f79-45f7-a591-cdc605b1525d}</Project>
       <Name>UI_Scheduler_Tool</Name>
     </ProjectReference>
   </ItemGroup>

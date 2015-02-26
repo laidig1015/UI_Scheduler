@@ -9,6 +9,25 @@ namespace UI_Scheduler_Tool.Models
 {
     public static class MauiWrapper
     {
+    //    public class Course
+    //    {
+    //        public String Title;
+    //        public String CatalogDescription;
+    //        public String LastTaught;
+    //        public int LastTaughtID;
+    //        public String LastTaughtCode;
+    //        public String CourseNumber;
+
+    //    }
+    //        "title": "Introduction to Digital Design",
+    //"catalogDescription": "Modern design and analysis of digital switching circuits; combinational logic; sequential circuits and system controllers; interfacing and busing techniques; design methodologies using medium- and large-scale integrated circuits; lab arranged.  ",
+    //"lastTaught": "Fall 2014",
+    //"lastTaughtId": 56,
+    //"lastTaughtCode": "20143",
+    //"courseNumber": "ECE:3320",
+    //"legacyCourseNumber": "055:032",
+    //"creditHours": "3"
+
         public static string GetCourse(string course)
         {
             string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/course/" + course;
