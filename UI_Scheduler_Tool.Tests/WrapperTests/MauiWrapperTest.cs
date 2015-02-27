@@ -47,5 +47,22 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
             Assert.IsTrue(contains_value);
         }
 
+        [TestMethod]
+        public void getCurrentSession()
+        {
+            string result;
+            result = MauiWrapper.GetCurrentSession();
+            Boolean contains_value = result.Contains("startDate");
+            Assert.IsTrue(contains_value);
+        }
+        [TestMethod]
+        public void getAllSessions()
+        {
+            string result;
+            result = MauiWrapper.GetAllSessions();
+            Boolean contains_value = result.Contains("startDate");
+            Assert.IsTrue(contains_value);
+        }
+
     }
 }
