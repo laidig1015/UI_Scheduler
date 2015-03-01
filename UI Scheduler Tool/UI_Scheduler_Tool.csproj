@@ -193,6 +193,8 @@
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\MauiWrapper.cs" />
+    <Compile Include="Models\Scheduler.cs" />
+    <Compile Include="Models\TimeUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

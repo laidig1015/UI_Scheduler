@@ -12,12 +12,8 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
         {
             string result;
             result = MauiWrapper.GetCourse("055:032");
-            //result = MauiWrapper.GetMinors();
-            Boolean contains_value = result.Contains("Digital Design");
+            bool contains_value = result.Contains("Digital Design");
             Assert.IsTrue(contains_value);
-            //result = MauiWrapper.GetProgramsOfStudyByNatKey("R");
-            //result = MauiWrapper.GetProgramOfStudyByProgramNatKey("ANTH");
-            //result = MauiWrapper.GetProgramOfStudyByID("305");
         }
 
         [TestMethod]
@@ -25,7 +21,7 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
         {
             string result;
             result = MauiWrapper.GetMinors();
-            Boolean contains_value = result.Contains("Aerospace Studies");
+            bool contains_value = result.Contains("Aerospace Studies");
             Assert.IsTrue(contains_value);
         }
 
@@ -34,7 +30,7 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
         {
             string result;
             result = MauiWrapper.GetProgramsOfStudyByNatKey("R");
-            Boolean contains_value = result.Contains("Aerospace Studies");
+            bool contains_value = result.Contains("Aerospace Studies");
             Assert.IsTrue(contains_value);
         }
 
@@ -43,7 +39,7 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
         {
             string result;
             result = MauiWrapper.GetProgramOfStudyByID("305");
-            Boolean contains_value = result.Contains("Communication Studies");
+            bool contains_value = result.Contains("Communication Studies");
             Assert.IsTrue(contains_value);
         }
 
@@ -52,7 +48,7 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
         {
             string result;
             result = MauiWrapper.GetCurrentSession();
-            Boolean contains_value = result.Contains("startDate");
+            bool contains_value = result.Contains("startDate");
             Assert.IsTrue(contains_value);
         }
         [TestMethod]
@@ -60,7 +56,7 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
         {
             string result;
             result = MauiWrapper.GetAllSessions();
-            Boolean contains_value = result.Contains("startDate");
+            bool contains_value = result.Contains("startDate");
             Assert.IsTrue(contains_value);
         }
 
