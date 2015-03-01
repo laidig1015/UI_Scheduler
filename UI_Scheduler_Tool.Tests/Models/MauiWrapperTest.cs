@@ -8,57 +8,52 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
     public class MauiWrapperTest
     {
         [TestMethod]
-        public void getCourse()
+        public void GetCourse()
         {
-            string result;
-            result = MauiWrapper.GetCourse("055:032");
-            bool contains_value = result.Contains("Digital Design");
-            Assert.IsTrue(contains_value);
+
+            string result = MauiWrapper.GetCourse("055:032");
+            Assert.IsTrue(result.Contains("Digital Design"),
+                          "Unable to locate 'Digital Design' in resulting GetCourse JSON");
         }
 
         [TestMethod]
-        public void getMinors()
+        public void GetMinors()
         {
-            string result;
-            result = MauiWrapper.GetMinors();
-            bool contains_value = result.Contains("Aerospace Studies");
-            Assert.IsTrue(contains_value);
+            string result = MauiWrapper.GetMinors();
+            Assert.IsTrue(result.Contains("Aerospace Studies"),
+                          "Unable to locate 'Aerospace Studies' in resulting GetMinors JSON");
         }
 
         [TestMethod]
-        public void getProgramsofStudyByNatKey()
+        public void GetProgramsofStudyByNatKey()
         {
-            string result;
-            result = MauiWrapper.GetProgramsOfStudyByNatKey("R");
-            bool contains_value = result.Contains("Aerospace Studies");
-            Assert.IsTrue(contains_value);
+            string result = MauiWrapper.GetProgramsOfStudyByNatKey("R");
+            Assert.IsTrue(result.Contains("Aerospace Studies"),
+                          "Unable to locate 'Aerospace Studies' in resulting GetProgramsofStudyByNatKey JSON");
         }
 
         [TestMethod]
-        public void getProgramofStudyByID()
+        public void GetProgramofStudyByID()
         {
-            string result;
-            result = MauiWrapper.GetProgramOfStudyByID("305");
-            bool contains_value = result.Contains("Communication Studies");
-            Assert.IsTrue(contains_value);
+            string result = MauiWrapper.GetProgramOfStudyByID("305");
+            Assert.IsTrue(result.Contains("Communication Studies"),
+                          "Unable to locate 'Communication Studies' in resulting GetProgramofStudyByID JSON");
         }
 
         [TestMethod]
-        public void getCurrentSession()
+        public void GetCurrentSession()
         {
-            string result;
-            result = MauiWrapper.GetCurrentSession();
-            bool contains_value = result.Contains("startDate");
-            Assert.IsTrue(contains_value);
-        }
-        [TestMethod]
-        public void getAllSessions()
-        {
-            string result;
-            result = MauiWrapper.GetAllSessions();
-            bool contains_value = result.Contains("startDate");
-            Assert.IsTrue(contains_value);
+            string result = MauiWrapper.GetCurrentSession();
+            Assert.IsTrue(result.Contains("startDate"),
+                          "Unable to locate 'startDate' in resulting GetCurrentSession JSON");
         }
 
+        [TestMethod]
+        public void GetAllSessions()
+        {
+            string result = MauiWrapper.GetAllSessions();
+            Assert.IsTrue(result.Contains("startDate"),
+                          "Unable to locatel 'startDate' in resulting GetAllSessions JSON");
+        }
     }
 }
