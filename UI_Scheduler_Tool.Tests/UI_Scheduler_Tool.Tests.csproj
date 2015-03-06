@@ -124,7 +124,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\SchdeulerTest.cs" />
+    <Compile Include="Models\SchedulerTest.cs" />
     <Compile Include="Models\DBTest.cs" />
     <Compile Include="Models\MauiScriptTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
