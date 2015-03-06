@@ -19,7 +19,7 @@ namespace UI_Scheduler_Tool.Models
     }
 
     [Table("UserProfile")]
-    public class UserProfile
+    public class UserProfileModel// TODO: fix naming of old model with new generated model
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]

@@ -5,30 +5,16 @@ using System.Web;
 
 namespace UI_Scheduler_Tool.Models
 {
-    public class Scheduler
+    public static class Scheduler
     {
-        public struct Node
+        public static SchedulerNode[] SortByFinish(SchedulerNode[] nodes)
         {
-            public long Start;
-            public long Finish;
-
-            public Node(long start, long finish)
-            {
-                Start = start;
-                Finish = finish;
-            }
-
-            public bool Overlaps(Node other)
-            {
-                return (Start >= other.Start && Start <= other.Finish)
-                       || (Finish >= other.Start && Finish <= other.Finish);
-            }
-
-            public override string ToString()
-            {
-                return String.Format("{0:g} -> {1:g}", Start, Finish);
-            }
+            return nodes.OrderBy(n => n.Finish).ToArray();
         }
 
+        public static SchedulerNode[] SortByStart(SchedulerNode[] nodes)
+        {
+            return nodes.OrderBy(n => n.Start).ToArray();
+        }
     }
 }

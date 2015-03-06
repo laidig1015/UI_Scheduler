@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UI_Scheduler_Tool.Models;
+using UI_Scheduler_Tool.Maui;
+using System.Web.Script.Serialization;
+using System.Collections.Generic;
 
 namespace UI_Scheduler_Tool.Tests.WrapperTests
 {
@@ -10,10 +12,19 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
         [TestMethod]
         public void GetCourse()
         {
-
             string result = MauiWrapper.GetCourse("055:032");
-            Assert.IsTrue(result.Contains("Digital Design"),
+            MauiCourse course = new JavaScriptSerializer().Deserialize<MauiCourse>(result);
+            Assert.IsTrue(course.title.Contains("Digital Design"),
                           "Unable to locate 'Digital Design' in resulting GetCourse JSON");
+        }
+
+        [TestMethod]
+        public void GetAllECE()
+        {
+            string result = MauiWrapper.GetCourse("ECE");
+            var courses = new JavaScriptSerializer().Deserialize<List<MauiCourse>>(result);
+            Assert.IsTrue(courses.Count > 1,
+                          "Unable to find all ECE courses in result Course List");
         }
 
         [TestMethod]

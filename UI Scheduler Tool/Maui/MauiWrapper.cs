@@ -5,7 +5,7 @@ using System.Web;
 using System.Net;
 using System.IO;
 
-namespace UI_Scheduler_Tool.Models
+namespace UI_Scheduler_Tool.Maui
 {
     public static class MauiWrapper
     {
