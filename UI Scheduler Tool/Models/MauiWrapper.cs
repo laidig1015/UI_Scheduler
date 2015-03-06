@@ -39,6 +39,18 @@ namespace UI_Scheduler_Tool.Models
             return GetJsonFromURL(url);
         }
 
+        public static string GetCurrentSession()
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/sessions/current";
+            return GetJsonFromURL(url);
+        }
+
+        public static string GetAllSessions()
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/sessions";
+            return GetJsonFromURL(url);
+        }
+
         private static string GetJsonFromURL(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
