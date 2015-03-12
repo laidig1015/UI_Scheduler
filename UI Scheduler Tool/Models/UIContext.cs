@@ -5,10 +5,10 @@ namespace UI_Scheduler_Tool.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
 
-    public partial class UIowaScheduler : DbContext
+    public partial class UIContext : DbContext
     {
-        public UIowaScheduler()
-            : base("name=UIowaScheduler")
+        public UIContext()
+            : base("name=UIScheduler")
         {
         }
 

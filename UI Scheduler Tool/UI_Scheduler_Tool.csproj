@@ -208,7 +208,7 @@
     <Compile Include="Models\Session.cs" />
     <Compile Include="Models\TimeUtilities.cs" />
     <Compile Include="Models\TransferCourse.cs" />
-    <Compile Include="Models\UIowaScheduler.cs" />
+    <Compile Include="Models\UIContext.cs" />
     <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Models\UserSection.cs" />
     <Compile Include="Models\ValidGened.cs" />

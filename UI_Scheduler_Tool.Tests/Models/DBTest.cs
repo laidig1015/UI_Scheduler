@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UI_Scheduler_Tool.Models;
 using System.Linq;
+using System.Data.Entity.Infrastructure;
 
 namespace UI_Scheduler_Tool.Tests.Models
 {
@@ -11,18 +12,25 @@ namespace UI_Scheduler_Tool.Tests.Models
         [TestMethod]
         public void AddNewCourse()
         {
-            using(var db = new UIowaScheduler())
+            try
             {
-                Course course = new Course()
+                using (var db = new UIContext())
                 {
-                    CourseName = "Test Course",
-                    CatalogDescription = "A test course",
-                    CourseNumber = "TEST:000",
-                    LegacyCourseNumber = "000:000",
-                    CreditHours = "0"
-                };
-                db.Courses.Add(course);
-                db.SaveChanges();
+                    Course course = new Course()
+                    {
+                        CourseName = "Test Course New",
+                        CatalogDescription = "A test course",
+                        CourseNumber = "TEST:000",
+                        LegacyCourseNumber = "000:000",
+                        CreditHours = "0"
+                    };
+                    db.Courses.Add(course);
+                    db.SaveChanges();
+                }
+            }
+            catch(DbUpdateException e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
     }
