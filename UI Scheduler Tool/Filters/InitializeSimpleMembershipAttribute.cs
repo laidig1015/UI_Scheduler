@@ -26,7 +26,8 @@ namespace UI_Scheduler_Tool.Filters
             public SimpleMembershipInitializer()
             {
                 Database.SetInitializer<UsersContext>(null);
-
+                // TODO: maybe get this to work on build instead of publish
+                //string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
                 try
                 {
                     using (var context = new UsersContext())
