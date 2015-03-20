@@ -12,14 +12,14 @@ namespace UI_Scheduler_Tool.Controllers
 {
     public class CourseController : Controller
     {
-        public ActionResult Course()
+        public ActionResult Search()
         {
             return View();
         }
 
-        public ActionResult Search(string college)
+        public ActionResult SearchCourse(string course)
         {
-            List<MauiCourse> mauiCourses = MauiCourse.GetCoursesFromCollege(college);
+            List<MauiCourse> mauiCourses = MauiCourse.Get(course);
             if(mauiCourses == null)
             {
                 // TODO: error here
@@ -34,7 +34,13 @@ namespace UI_Scheduler_Tool.Controllers
                 CourseNumber = mc.courseNumber,
                 LegacyCourseNumber = mc.legacyCourseNumber,
                 CreditHours = mc.creditHours
-            });
+            }).ToList();
+
+            using (var db = new UIContext())
+            {
+                db.Courses.Add(courses[0]);
+                db.SaveChanges();
+            }
             return PartialView("_CoursesPartial", courses);
         }
     }

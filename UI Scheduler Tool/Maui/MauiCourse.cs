@@ -17,24 +17,24 @@ namespace UI_Scheduler_Tool.Maui
         public string legacyCourseNumber { get; set; }
         public string creditHours { get; set; }// should be an int most of the time
 
-        public static List<MauiCourse> GetCoursesFromCollege(string college)
+        public static List<MauiCourse> Get(string course)
         {
-            if (String.IsNullOrEmpty(college))
+            if (String.IsNullOrEmpty(course))
             {
                 return null;
             }
             else
             {
-                college = college.Trim();
+                course = course.Trim();
             }
             string result;
             List<MauiCourse> courses = null;
             try
             {
-                result = MauiWrapper.GetCourse(college);
+                result = MauiWrapper.GetCourse(course);
                 if (String.IsNullOrEmpty(result))
                 {
-                    Console.Error.WriteLine("Unable to get course from college: " + college);
+                    Console.Error.WriteLine("Unable to get course from college: " + course);
                     return courses;// TODO: more thorough logging
                 }
 

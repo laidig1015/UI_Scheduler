@@ -199,6 +199,7 @@
     </Compile>
     <Compile Include="Maui\MauiCourse.cs" />
     <Compile Include="Maui\MauiScripts.cs" />
+    <Compile Include="Migration\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\CourseSection.cs" />
@@ -277,6 +278,7 @@
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\uiowascheduler.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
+    <Content Include="Images\ajax-loading.gif" />
     <Content Include="Images\logo.png" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
@@ -333,7 +335,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
-    <Content Include="Views\Course\Course.cshtml" />
+    <Content Include="Views\Course\Search.cshtml" />
     <Content Include="Views\Course\_CoursesPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
