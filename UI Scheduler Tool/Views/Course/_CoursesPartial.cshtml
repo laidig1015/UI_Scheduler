@@ -1,0 +1,17 @@
+﻿@using UI_Scheduler_Tool.Models
+@model IEnumerable<Course>
+<table class="grid">
+    <tr>
+        <th>Course Name</th>
+        <th>Course Number</th>
+        <th>Credit Hours</th>
+    </tr>
+    @foreach (var course in Model)
+    {
+        <tr>
+            <td class="left">@course.CourseName</td>
+            <td class="left">@course.CourseNumber</td>
+            <td class="left">@course.CreditHours</td>
+        </tr>
+    }
+</table>

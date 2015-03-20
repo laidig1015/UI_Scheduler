@@ -8,7 +8,7 @@ namespace UI_Scheduler_Tool.Models
     public partial class UIContext : DbContext
     {
         public UIContext()
-            : base("name=UIScheduler")
+            : base("DefaultConnection")
         {
         }
 

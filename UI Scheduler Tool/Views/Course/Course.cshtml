@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "Courses";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body>
+    <div>
+        @{
+            Html.BeginForm("Search", "Course", FormMethod.Get);
+            <p>
+                Title: @Html.TextBox("College")
+                <input type="submit" value="Search" />
+            </p>
+        }@{
+            Html.RenderAction("Search", "Course");
+        }
+    </div>
+</body>
+</html>
