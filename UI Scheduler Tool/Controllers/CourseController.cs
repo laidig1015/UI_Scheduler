@@ -20,28 +20,7 @@ namespace UI_Scheduler_Tool.Controllers
         public ActionResult SearchCourse(string course)
         {
             List<MauiCourse> mauiCourses = MauiCourse.Get(course);
-            if(mauiCourses == null)
-            {
-                // TODO: error here
-                return PartialView("_CoursesPartial", new List<Course>());
-            }
-
-            var courses = mauiCourses.Select(mc => new Course
-            {
-                CourseName = mc.title,
-                CatalogDescription = mc.catalogDescription,
-                LastTaught = mc.lastTaught,
-                CourseNumber = mc.courseNumber,
-                LegacyCourseNumber = mc.legacyCourseNumber,
-                CreditHours = mc.creditHours
-            }).ToList();
-
-            //using (var db = new UIContext())
-            //{
-            //    db.Courses.Add(courses[0]);
-            //    db.SaveChanges();
-            //}
-            return PartialView("_CoursesPartial", courses);
+            return PartialView("_CoursesPartial", Course.FromMauiCourses(mauiCourses));
         }
     }
 }

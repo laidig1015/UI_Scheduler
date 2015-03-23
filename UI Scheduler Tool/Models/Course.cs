@@ -5,6 +5,8 @@ namespace UI_Scheduler_Tool.Models
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
+    using System.Linq;
+    using UI_Scheduler_Tool.Maui;
 
     [Table("Course")]
     public partial class Course
@@ -14,6 +16,21 @@ namespace UI_Scheduler_Tool.Models
             CourseSections = new HashSet<CourseSection>();
             TransferCourses = new HashSet<TransferCourse>();
             ValidGeneds = new HashSet<ValidGened>();
+        }
+
+        public Course(MauiCourse mauiCourse)
+        {
+            CourseName = mauiCourse.title;
+            CatalogDescription = mauiCourse.catalogDescription;
+            LastTaught = mauiCourse.lastTaught;
+            CourseNumber = mauiCourse.courseNumber;
+            LegacyCourseNumber = mauiCourse.legacyCourseNumber;
+            CreditHours = mauiCourse.creditHours;
+        }
+
+        public static explicit operator Course(MauiCourse mauiCourse)
+        {
+            return new Course(mauiCourse);
         }
 
         public int ID { get; set; }
@@ -45,5 +62,12 @@ namespace UI_Scheduler_Tool.Models
         public virtual ICollection<TransferCourse> TransferCourses { get; set; }
 
         public virtual ICollection<ValidGened> ValidGeneds { get; set; }
+
+        public static List<Course> FromMauiCourses(List<MauiCourse> mauiCourses)
+        {
+            return mauiCourses == null ?
+                new List<Course>() :
+                mauiCourses.Select(mc => (Course)mc).ToList();
+        }
     }
 }
