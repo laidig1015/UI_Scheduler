@@ -36,11 +36,11 @@ namespace UI_Scheduler_Tool.Controllers
                 CreditHours = mc.creditHours
             }).ToList();
 
-            using (var db = new UIContext())
-            {
-                db.Courses.Add(courses[0]);
-                db.SaveChanges();
-            }
+            //using (var db = new UIContext())
+            //{
+            //    db.Courses.Add(courses[0]);
+            //    db.SaveChanges();
+            //}
             return PartialView("_CoursesPartial", courses);
         }
     }

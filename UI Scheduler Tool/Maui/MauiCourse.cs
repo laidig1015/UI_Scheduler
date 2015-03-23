@@ -38,7 +38,30 @@ namespace UI_Scheduler_Tool.Maui
                     return courses;// TODO: more thorough logging
                 }
 
-                courses = new JavaScriptSerializer().Deserialize<List<MauiCourse>>(result);
+                // sometimes we get an array which will contain data like this
+                /*
+                 * [
+                 *  {
+                 *      <data>
+                 *  }
+                 * ]
+                 */
+                // this will cause the deserializer to fail when parsing a list instead of
+                // a single course
+                // to avoid this just check if it is a list first then call the appropriate
+                // deserializer call
+                if (result[0] == '[')
+                {
+                    courses = new JavaScriptSerializer().Deserialize<List<MauiCourse>>(result);
+                }
+                else
+                {
+                    courses = new List<MauiCourse>()
+                    {
+                       new JavaScriptSerializer().Deserialize<MauiCourse>(result)
+                    };
+                }
+                
             }
             catch (Exception e)// TODO: BAD!
             {
