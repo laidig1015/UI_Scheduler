@@ -11,28 +11,7 @@ namespace UI_Scheduler_Tool.Models
     [Table("Course")]
     public partial class Course
     {
-        public Course()
-        {
-            CourseSections = new HashSet<CourseSection>();
-            TransferCourses = new HashSet<TransferCourse>();
-            ValidGeneds = new HashSet<ValidGened>();
-        }
-
-        public Course(MauiCourse mauiCourse)
-        {
-            CourseName = mauiCourse.title;
-            CatalogDescription = mauiCourse.catalogDescription;
-            LastTaught = mauiCourse.lastTaught;
-            CourseNumber = mauiCourse.courseNumber;
-            LegacyCourseNumber = mauiCourse.legacyCourseNumber;
-            CreditHours = mauiCourse.creditHours;
-        }
-
-        public static explicit operator Course(MauiCourse mauiCourse)
-        {
-            return new Course(mauiCourse);
-        }
-
+        #region Fields
         public int ID { get; set; }
 
         [Required]
@@ -57,11 +36,37 @@ namespace UI_Scheduler_Tool.Models
         [StringLength(16)]
         public string CreditHours { get; set; }
 
+        public int LastTaughtID { get; set; }
+
         public virtual ICollection<CourseSection> CourseSections { get; set; }
 
         public virtual ICollection<TransferCourse> TransferCourses { get; set; }
 
         public virtual ICollection<ValidGened> ValidGeneds { get; set; }
+        #endregion
+
+        public Course()
+        {
+            CourseSections = new HashSet<CourseSection>();
+            TransferCourses = new HashSet<TransferCourse>();
+            ValidGeneds = new HashSet<ValidGened>();
+        }
+
+        public Course(MauiCourse mauiCourse)
+        {
+            CourseName = mauiCourse.title;
+            CatalogDescription = mauiCourse.catalogDescription;
+            LastTaught = mauiCourse.lastTaught;
+            CourseNumber = mauiCourse.courseNumber;
+            LegacyCourseNumber = mauiCourse.legacyCourseNumber;
+            CreditHours = mauiCourse.creditHours;
+            LastTaughtID = mauiCourse.lastTaughtId;
+        }
+
+        public static explicit operator Course(MauiCourse mauiCourse)
+        {
+            return new Course(mauiCourse);
+        }
 
         public static List<Course> FromMauiCourses(List<MauiCourse> mauiCourses)
         {

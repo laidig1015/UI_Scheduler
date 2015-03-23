@@ -199,6 +199,7 @@
     </Compile>
     <Compile Include="Maui\MauiCourse.cs" />
     <Compile Include="Maui\MauiScripts.cs" />
+    <Compile Include="Maui\MauiSection.cs" />
     <Compile Include="Migration\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Course.cs" />

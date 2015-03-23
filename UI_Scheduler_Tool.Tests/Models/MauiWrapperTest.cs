@@ -66,5 +66,26 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
             Assert.IsTrue(result.Contains("startDate"),
                           "Unable to locatel 'startDate' in resulting GetAllSessions JSON");
         }
+
+        [TestMethod]
+        public void GetSection()
+        {
+            // TODO: maybe deserialize
+            string result = MauiWrapper.GetSections(59, "CS", "3330");
+            Assert.IsTrue(result.Contains("Algorithms"),
+                          "Unable to locate 'Algorithms' in resulting GetSection JSON");
+            MauiCourse dummy = new MauiCourse()
+            {
+                title = "Algorithms",
+                catalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                lastTaught = "Spring 2015",
+                lastTaughtId= 59,
+                lastTaughtCode= "20148",
+                courseNumber= "CS:3330",
+                legacyCourseNumber= "22C:031",
+                creditHours= "3"
+            };
+            var sections = MauiSection.Get(dummy);
+        }
     }
 }

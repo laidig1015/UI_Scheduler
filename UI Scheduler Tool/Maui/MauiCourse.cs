@@ -27,11 +27,10 @@ namespace UI_Scheduler_Tool.Maui
             {
                 course = course.Trim();
             }
-            string result;
             List<MauiCourse> courses = null;
             try
             {
-                result = MauiWrapper.GetCourse(course);
+                string result = MauiWrapper.GetCourse(course);
                 if (String.IsNullOrEmpty(result))
                 {
                     Console.Error.WriteLine("Unable to get course from college: " + course);
@@ -66,9 +65,15 @@ namespace UI_Scheduler_Tool.Maui
             catch (Exception e)// TODO: BAD!
             {
                 Console.Error.WriteLine("Error getting courses from maui: " + e.Message);
-                return courses;// TODO: more thorough logging
             }
             return courses;
+        }
+
+        public void GetSubjectAndNumber(out string subject, out string number)
+        {
+            String[] parts = courseNumber.Split(':');
+            subject = parts[0];
+            number = parts[1];
         }
     }
 }

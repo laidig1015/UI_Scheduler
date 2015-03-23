@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UI_Scheduler_Tool.Models;
 using System.Linq;
+using System.Data;
 using System.Data.Entity.Infrastructure;
 
 namespace UI_Scheduler_Tool.Tests.Models
@@ -22,15 +23,20 @@ namespace UI_Scheduler_Tool.Tests.Models
                         CatalogDescription = "A test course",
                         CourseNumber = "TEST:000",
                         LegacyCourseNumber = "000:000",
-                        CreditHours = "0"
+                        CreditHours = "0",
+                        LastTaughtID = 0
                     };
                     db.Courses.Add(course);
                     db.SaveChanges();
                 }
             }
-            catch(DbUpdateException e)
+            catch (DbUpdateException due)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(due.Message);
+            }
+            catch(DataException de)
+            {
+                Console.WriteLine(de.Message);
             }
         }
     }

@@ -19,8 +19,7 @@ namespace UI_Scheduler_Tool.Controllers
 
         public ActionResult SearchCourse(string course)
         {
-            List<MauiCourse> mauiCourses = MauiCourse.Get(course);
-            return PartialView("_CoursesPartial", Course.FromMauiCourses(mauiCourses));
+            return PartialView("_CoursesPartial", Course.FromMauiCourses(MauiCourse.Get(course)));
         }
     }
 }

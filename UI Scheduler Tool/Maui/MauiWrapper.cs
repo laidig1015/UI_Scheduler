@@ -51,6 +51,14 @@ namespace UI_Scheduler_Tool.Maui
             return GetJsonFromURL(url);
         }
 
+        public static string GetSections(int sessionId, string couseSubject, string courseNumber)
+        {
+            // TODO: do we want to make the page size and exclude vairables configurable? (right now they are set to max and none)
+            string url = String.Format("https://api.maui.uiowa.edu/maui/api/pub/registrar/sections?json={{sessionId: {0}, courseSubject: '{1}', courseNumber: '{2}'}}&pageStart=0&pageSize=2147483647&",
+                sessionId, couseSubject, courseNumber);
+            return GetJsonFromURL(url);
+        }
+
         private static string GetJsonFromURL(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
