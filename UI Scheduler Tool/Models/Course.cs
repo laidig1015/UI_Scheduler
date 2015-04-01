@@ -12,6 +12,9 @@ namespace UI_Scheduler_Tool.Models
     public partial class Course
     {
         #region Fields
+        private string _courseNumber;
+        private string _legacyCourseNumber;
+
         public int ID { get; set; }
 
         [Required]
@@ -26,17 +29,49 @@ namespace UI_Scheduler_Tool.Models
 
         [Required]
         [StringLength(16)]
-        public string CourseNumber { get; set; }
+        public string CourseNumber
+        {
+            get
+            {
+                return _courseNumber;
+            }
+
+            set
+            {
+                _courseNumber = value;
+                CourseSubject = _courseNumber.Substring(0, _courseNumber.IndexOf(':'));// if this errors for any reason it isn't a valid course
+            }
+        }
 
         [Required]
         [StringLength(16)]
-        public string LegacyCourseNumber { get; set; }
+        public string LegacyCourseNumber
+        {
+            get
+            {
+                return _legacyCourseNumber;
+            }
+
+            set
+            {
+                _legacyCourseNumber = value;
+                LegacyCourseSubject = _legacyCourseNumber.Substring(0, _legacyCourseNumber.IndexOf(':'));// if this errors for any reason it isn't a valid course
+            }
+        }
 
         [Required]
         [StringLength(16)]
         public string CreditHours { get; set; }
 
         public int LastTaughtID { get; set; }
+
+        [Required]
+        [StringLength(16)]
+        public string CourseSubject { get; private set; }
+
+        [Required]
+        [StringLength(16)]
+        public string LegacyCourseSubject { get; private set; }
 
         public virtual ICollection<CourseSection> CourseSections { get; set; }
 

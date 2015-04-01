@@ -72,5 +72,6 @@ namespace UI_Scheduler_Tool.Models
         public int? MAUISectionID { get; set; }
 
         public virtual Course Course { get; set; }
+
     }
 }

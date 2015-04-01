@@ -1,28 +1,28 @@
 ﻿@{
-    ViewBag.Title = "Course Search";
+    ViewBag.Title = "Block Scheduler";
 }
 <!DOCTYPE html>
 
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Course Search</title>
+    <title>Block Scheduler</title>
     <script src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.5.js" type="text/javascript"></script>
     <script>
         $(document).ready(function (e) {
             $("#search").click(function (event) {
-                $(".partialContents").empty();// clear previous data if any
+                $(".sectionData").empty();// clear previous data if any
 
-                var course = $("#searchBox").val();// get college choice
+                var sectionSubject = $("#sectionSearch").val();
 
                 // find item
-                var item = $(".partialContents");
+                var item = $(".sectionData");
                 var url = item.data("url");
                 // check url
                 if (url && url.length > 0) {
                     document.getElementById('loadingGif').style.display = 'block';// show loading gif
                     // load partial view
-                    item.load(url, "course=" + course,
+                    item.load(url, "sectionSubject=" + sectionSubject,
                     function () {
                         document.getElementById('loadingGif').style.display = 'none';// on load hide gif
                     });
@@ -33,14 +33,14 @@
 </head>
 <body>
     <div class="search">
-        Course: <input id="searchBox" type="text" name="SearchBox">
+        Section: <input id="sectionSearch" type="text" name="SectionBox"/>
         <input id="search" type="submit" value="Search">
     </div>
     <div class="searchResults">
         <div id="loadingGif" style="display:none">
             <img src="~/Images/ajax-loading.gif" />
         </div>
-        <div id="searchData" class="partialContents" data-url="/Course/SearchCourse">
+        <div id="searchData" class="sectionData" data-url="/Course/SearchSection">
         </div>
     </div>
 </body>

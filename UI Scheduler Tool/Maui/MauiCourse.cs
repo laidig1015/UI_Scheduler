@@ -17,6 +17,12 @@ namespace UI_Scheduler_Tool.Maui
         public string legacyCourseNumber { get; set; }
         public string creditHours { get; set; }// should be an int most of the time
 
+        public static string GetJSON(string course)
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/course/" + course;
+            return MauiHelper.GetJsonFromURL(url);
+        }
+
         public static List<MauiCourse> Get(string course)
         {
             if (String.IsNullOrEmpty(course))

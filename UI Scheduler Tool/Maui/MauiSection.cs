@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -17,7 +18,7 @@ namespace UI_Scheduler_Tool.Maui
         public DateTime BeginDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Status { get; set; }
-        public string Type { get; set; }
+        public string SectionType { get; set; }
         public string Hours { get; set; }
         public string ManagementType { get; set; }
         public string MaxEnroll { get; set; }
@@ -34,6 +35,108 @@ namespace UI_Scheduler_Tool.Maui
         public bool ArrangedTime { get; set; }
         public bool ArrangedLocation { get; set; }
         public bool Offsite { get; set; }
+        public int SessionID { get; set; }
+
+        public static string GetAllSections(int sectionID)
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/sections/" + sectionID;
+            return MauiHelper.GetJsonFromURL(url);
+        }
+
+        public static string GetSectionSearch(int sessionId, string couseSubject, string courseNumber)
+        {
+            // TODO: do we want to make the page size and exclude vairables configurable? (right now they are set to max and none)
+            string url = String.Format("https://api.maui.uiowa.edu/maui/api/pub/registrar/sections?json={{sessionId: {0}, courseSubject: '{1}', courseNumber: '{2}'}}&pageStart=0&pageSize=2147483647&",
+                sessionId, couseSubject, courseNumber);
+            return MauiHelper.GetJsonFromURL(url);
+        }
+
+        public static string GetSectionByRelation(int sectionID, int courseIdentityID, SectionRelationships r, SectionTypes t)
+        {
+            // TODO: do we want to make the page size and exclude vairables configurable? (right now they are set to max and none)
+            string url = String.Format("https://api.maui.uiowa.edu/maui/api/pub/registrar/sections/{0}/{1}/{2}/{3}?pageStart=0&pageSize=2147483647&",
+                sectionID, courseIdentityID, r.ToURLString(), t.ToURLString());
+            return MauiHelper.GetJsonFromURL(url);
+        }
+
+        public static string GetFromLegacy(int legacySectionID, string subject)
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/sections/" + legacySectionID + "/" + subject;
+            return MauiHelper.GetJsonFromURL(url);
+        }
+
+        public static string GetFromLegacy(int legacySectionID, string subject, string course, bool isSimple)
+        {
+            string url = String.Format("https://api.maui.uiowa.edu/maui/api/pub/registrar/sections/{0}/{1}/{2}/simple={3}&",
+                legacySectionID, subject, course, isSimple);
+            return MauiHelper.GetJsonFromURL(url);
+        }
+
+        public static string GetFromLegacy(int legacySectionID, string subject, string course, string section, bool isSimple)
+        {
+            string url = String.Format("https://api.maui.uiowa.edu/maui/api/pub/registrar/sections/{0}/{1}/{2}/{3}/simple={4}&",
+                legacySectionID, subject, course, section, isSimple);
+            return MauiHelper.GetJsonFromURL(url);
+        }
+
+        public static string GetJSON(int sessionID, string combinedCourseNumber, bool isSimple)
+        {
+            string[] parts = combinedCourseNumber.Split(':');
+            if (parts.Length < 2)
+            {
+                return string.Empty;
+            }
+            else if (parts.Length == 2)
+            {
+                return GetFromLegacy(sessionID, parts[0], parts[1], isSimple);
+            }
+            else
+            {
+                return GetFromLegacy(sessionID, parts[0], parts[1], parts[2], isSimple);
+            }
+        }
+
+        public static string GetEnrollment(int sessionID, string[] sectionIDs)
+        {
+            StringBuilder urlBuilder = new StringBuilder("https://api.maui.uiowa.edu/maui/api/pub/registrar/sections/enrollments-n-status/" + sessionID + "/");
+            foreach(string s in sectionIDs)
+            {
+                urlBuilder.Append(s);
+                urlBuilder.Append(',');
+            }
+            return MauiHelper.GetJsonFromURL(urlBuilder.ToString());
+        }
+
+        public static string GetFromCourseIdentity(int sectionID, int courseIdenityID)
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/sections/" + sectionID + "/" + courseIdenityID;
+            return MauiHelper.GetJsonFromURL(url);
+        }
+
+        public static string GetFromRelationship(int sectionID, int courseIdenityID, SectionRelationships r)
+        {
+            string url = String.Format("https://api.maui.uiowa.edu/maui/api/pub/registrar/sections/related/{0}/{1}/{2}",
+                r.AliasUnrelatedToRelated().ToURLString(), sectionID, courseIdenityID);
+            return MauiHelper.GetJsonFromURL(url);
+        }
+
+        public static string GetTimesAndLocation(int sectionID)
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/sections/" + sectionID + "/times-and-locations";
+            return MauiHelper.GetJsonFromURL(url);
+        }
+
+        public static string GetInstructors(int sectionID)
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/sections/" + sectionID + "/instructors";
+            return MauiHelper.GetJsonFromURL(url);
+        }
+
+        public static string GetRestrictions(int sectionID)
+        {
+            string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/sections/restrict-enrollments/" + sectionID;
+            return MauiHelper.GetJsonFromURL(url);
+        }
 
         public static List<MauiSection> Get(MauiCourse course)
         {
@@ -79,7 +182,7 @@ namespace UI_Scheduler_Tool.Maui
                 BeginDate = DateTime.Parse((string)token["beginDate"]),
                 EndDate = DateTime.Parse((string)token["endDate"]),
                 Status = (string)token["status"],
-                Type = (string)token["sectionType"],
+                SectionType = (string)token["sectionType"],
                 Hours = (string)token["hours"],
                 ManagementType = (string)token["managementType"],
                 MaxEnroll = (string)token["maxEnroll"],
@@ -95,7 +198,8 @@ namespace UI_Scheduler_Tool.Maui
                 Room = room,
                 ArrangedLocation = arrangedLoc,
                 ArrangedTime = arrangedTime,
-                Offsite = offsite
+                Offsite = offsite,
+                SessionID = (int)token["session"]
             };
             return section;
         }

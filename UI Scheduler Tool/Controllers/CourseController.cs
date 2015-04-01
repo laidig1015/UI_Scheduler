@@ -17,9 +17,24 @@ namespace UI_Scheduler_Tool.Controllers
             return View();
         }
 
+        public ActionResult BlockSchedueler()
+        {
+            return View();
+        }
+
         public ActionResult SearchCourse(string course)
         {
             return PartialView("_CoursesPartial", Course.FromMauiCourses(MauiCourse.Get(course)));
+            //List<MauiCourse> courses = MauiCourse.Get(course);
+            //// TEST
+            //List<MauiSection> sections = MauiSection.Get(courses[0]);
+            //return PartialView("_CoursesPartial", Course.FromMauiCourses(courses));
+        }
+
+        public ActionResult SearchSection(string sectionSubject)
+        {
+            // TODO section is hard coded for now!!!
+            return PartialView("_CourseSectionPartial", new MauiBlockCollection(MauiBlockSection.Load(59, sectionSubject)));
         }
     }
 }

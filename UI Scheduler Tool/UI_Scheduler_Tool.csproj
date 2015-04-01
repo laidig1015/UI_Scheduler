@@ -197,7 +197,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Maui\MauiBlockCollection.cs" />
+    <Compile Include="Maui\MauiBlockSection.cs" />
     <Compile Include="Maui\MauiCourse.cs" />
+    <Compile Include="Maui\MauiEnums.cs" />
+    <Compile Include="Maui\MauiHelper.cs" />
     <Compile Include="Maui\MauiScripts.cs" />
     <Compile Include="Maui\MauiSection.cs" />
     <Compile Include="Migration\Configuration.cs" />
@@ -338,9 +342,12 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Course\Search.cshtml" />
     <Content Include="Views\Course\_CoursesPartial.cshtml" />
+    <Content Include="Views\Course\BlockSchedueler.cshtml" />
+    <Content Include="Views\Course\_CourseSectionPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Block\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
