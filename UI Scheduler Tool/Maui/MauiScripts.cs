@@ -39,9 +39,7 @@ namespace UI_Scheduler_Tool.Maui
                         {
                             CourseName = mauiCourse.title,
                             CatalogDescription = mauiCourse.catalogDescription,
-                            LastTaught = mauiCourse.lastTaught,
                             CourseNumber = mauiCourse.courseNumber,
-                            LegacyCourseNumber = mauiCourse.legacyCourseNumber,
                             CreditHours = mauiCourse.creditHours
                         };
                         if(!db.Courses.Any(c => c.CourseName == course.CourseName))

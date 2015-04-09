@@ -1,29 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
 namespace UI_Scheduler_Tool.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
-
-    [Table("Session")]
     public partial class Session
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int ID { get; set; }
-
-        public DateTime startDate { get; set; }
-
-        public DateTime endDate { get; set; }
-
-        [Required]
-        [StringLength(16)]
-        public string shortDescription { get; set; }
-
-        [Required]
-        [StringLength(16)]
-        public string legacyCode { get; set; }
-
-        public int? mauiID { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string ShortDescription { get; set; }
+        public string LegacyCode { get; set; }
+        public int? MauiID { get; set; }
     }
 }
