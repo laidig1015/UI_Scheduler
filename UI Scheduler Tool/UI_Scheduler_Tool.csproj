@@ -234,6 +234,7 @@
     <Compile Include="Models\PreqTable.cs" />
     <Compile Include="Models\TimeUtilities.cs" />
     <Compile Include="Models\DataContext.cs" />
+    <Compile Include="Models\TrackMatrix.cs" />
     <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Models\webpages_Membership.cs" />
     <Compile Include="Models\webpages_OAuthMembership.cs" />
@@ -320,6 +321,7 @@
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\Preq.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
