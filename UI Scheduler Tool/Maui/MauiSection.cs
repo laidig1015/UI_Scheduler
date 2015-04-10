@@ -156,6 +156,7 @@ namespace UI_Scheduler_Tool.Maui
                     return sections;// TODO: more thorough logging
                 }
                 sections = JObject.Parse(result)["payload"].Select(token => FromToken(token)).ToList();
+                //https://api.maui.uiowa.edu/maui/pub/webservices/documentation.page
             }
             catch (Exception e)// TODO: BAD!
             {
@@ -163,6 +164,99 @@ namespace UI_Scheduler_Tool.Maui
             }
             return sections;
         }
+
+
+        public static string createPrerequesties(MauiCourse course)
+        {
+            string prereq = null;
+            if (course == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                string subject, number;
+                course.GetSubjectAndNumber(out subject, out number);
+                string result = MauiWrapper.GetSections(course.lastTaughtId, subject, number);
+                if (String.IsNullOrEmpty(result))
+                {
+                    Console.Error.WriteLine("Unable to get section from course (sessionId: {0} {1}:{2})", course.lastTaughtId, subject, number);
+                    //return sections;// TODO: more thorough logging
+                }
+                //sections = JObject.Parse(result)["payload"].Select(token => FromToken(token)).ToList();
+                JToken token = JObject.Parse(result)["payload"];
+
+                JToken preToken = token[0];
+               // JToken preToken = token["timeAndLocations"][0];
+                string preString = (string)preToken["prerequisite"];
+                char[] delimiters = { ' ' };
+                string[] splitString = preString.Split(delimiters);
+
+                List<string> prereqList = splitString.ToList<string>();
+                int orIndex;
+                int andIndex;
+
+                while (prereqList.Count != 0)
+                {
+                    //Check for an "Or" Relationship
+                    orIndex = prereqList.IndexOf("or");
+                    if (orIndex >= 2)
+                    {
+                        //Grab Optional 1
+                        string course1 = prereqList[orIndex - 2];
+                        string legacy1 = prereqList[orIndex - 1];
+                        string course2 = prereqList[orIndex + 1];
+                        string legacy2 = prereqList[orIndex + 2];
+                        createPrereqEdge(number, course1, true);
+                        createPrereqEdge(number, course2, true);
+                        prereqList.Remove(course1);
+                        prereqList.Remove(course2);
+                        prereqList.Remove(legacy1);
+                        prereqList.Remove(legacy2);
+                        prereqList.Remove("or");
+                    }
+                    andIndex = prereqList.IndexOf("and");
+                    if (andIndex >= 2)
+                    {
+                        string course1 = prereqList[andIndex - 2];
+                        string legacy1 = prereqList[andIndex - 1];
+                        createPrereqEdge(number, course1, true);
+                        prereqList.Remove(course1);
+                        prereqList.Remove(legacy1);
+                        prereqList.Remove("and");
+                    }
+
+                    if (prereqList.Count >= 2)
+                    {
+                        string course1 = prereqList[andIndex - 2];
+                        string legacy1 = prereqList[andIndex - 1];
+                        createPrereqEdge(number, course1, true);
+                        prereqList.Remove(course1);
+                        prereqList.Remove(legacy1);
+                    }
+
+                    if (prereqList.Count < 2 && prereqList.Count > 0)
+                    {
+                        prereqList.Clear();
+                    }
+                }
+                //https://api.maui.uiowa.edu/maui/pub/webservices/documentation.page
+                prereq = preString;
+            }
+            catch (Exception e)// TODO: BAD!
+            {
+                Console.Error.WriteLine("Error getting sections from maui: " + e.Message);
+            }
+
+            return prereq;
+        }
+
+        private static bool createPrereqEdge(string main, string reference, bool optional)
+        {
+            return true;
+        }
+
 
         private static MauiSection FromToken(JToken token)
         {
