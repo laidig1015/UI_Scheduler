@@ -24,9 +24,10 @@ namespace UI_Scheduler_Tool.Controllers
 
         public ActionResult SearchCourse(string course)
         {
-            using(var db = new UIContext())
+            using (var db = new DataContext())
             {
-                List<Course> courses = db.Courses.ToList();
+                List<Course> all = db.Courses.ToList();
+                PreqTable table = new PreqTable(all);
             }
             //return PartialView("_CoursesPartial", Course.FromMauiCourses(MauiCourse.Get(course)));
             //List<MauiCourse> courses = MauiCourse.Get(course);

@@ -31,7 +31,7 @@ namespace UI_Scheduler_Tool.Maui
 
             try
             {
-                using (var db = new UIContext())
+                using (var db = new DataContext())
                 {
                     foreach (var mauiCourse in courses)
                     {

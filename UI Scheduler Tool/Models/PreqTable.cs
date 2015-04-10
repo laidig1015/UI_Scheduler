@@ -11,6 +11,7 @@ namespace UI_Scheduler_Tool.Models
 
         public PreqTable(List<Course> courses)
         {
+            Table = new Dictionary<string, PreqNode>();
             // initialize all buckets in our table so we have valid references
             // we have to use two seperate loops so when we link our references
             // we don't link to a null table

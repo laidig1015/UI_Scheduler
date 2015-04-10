@@ -15,14 +15,13 @@ namespace UI_Scheduler_Tool.Tests.Models
         {
             try
             {
-                using (var db = new UIContext())
+                using (var db = new DataContext())
                 {
                     Course course = new Course()
                     {
                         CourseName = "Test Course New",
                         CatalogDescription = "A test course",
                         CourseNumber = "TEST:000",
-                        LegacyCourseNumber = "000:000",
                         CreditHours = "0",
                         LastTaughtID = 0
                     };

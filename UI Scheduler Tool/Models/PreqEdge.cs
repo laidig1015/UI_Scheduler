@@ -5,7 +5,7 @@ using System.Web;
 
 namespace UI_Scheduler_Tool.Models
 {
-    public partial class PreqEdge
+    public class PreqEdge
     {
         public int Id { get; set; }
         public int ParentID { get; set; }
