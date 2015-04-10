@@ -8,7 +8,7 @@
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{79B5741A-3F79-45F7-A591-CDC605B1525D}</ProjectGuid>
-    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UI_Scheduler_Tool</RootNamespace>
@@ -20,6 +20,8 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,15 +43,16 @@
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -193,6 +196,28 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CourseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\TrackController.cs" />
+    <Compile Include="DataMigrations\201504100215273_Initial.cs" />
+    <Compile Include="DataMigrations\201504100215273_Initial.Designer.cs">
+      <DependentUpon>201504100215273_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\201504100220250_RequiredsToCourse.cs" />
+    <Compile Include="DataMigrations\201504100220250_RequiredsToCourse.Designer.cs">
+      <DependentUpon>201504100220250_RequiredsToCourse.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\201504100345114_SwapForeignKey.cs" />
+    <Compile Include="DataMigrations\201504100345114_SwapForeignKey.Designer.cs">
+      <DependentUpon>201504100345114_SwapForeignKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\201504100401230_SwapBackForeignKey.cs" />
+    <Compile Include="DataMigrations\201504100401230_SwapBackForeignKey.Designer.cs">
+      <DependentUpon>201504100401230_SwapBackForeignKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\201504100406596_AddIndex.cs" />
+    <Compile Include="DataMigrations\201504100406596_AddIndex.Designer.cs">
+      <DependentUpon>201504100406596_AddIndex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\Configuration.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -204,25 +229,25 @@
     <Compile Include="Maui\MauiHelper.cs" />
     <Compile Include="Maui\MauiScripts.cs" />
     <Compile Include="Maui\MauiSection.cs" />
-    <Compile Include="Migration\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
-    <Compile Include="Models\Course.cs" />
-    <Compile Include="Models\CourseSection.cs" />
-    <Compile Include="Models\Instructor.cs" />
     <Compile Include="Maui\MauiWrapper.cs" />
-    <Compile Include="Models\Scheduler.cs" />
-    <Compile Include="Models\SchedulerNode.cs" />
-    <Compile Include="Models\Session.cs" />
+    <Compile Include="Models\Course.cs" />
+    <Compile Include="Models\PreqEdge.cs" />
+    <Compile Include="Models\PreqNode.cs" />
+    <Compile Include="Models\PreqTable.cs" />
     <Compile Include="Models\TimeUtilities.cs" />
-    <Compile Include="Models\TransferCourse.cs" />
-    <Compile Include="Models\UIContext.cs" />
+    <Compile Include="Models\DataContext.cs" />
+    <Compile Include="Models\TrackMatrix.cs" />
     <Compile Include="Models\UserProfile.cs" />
-    <Compile Include="Models\UserSection.cs" />
-    <Compile Include="Models\ValidGened.cs" />
     <Compile Include="Models\webpages_Membership.cs" />
     <Compile Include="Models\webpages_OAuthMembership.cs" />
     <Compile Include="Models\webpages_Roles.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserMigrations\201504100211168_Initial.cs" />
+    <Compile Include="UserMigrations\201504100211168_Initial.Designer.cs">
+      <DependentUpon>201504100211168_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserMigrations\Configuration.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
@@ -299,6 +324,7 @@
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\Preq.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -344,13 +370,38 @@
     <Content Include="Views\Course\_CoursesPartial.cshtml" />
     <Content Include="Views\Course\BlockSchedueler.cshtml" />
     <Content Include="Views\Course\_CourseSectionPartial.cshtml" />
+    <Content Include="Views\Track\Select.cshtml" />
+    <Content Include="Views\Track\EFA.cshtml" />
+    <Content Include="Views\Track\TrackBuilder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Block\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DataMigrations\201504100215273_Initial.resx">
+      <DependentUpon>201504100215273_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504100220250_RequiredsToCourse.resx">
+      <DependentUpon>201504100220250_RequiredsToCourse.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504100345114_SwapForeignKey.resx">
+      <DependentUpon>201504100345114_SwapForeignKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504100401230_SwapBackForeignKey.resx">
+      <DependentUpon>201504100401230_SwapBackForeignKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504100406596_AddIndex.resx">
+      <DependentUpon>201504100406596_AddIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserMigrations\201504100211168_Initial.resx">
+      <DependentUpon>201504100211168_Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -380,6 +431,7 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

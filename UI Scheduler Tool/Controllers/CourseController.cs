@@ -24,11 +24,17 @@ namespace UI_Scheduler_Tool.Controllers
 
         public ActionResult SearchCourse(string course)
         {
-            return PartialView("_CoursesPartial", Course.FromMauiCourses(MauiCourse.Get(course)));
+            using (var db = new DataContext())
+            {
+                List<Course> all = db.Courses.ToList();
+                PreqTable table = new PreqTable(all);
+            }
+            //return PartialView("_CoursesPartial", Course.FromMauiCourses(MauiCourse.Get(course)));
             //List<MauiCourse> courses = MauiCourse.Get(course);
             //// TEST
             //List<MauiSection> sections = MauiSection.Get(courses[0]);
             //return PartialView("_CoursesPartial", Course.FromMauiCourses(courses));
+            return View();
         }
 
         public ActionResult SearchSection(string sectionSubject)
