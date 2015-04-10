@@ -8,27 +8,26 @@
     <ul>
         <li>@Html.ActionLink("ICON", "ICON", "Home")</li>
         <li>@Html.ActionLink("ISIS", "ISIS", "Home")</li>
-        <li>@Html.ActionLink("Email", "Email", "Home")</li>
+        <li>@Html.ActionLink("Hawk Mail", "Email", "Home")</li>
     </ul>
 </aside>
-    
-
     <ol class="round">
         <li class="one">
-            <h5>Getting Started</h5>
-            Register a new account or login to an existing one by clicking the links above.
+            <h5>Choose Your Track</h5>
+            Start by selecting your prefered
+            @Html.ActionLink("track", "Select", "Track") for your 4 year experience.
         </li>
 
         <li class="two">
-            <h5>Begin Scheduling Your Courses</h5>
-            Enter in your schedule and a few other personal options and let us do the work for you!
-            @Html.ActionLink("View Courses", "Search", "Course")
-            @Html.ActionLink("Build Schdule", "BlockSchedueler", "Course")
+            <h5>Choose Your EFA</h5>
+            Narrow your plan of study by choosing an
+            @Html.ActionLink("EFA", "EFA", "Track") from your chosen track.
         </li>
 
         <li class="three">
-            <h5>Observe several options for your class schedule</h5>
-            Given your information, we will produce several options for your course schedule from which you
-            can choose.
+            <h5>Build Your 4 Year Plan</h5>
+            Finally use our
+            @Html.ActionLink("track builder", "TrackBuilder", "Track")
+            to build your plan. The track builder will ensure the plan will meet the colleges requirements!
         </li>
     </ol>

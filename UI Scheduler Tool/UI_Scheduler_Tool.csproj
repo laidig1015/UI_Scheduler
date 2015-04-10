@@ -8,7 +8,7 @@
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{79B5741A-3F79-45F7-A591-CDC605B1525D}</ProjectGuid>
-    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UI_Scheduler_Tool</RootNamespace>
@@ -20,6 +20,8 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -194,6 +196,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CourseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\TrackController.cs" />
     <Compile Include="DataMigrations\201504100215273_Initial.cs" />
     <Compile Include="DataMigrations\201504100215273_Initial.Designer.cs">
       <DependentUpon>201504100215273_Initial.cs</DependentUpon>
@@ -367,10 +370,12 @@
     <Content Include="Views\Course\_CoursesPartial.cshtml" />
     <Content Include="Views\Course\BlockSchedueler.cshtml" />
     <Content Include="Views\Course\_CourseSectionPartial.cshtml" />
+    <Content Include="Views\Track\Select.cshtml" />
+    <Content Include="Views\Track\EFA.cshtml" />
+    <Content Include="Views\Track\TrackBuilder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Block\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -426,6 +431,7 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
