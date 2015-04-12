@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Track Builder";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Block Scheduler</title>
+    <script src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.5.js" type="text/javascript"></script>
+    <script src="~/Scripts/Preq.js" type="text/javascript"></script>
+    <script>
+        $(document).ready(function (e) {
+            Preq.matrix = new TrackMatrix();
+
+            $("#search").click(function (event) {
+                Preq.matrix.loadNodes($("#query").val());
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="search">
+        Section: <input id="query" type="text" name="Query"/>
+        <input id="search" type="submit" value="Search">
+    </div>
+</body>
+</html>

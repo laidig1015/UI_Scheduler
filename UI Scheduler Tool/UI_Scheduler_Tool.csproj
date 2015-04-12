@@ -234,10 +234,7 @@
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\PreqEdge.cs" />
     <Compile Include="Models\PreqNode.cs" />
-    <Compile Include="Models\PreqTable.cs" />
-    <Compile Include="Models\TimeUtilities.cs" />
     <Compile Include="Models\DataContext.cs" />
-    <Compile Include="Models\TrackMatrix.cs" />
     <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Models\webpages_Membership.cs" />
     <Compile Include="Models\webpages_OAuthMembership.cs" />
@@ -372,7 +369,7 @@
     <Content Include="Views\Course\_CourseSectionPartial.cshtml" />
     <Content Include="Views\Track\Select.cshtml" />
     <Content Include="Views\Track\EFA.cshtml" />
-    <Content Include="Views\Track\TrackBuilder.cshtml" />
+    <Content Include="Views\Track\Builder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
