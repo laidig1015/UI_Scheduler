@@ -49,6 +49,8 @@ namespace UI_Scheduler_Tool.DataMigrations
                 new PreqEdge { Parent = easy, Child = advancedB, IsRequired = true }
                 );
 
+           
+
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data. E.g.
             //

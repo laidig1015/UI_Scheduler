@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Newtonsoft.Json.Linq;
+using UI_Scheduler_Tool.Models;
 
 namespace UI_Scheduler_Tool.Maui
 {
@@ -208,8 +209,8 @@ namespace UI_Scheduler_Tool.Maui
                         string legacy1 = prereqList[orIndex - 1];
                         string course2 = prereqList[orIndex + 1];
                         string legacy2 = prereqList[orIndex + 2];
-                        createPrereqEdge(number, course1, true);
-                        createPrereqEdge(number, course2, true);
+                        //createPrereqEdge(number, course1, true);
+                        //createPrereqEdge(number, course2, true);
                         prereqList.Remove(course1);
                         prereqList.Remove(course2);
                         prereqList.Remove(legacy1);
@@ -221,7 +222,7 @@ namespace UI_Scheduler_Tool.Maui
                     {
                         string course1 = prereqList[andIndex - 2];
                         string legacy1 = prereqList[andIndex - 1];
-                        createPrereqEdge(number, course1, true);
+                        //createPrereqEdge(number, course1, true);
                         prereqList.Remove(course1);
                         prereqList.Remove(legacy1);
                         prereqList.Remove("and");
@@ -231,7 +232,7 @@ namespace UI_Scheduler_Tool.Maui
                     {
                         string course1 = prereqList[andIndex - 2];
                         string legacy1 = prereqList[andIndex - 1];
-                        createPrereqEdge(number, course1, true);
+                        //createPrereqEdge(number, course1, true);
                         prereqList.Remove(course1);
                         prereqList.Remove(legacy1);
                     }
@@ -252,8 +253,15 @@ namespace UI_Scheduler_Tool.Maui
             return prereq;
         }
 
-        private static bool createPrereqEdge(string main, string reference, bool optional)
+        private static bool createPrereqEdge(Course main, Course reference, bool optional)
         {
+             using(var db = new DataContext())
+            {
+                //db.PreqEdges.Add(new PreqEdge { Parent = main, Child = reference, IsRequired = true });
+                //List<Course> courses = db.Courses.Where(c => c.CourseNumber == "055:1742").ToList();
+                db.SaveChanges();
+            }
+
             return true;
         }
 
