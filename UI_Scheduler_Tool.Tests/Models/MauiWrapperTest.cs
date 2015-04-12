@@ -105,6 +105,18 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
             };
             MauiSection.createPrerequesties(dummy);
 
+            Course dummy2 = new Course()
+            {
+                CourseName = "Embedded Systems",
+                CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "ECE:3360",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+            MauiSection.createPrerequesties(dummy2);
             //https://api.maui.uiowa.edu/maui/api/pub/registrar/sections?json={sessionId: 59, courseSubject: 'CS', courseNumber: '3330'}&pageStart=0&pageSize=2147483647&
             //string college = 'ECE';
             

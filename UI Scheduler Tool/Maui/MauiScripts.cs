@@ -11,7 +11,7 @@ namespace UI_Scheduler_Tool.Maui
         public static bool PopulateCourseFromCollege(string college)
         {
             string result;
-            List<MauiCourse> courses;
+            List<Course> courses;
             try
             {
                 result = MauiWrapper.GetCourse(college);
@@ -21,7 +21,7 @@ namespace UI_Scheduler_Tool.Maui
                     return false;// TODO: more thorough logging
                 }
 
-                courses = new JavaScriptSerializer().Deserialize<List<MauiCourse>>(result);
+                courses = new JavaScriptSerializer().Deserialize<List<Course>>(result);
             }
             catch (Exception e)// TODO: BAD!
             {
@@ -37,14 +37,15 @@ namespace UI_Scheduler_Tool.Maui
                     {
                         Course course = new Course()
                         {
-                            CourseName = mauiCourse.title,
-                            CatalogDescription = mauiCourse.catalogDescription,
-                            CourseNumber = mauiCourse.courseNumber,
-                            CreditHours = mauiCourse.creditHours
+                            CourseName = mauiCourse.CourseName,
+                            CatalogDescription = mauiCourse.CatalogDescription,
+                            CourseNumber = mauiCourse.CourseNumber,
+                            CreditHours = mauiCourse.CreditHours
                         };
                         if(!db.Courses.Any(c => c.CourseName == course.CourseName))
                         {
                             db.Courses.Add(course);
+                            //MauiSection.createPrerequesties(course);
                         }
                     }
                     db.SaveChanges();
@@ -53,6 +54,28 @@ namespace UI_Scheduler_Tool.Maui
             catch (Exception e)// TODO: BAD!!!
             {
                 Console.Error.WriteLine("Error writing db courses: " + e.Message);
+                return false;
+            }
+            return true;
+        }
+
+        public static bool addPrerequesiteInformationToAllCourses()
+        {
+            try
+            {
+                using (var db = new DataContext())
+                {
+                    List<Course> courses1 = db.Courses.Where(c => c.CourseNumber != null).ToList();
+                    foreach (Course course in courses1)
+                    {
+                        MauiSection.createPrerequesties(course);
+                    }
+                    db.SaveChanges();
+                }
+
+            }
+            catch
+            {
                 return false;
             }
             return true;

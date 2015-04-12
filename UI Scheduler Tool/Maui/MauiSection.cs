@@ -215,9 +215,21 @@ namespace UI_Scheduler_Tool.Maui
                         using (var db = new DataContext())
                         {
                             //db.PreqEdges.Add(new PreqEdge { Parent = main, Child = reference, IsRequired = true });
-                            List<Course> courses = db.Courses.Where(c => c.CourseNumber == "055:1742").ToList();
-                            db.SaveChanges();
+                            List<Course> courses1 = db.Courses.Where(c => c.CourseNumber == course1).ToList();
+                            List<Course> courses2 = db.Courses.Where(c => c.CourseNumber == course2).ToList();
+                            if (courses1.Count > 0)
+                            {
+                                Course childCourse = courses1[0];
+                                createPrereqEdge(course, childCourse, true);
+                            }
+                            if (courses2.Count > 0)
+                            {
+                                Course childCourse = courses2[0];
+                                createPrereqEdge(course, childCourse, true);
+                            }
+                            // db.SaveChanges();
                         }
+
                         prereqList.Remove(course1);
                         prereqList.Remove(course2);
                         prereqList.Remove(legacy1);
@@ -229,7 +241,19 @@ namespace UI_Scheduler_Tool.Maui
                     {
                         string course1 = prereqList[andIndex - 2];
                         string legacy1 = prereqList[andIndex - 1];
-                        //createPrereqEdge(number, course1, true);
+                        //createPrereqEdge(number, course1, false);
+                        using (var db = new DataContext())
+                        {
+                            //db.PreqEdges.Add(new PreqEdge { Parent = main, Child = reference, IsRequired = true });
+                            List<Course> courses1 = db.Courses.Where(c => c.CourseNumber == course1).ToList();
+                            //List<Course> courses2 = db.Courses.Where(c => c.CourseNumber == course2).ToList();
+                            if (courses1.Count > 0)
+                            {
+                                Course childCourse = courses1[0];
+                                createPrereqEdge(course, childCourse, true);
+                            }
+                            // db.SaveChanges();
+                        }
                         prereqList.Remove(course1);
                         prereqList.Remove(legacy1);
                         prereqList.Remove("and");
@@ -237,9 +261,20 @@ namespace UI_Scheduler_Tool.Maui
 
                     if (prereqList.Count >= 2)
                     {
-                        string course1 = prereqList[andIndex - 2];
-                        string legacy1 = prereqList[andIndex - 1];
-                        //createPrereqEdge(number, course1, true);
+                        string course1 = prereqList[0];
+                        string legacy1 = prereqList[1];
+                        using (var db = new DataContext())
+                        {
+                            //db.PreqEdges.Add(new PreqEdge { Parent = main, Child = reference, IsRequired = true });
+                            List<Course> courses1 = db.Courses.Where(c => c.CourseNumber == course1).ToList();
+                            //List<Course> courses2 = db.Courses.Where(c => c.CourseNumber == course2).ToList();
+                            if (courses1.Count > 0)
+                            {
+                                Course childCourse = courses1[0];
+                                createPrereqEdge(course, childCourse, false);
+                            }
+                            db.SaveChanges();
+                        }
                         prereqList.Remove(course1);
                         prereqList.Remove(legacy1);
                     }
@@ -264,7 +299,19 @@ namespace UI_Scheduler_Tool.Maui
         {
              using(var db = new DataContext())
             {
-                //db.PreqEdges.Add(new PreqEdge { Parent = main, Child = reference, IsRequired = true });
+                PreqEdge edge = new PreqEdge()
+                {
+                    Parent = main,
+                    Child = reference,
+                    IsRequired = optional
+                };
+
+                if (!db.PreqEdges.Any(c => c.Parent == edge.Parent && c.Child == edge.Child))
+                {
+                    db.PreqEdges.Add(edge);
+                    //MauiSection.createPrerequesties(course);
+                }
+                //db.PreqEdges.Add(new PreqEdge { Parent = main, Child = reference, IsRequired = !(optional) });
                 //List<Course> courses = db.Courses.Where(c => c.CourseNumber == "055:1742").ToList();
                 db.SaveChanges();
             }
