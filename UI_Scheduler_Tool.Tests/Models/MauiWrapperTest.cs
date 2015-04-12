@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UI_Scheduler_Tool.Maui;
 using System.Web.Script.Serialization;
 using System.Collections.Generic;
+using UI_Scheduler_Tool.Models;
 
 namespace UI_Scheduler_Tool.Tests.WrapperTests
 {
@@ -91,16 +92,16 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
         [TestMethod]
         public void createPrerequesites()
         {
-            MauiCourse dummy = new MauiCourse()
+            Course dummy = new Course()
             {
-                title = "Algorithms",
-                catalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
-                lastTaught = "Spring 2015",
-                lastTaughtId = 59,
-                lastTaughtCode = "20148",
-                courseNumber = "CS:3330",
-                legacyCourseNumber = "22C:031",
-                creditHours = "3"
+                CourseName = "Algorithms",
+                CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "CS:3330",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
             };
             MauiSection.createPrerequesties(dummy);
 

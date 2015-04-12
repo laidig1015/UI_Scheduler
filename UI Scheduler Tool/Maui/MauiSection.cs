@@ -167,7 +167,7 @@ namespace UI_Scheduler_Tool.Maui
         }
 
 
-        public static string createPrerequesties(MauiCourse course)
+        public static string createPrerequesties(Course course)
         {
             string prereq = null;
             if (course == null)
@@ -179,10 +179,10 @@ namespace UI_Scheduler_Tool.Maui
             {
                 string subject, number;
                 course.GetSubjectAndNumber(out subject, out number);
-                string result = MauiWrapper.GetSections(course.lastTaughtId, subject, number);
+                string result = MauiWrapper.GetSections(course.LastTaughtID, subject, number);
                 if (String.IsNullOrEmpty(result))
                 {
-                    Console.Error.WriteLine("Unable to get section from course (sessionId: {0} {1}:{2})", course.lastTaughtId, subject, number);
+                    Console.Error.WriteLine("Unable to get section from course (sessionId: {0} {1}:{2})", course.LastTaughtID, subject, number);
                     //return sections;// TODO: more thorough logging
                 }
                 //sections = JObject.Parse(result)["payload"].Select(token => FromToken(token)).ToList();
@@ -211,6 +211,13 @@ namespace UI_Scheduler_Tool.Maui
                         string legacy2 = prereqList[orIndex + 2];
                         //createPrereqEdge(number, course1, true);
                         //createPrereqEdge(number, course2, true);
+                        //GET the Actual Corses Objects
+                        using (var db = new DataContext())
+                        {
+                            //db.PreqEdges.Add(new PreqEdge { Parent = main, Child = reference, IsRequired = true });
+                            List<Course> courses = db.Courses.Where(c => c.CourseNumber == "055:1742").ToList();
+                            db.SaveChanges();
+                        }
                         prereqList.Remove(course1);
                         prereqList.Remove(course2);
                         prereqList.Remove(legacy1);

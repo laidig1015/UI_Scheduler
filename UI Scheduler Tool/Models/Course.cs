@@ -68,5 +68,12 @@ namespace UI_Scheduler_Tool.Models
                 return Int32.TryParse(CreditHours, out hours) ? hours : 0;
             }
         }
+
+        public void GetSubjectAndNumber(out string subject, out string number)
+        {
+            String[] parts = CourseNumber.Split(':');
+            subject = parts[0];
+            number = parts[1];
+        }
     }
 }
