@@ -30,16 +30,20 @@
         <input id="search" type="submit" value="Search">
     </div>
 
-    <div id="matrix" class="track">
+    <div id="matrix">
         <h3>Track</h3>
-        <ul id="semester-0" class="semester"></ul>
-        <ul id="semester-1" class="semester"></ul>
-        <ul id="semester-2" class="semester"></ul>
-        <ul id="semester-3" class="semester"></ul>
-        <ul id="semester-4" class="semester"></ul>
-        <ul id="semester-5" class="semester"></ul>
-        <ul id="semester-6" class="semester"></ul>
-        <ul id="semester-7" class="semester"></ul>
+        @for(int i = 0; i < 8; i++)
+        {
+            <ul id="semester-@(i)" class="semester"></ul> 
+        }
+    </div>
+    <div id="errors">
+        <h3>Errors</h3>
+        <ul id="error-list" class="error"></ul>
+    </div>
+    <div id="course-pool">
+        <h3>Courses</h3>
+        <ul id="course-pool" class="course"></ul>
     </div>
 </body>
 </html>

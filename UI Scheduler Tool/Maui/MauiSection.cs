@@ -230,6 +230,7 @@ namespace UI_Scheduler_Tool.Maui
                             Console.WriteLine("unable to find course: " + courseNumber);
                         }
                     }
+                    db.SaveChanges();
                 }
             }
             catch (System.Net.WebException we)
@@ -252,15 +253,14 @@ namespace UI_Scheduler_Tool.Maui
                 Child = child,
                 IsRequired = isRequired
             };
+            db.PreqEdges.Add(edge);
 
-            if (!db.PreqEdges.Any(c => c.Parent == edge.Parent && c.Child == edge.Child))
-            {
-                db.PreqEdges.Add(edge);
-                //MauiSection.createPrerequesties(course);
-            }
-            //db.PreqEdges.Add(new PreqEdge { Parent = main, Child = reference, IsRequired = !(optional) });
-            //List<Course> courses = db.Courses.Where(c => c.CourseNumber == "055:1742").ToList();
-            db.SaveChanges();
+            //if (!db.PreqEdges.Any(c => c.Parent == edge.Parent && c.Child == edge.Child))
+            //{
+            //    db.PreqEdges.Add(edge);
+            //    //MauiSection.createPrerequesties(course);
+            //}
+            //db.SaveChanges();
 
             return true;
         }

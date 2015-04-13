@@ -24,7 +24,7 @@ namespace UI_Scheduler_Tool.Maui
             return MauiHelper.GetJsonFromURL(url);
         }
 
-        public static JToken FastGetSingleCoures(string courseNumber)
+        public static JToken FastGetSingleCourse(string courseNumber)
         {
             string result = MauiWrapper.GetCourse(courseNumber);
             if(result[0] == '[')

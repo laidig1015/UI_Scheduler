@@ -10,3 +10,31 @@ ul.semester {
     _height: 30px;
     background-color: #bfe176
 }
+
+ul.course {
+    display: block;
+    padding: 20px;
+    vertical-align: top;
+    display: inline-block;
+    list-style-type: none;
+    zoom: 1;
+    *display: inline;
+    _height: 30px;
+    background-color: #3092cb
+}
+
+ul.error {
+    display: block;
+    padding: 20px;
+    vertical-align: top;
+    display: inline-block;
+    list-style-type: none;
+    zoom: 1;
+    *display: inline;
+    _height: 30px;
+    background-color: #b60d0d
+}
+
+li {
+    color: #ffffff;
+}

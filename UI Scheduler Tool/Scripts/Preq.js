@@ -9,6 +9,8 @@ function TrackMatrix() {
         this.matrix[i] = new Array(MAX_CLASSES);
     }
     this.nodes = {};
+    this.errors = new Array();
+    this.coursePool = new Array();
     this.totalSemsterHours = 0;
 }
 
@@ -17,7 +19,7 @@ TrackMatrix.prototype.seedCurriculum = function (track) {
     $.get("/Track/GetCurriculum", "trackName=" + track, function (curriculum, status) {
         console.log("got curriculum: %o", curriculum);
         self.matrix = curriculum;
-        self.render;
+        self.renderMatrix();
         return true;
     }, "json").fail(function (err, status) {
         console.log("error getting nodes: %s (%s)", err, status);
@@ -143,9 +145,9 @@ TrackMatrix.prototype.checkPreq = function (semester, node) {
             // if we did take it then add its parents to the stack to be checked
             // since we did find it all of the parents should start their search
             // from the index we found the class at
-            var numParents = curr.node.parents.length;
+            var numParents = currFrame.node.parents.length;
             for (var i = 0; i < numParents; i++) {
-                stack.push({ node: curr.node, index: takenAt });
+                stack.push({ node: this.nodes[currFrame.parents[i]], index: takenAt });
             }
         }
     }
@@ -176,7 +178,7 @@ TrackMatrix.prototype.removeCourse = function (semster, courseId) {
     var conflicts = new Array();
     var numChildren = node.children.length;
     for (var i = 0; i < numChildren; i++) {
-        var child = this.nodes[node.children[i].id];
+        var child = this.nodes[node.children[i]];
         // if we have one of our children taken in the future don't let us remove
         // this from the matrix
         var takenAt = this.hasTakenCourseInFuture(semster, child.id);
@@ -206,7 +208,7 @@ TrackMatrix.prototype.indexOfCourse = function (semester, courseId) {
     return -1;
 }
 
-TrackMatrix.prototype.render = function () {
+TrackMatrix.prototype.renderMatrix = function () {
     for (var i = 0; i < MAX_SEMESTERS; i++) {
         this.renderSemester(i);
     }
@@ -230,8 +232,78 @@ TrackMatrix.prototype.renderSemester = function (semester) {
             var index = self.indexOfCourse(s, courseId);
             self.matrix[s].splice(index, 1);
             self.renderSemester(s);
+            self.coursePool.push(courseId);
+            self.renderCourses();
         }
-        entry.appendChild(document.createTextNode(this.matrix[semester][i].id));
+        entry.appendChild(document.createTextNode(course.id));
+        list.appendChild(entry);
+    }
+}
+
+TrackMatrix.prototype.buildErrors = function(result) {
+    this.errors = [];
+    if (!result.wasSuccessful) {
+        switch (result.errorType) {
+            // add errors
+            case "FULL": this.errors.push("Semeseter is full"); break;
+            case "TAKEN": this.errors.push("Class already taken in semester " + result.takenIn); break;
+            case "LOAD": this.errors.push("Failed to load course data"); break;
+            case "OFFERING": this.errors.push("This course is not offered in that semester"); break;
+            case "PREQ":
+                var numDirty = result.dirty.length;
+                for (var i = 0; i < numDirty; i++) {
+                    this.errors.push("You must take " + dirty[i].node.name + " before semester " + (dirty[i].index + 1));
+                }
+                break;
+                // remove errors
+            case "NOT_FOUND_IN_SEMESTER": this.errors.push("Course not found in that semester"); break;
+            case "NOT_FOUND_IN_HASH": this.errors.push("Course not found"); break;
+            case "CONFLICTS":
+                var numConflicts = result.conflicts.length;
+                for (var i = 0; i < numConflicts; i++) {
+                    this.errors.push("Removing this course would invalidate your future course " + result.conflicts[i].node.name);
+                }
+                break;
+        }
+    }
+    this.renderErrors();
+}
+
+TrackMatrix.prototype.renderErrors = function () {
+    var list = document.getElementById("error-list");
+    while (list.firstChild) {
+        list.removeChild(list.firstChild);
+    }
+    var numErrors = this.errors.length;
+    for (var i = 0; i < numErrors; i++) {
+        var error = this.errors[i];
+        var entry = document.createElement("li");
+        entry.id = "error-" + i;
+        entry.appendChild(document.createTextNode(error));
+        list.appendChild(entry);
+    }
+}
+
+TrackMatrix.prototype.renderCourses = function () {
+    var list = document.getElementById("course-pool");
+    while (list.firstChild) {
+        list.removeChild(list.firstChild);
+    }
+    var numCourses = this.coursePool.length;
+    for (var i = 0; i < numCourses; i++) {
+        var courseId = this.coursePool[i];
+        var entry = document.createElement("li");
+        entry.id = "course-" + courseId;
+        var self = this;
+        entry.onclick = function () {
+            var parts = this.id.split('-');
+            var courseId = parts[1];
+            var index = self.coursePool.indexOf(courseId);
+            self.coursePool.splice(index, 1);
+            self.matrix[3].push(self.nodes[courseId]);
+            self.renderSemester(3);
+        }
+        entry.appendChild(document.createTextNode(courseId));
         list.appendChild(entry);
     }
 }

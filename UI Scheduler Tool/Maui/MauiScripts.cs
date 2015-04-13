@@ -64,20 +64,16 @@ namespace UI_Scheduler_Tool.Maui
             return true;
         }
 
-        public static bool addPrerequesiteInformationToAllCourses()
+        public static bool addPrerequesiteInformationToAllCourses(DataContext db)
         {
             try
             {
-                using (var db = new DataContext())
+                List<Course> courses = db.Courses.ToList();
+                foreach (Course course in courses)
                 {
-                    List<Course> courses = db.Courses.ToList();
-                    foreach (Course course in courses)
-                    {
-                        MauiSection.createPrerequesties(course, db);
-                    }
-                    db.SaveChanges();
+                    MauiSection.createPrerequesties(course, db);
                 }
-
+                db.SaveChanges();
             }
             catch (Exception e)
             {

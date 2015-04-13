@@ -39,10 +39,14 @@ namespace UI_Scheduler_Tool.Controllers
 
         public ActionResult GetCurriculum(string trackName)
         {
-            //Maui.MauiScripts.PopulateCourseFromCollege(trackName);
-            Maui.MauiScripts.addPrerequesiteInformationToAllCourses();
+            using(var db = new DataContext())
+            {
+                //UI_Scheduler_Tool.DataMigrations.Configuration.AddTracksAndCurriculum(db);
+                Maui.MauiScripts.addPrerequesiteInformationToAllCourses(db);
+            }
 
             return View();
+
             //using (var db = new DataContext())
             //{
             //    Track track = db.Tracks.Where(t => t.ShortName.Equals(trackName)).Single();
@@ -52,7 +56,7 @@ namespace UI_Scheduler_Tool.Controllers
             //        matrix[i] = new List<TrackMatrixNode>();
             //    }
             //    List<Curriculum> curriculum = track.Curricula.ToList();
-            //    foreach(Curriculum c in curriculum)
+            //    foreach (Curriculum c in curriculum)
             //    {
             //        matrix[c.SemesterIndex].Add(new TrackMatrixNode(c.Course));
             //    }
