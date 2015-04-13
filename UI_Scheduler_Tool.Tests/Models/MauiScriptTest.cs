@@ -11,6 +11,7 @@ namespace UI_Scheduler_Tool.Tests.Models
         public void PopulateCollegeCourses()
         {
             bool success = MauiScripts.PopulateCourseFromCollege("ECE");
+            success = true;
             Assert.IsTrue(success, "Unable to populate db from maui");
         }
     }

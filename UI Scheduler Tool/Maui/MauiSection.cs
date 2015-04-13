@@ -265,6 +265,54 @@ namespace UI_Scheduler_Tool.Maui
             return true;
         }
 
+        public static Boolean IsClassInFallSemester(Course course)
+        {
+            try
+            {
+                string subject, number;
+                course.GetSubjectAndNumber(out subject, out number);
+                string result = MauiWrapper.GetSections(56, subject, number);
+                if (String.IsNullOrEmpty(result))
+                {
+                    Console.Error.WriteLine("Unable to get section from course (sessionId: {0} {1}:{2})", course.LastTaughtID, subject, number);
+                    //return sections;// TODO: more thorough logging
+                }
+                //sections = JObject.Parse(result)["payload"].Select(token => FromToken(token)).ToList();
+                JToken token = JObject.Parse(result)["payload"];
+
+                JToken preToken = token[0];
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+        public static Boolean IsClassInSpringSemester(Course course)
+        {
+            try
+            {
+                string subject, number;
+                course.GetSubjectAndNumber(out subject, out number);
+                string result = MauiWrapper.GetSections(59, subject, number);
+                if (String.IsNullOrEmpty(result))
+                {
+                    Console.Error.WriteLine("Unable to get section from course (sessionId: {0} {1}:{2})", course.LastTaughtID, subject, number);
+                    //return sections;// TODO: more thorough logging
+                }
+                //sections = JObject.Parse(result)["payload"].Select(token => FromToken(token)).ToList();
+                JToken token = JObject.Parse(result)["payload"];
+
+                JToken preToken = token[0];
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
 
         private static MauiSection FromToken(JToken token)
         {
