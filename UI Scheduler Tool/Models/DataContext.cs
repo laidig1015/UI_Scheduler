@@ -17,6 +17,7 @@ namespace UI_Scheduler_Tool.Models
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<PreqEdge> PreqEdges { get; set; }
         public virtual DbSet<Track> Tracks { get; set; }
+        public virtual DbSet<Curriculum> Curricula { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

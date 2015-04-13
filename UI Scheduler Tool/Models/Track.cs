@@ -10,6 +10,12 @@ namespace UI_Scheduler_Tool.Models
     public class Track
     {
         public int ID { get; set; }
+        
+        [Index]
+        [Required]
+        [Column(TypeName = "VARCHAR")]
+        [StringLength(16)]
+        public string ShortName { get; set; }
 
         [Column(TypeName = "NVARCHAR")]
         [StringLength(64)]

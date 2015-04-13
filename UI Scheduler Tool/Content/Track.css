@@ -1,0 +1,12 @@
+﻿
+ul.semester {
+    display: block;
+    padding: 20px;
+    vertical-align: top;
+    display: inline-block;
+    list-style-type: none;
+    zoom: 1;
+    *display: inline;
+    _height: 30px;
+    background-color: #bfe176
+}

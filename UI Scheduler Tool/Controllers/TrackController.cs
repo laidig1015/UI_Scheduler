@@ -36,5 +36,29 @@ namespace UI_Scheduler_Tool.Controllers
                 return Content(result);
             }
         }
+
+        public ActionResult GetCurriculum(string trackName)
+        {
+            //Maui.MauiScripts.PopulateCourseFromCollege(trackName);
+            Maui.MauiScripts.addPrerequesiteInformationToAllCourses();
+
+            return View();
+            //using (var db = new DataContext())
+            //{
+            //    Track track = db.Tracks.Where(t => t.ShortName.Equals(trackName)).Single();
+            //    List<TrackMatrixNode>[] matrix = new List<TrackMatrixNode>[8];
+            //    for (int i = 0; i < 8; i++)
+            //    {
+            //        matrix[i] = new List<TrackMatrixNode>();
+            //    }
+            //    List<Curriculum> curriculum = track.Curricula.ToList();
+            //    foreach(Curriculum c in curriculum)
+            //    {
+            //        matrix[c.SemesterIndex].Add(new TrackMatrixNode(c.Course));
+            //    }
+            //    string result = JsonConvert.SerializeObject(matrix);
+            //    return Content(result);
+            //}
+        }
     }
 }

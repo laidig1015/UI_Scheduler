@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Newtonsoft.Json.Linq;
+using UI_Scheduler_Tool.Models;
 
 namespace UI_Scheduler_Tool.Maui
 {
@@ -166,7 +167,7 @@ namespace UI_Scheduler_Tool.Maui
         }
 
 
-        public static string createPrerequesties(MauiCourse course)
+        public static string createPrerequesties(Course course, DataContext db = null)
         {
             string prereq = null;
             if (course == null)
@@ -178,82 +179,89 @@ namespace UI_Scheduler_Tool.Maui
             {
                 string subject, number;
                 course.GetSubjectAndNumber(out subject, out number);
-                string result = MauiWrapper.GetSections(course.lastTaughtId, subject, number);
+                string result = MauiWrapper.GetSections(course.LastTaughtID, subject, number);
                 if (String.IsNullOrEmpty(result))
                 {
-                    Console.Error.WriteLine("Unable to get section from course (sessionId: {0} {1}:{2})", course.lastTaughtId, subject, number);
-                    //return sections;// TODO: more thorough logging
+                    Console.WriteLine("Unable to get section from course (sessionId: {0} {1}:{2})", course.LastTaughtID, subject, number);
                 }
-                //sections = JObject.Parse(result)["payload"].Select(token => FromToken(token)).ToList();
-                JToken token = JObject.Parse(result)["payload"];
-
-                JToken preToken = token[0];
-               // JToken preToken = token["timeAndLocations"][0];
-                string preString = (string)preToken["prerequisite"];
-                char[] delimiters = { ' ' };
-                string[] splitString = preString.Split(delimiters);
-
-                List<string> prereqList = splitString.ToList<string>();
-                int orIndex;
-                int andIndex;
-
-                while (prereqList.Count != 0)
+                JToken token = JObject.Parse(result)["payload"].FirstOrDefault();
+                if (token == null || token["prerequisite"] == null)
                 {
-                    //Check for an "Or" Relationship
-                    orIndex = prereqList.IndexOf("or");
-                    if (orIndex >= 2)
+                    return null;// root class with no preqs
+                }
+                string preqStr = (string)token["prerequisite"];
+                List<string> nodes = preqStr.Split(' ').Where(s => s[0] != '(').ToList();// ignore legacy numbers
+
+                List<Tuple<string, bool>> requirments = new List<Tuple<string, bool>>();
+                
+                // go through all odd nodes (only courses on odd nodes)
+                for(int i = 0; i < nodes.Count; i+=2)
+                {
+                    if(i + 1 >= nodes.Count && i - 1 < 0)
                     {
-                        //Grab Optional 1
-                        string course1 = prereqList[orIndex - 2];
-                        string legacy1 = prereqList[orIndex - 1];
-                        string course2 = prereqList[orIndex + 1];
-                        string legacy2 = prereqList[orIndex + 2];
-                        createPrereqEdge(number, course1, true);
-                        createPrereqEdge(number, course2, true);
-                        prereqList.Remove(course1);
-                        prereqList.Remove(course2);
-                        prereqList.Remove(legacy1);
-                        prereqList.Remove(legacy2);
-                        prereqList.Remove("or");
-                    }
-                    andIndex = prereqList.IndexOf("and");
-                    if (andIndex >= 2)
-                    {
-                        string course1 = prereqList[andIndex - 2];
-                        string legacy1 = prereqList[andIndex - 1];
-                        createPrereqEdge(number, course1, true);
-                        prereqList.Remove(course1);
-                        prereqList.Remove(legacy1);
-                        prereqList.Remove("and");
+                        requirments.Add(new Tuple<string, bool>(nodes[i], true));
+                        continue;
                     }
 
-                    if (prereqList.Count >= 2)
+                    int toCheck = (i + 1 < nodes.Count) ? i + 1 : i - 1;
+                    if(nodes[toCheck].StartsWith("and"))// if we have an and its requried
                     {
-                        string course1 = prereqList[andIndex - 2];
-                        string legacy1 = prereqList[andIndex - 1];
-                        createPrereqEdge(number, course1, true);
-                        prereqList.Remove(course1);
-                        prereqList.Remove(legacy1);
+                        requirments.Add(new Tuple<string, bool>(nodes[i], true));
                     }
-
-                    if (prereqList.Count < 2 && prereqList.Count > 0)
+                    else// otherwise optional
                     {
-                        prereqList.Clear();
+                        requirments.Add(new Tuple<string, bool>(nodes[i], false));
                     }
                 }
-                //https://api.maui.uiowa.edu/maui/pub/webservices/documentation.page
-                prereq = preString;
+
+                if(db != null)
+                {
+                    for (int i = 0; i < requirments.Count; i++)
+                    {
+                        string courseNumber = requirments[i].Item1;
+                        bool isRequired = requirments[i].Item2;
+                        try
+                        {
+                            Course parent = db.Courses.Where(c => c.CourseNumber.Equals(courseNumber)).First();
+                            createPrereqEdge(parent, course, isRequired, db);
+                        }
+                        catch(Exception)
+                        {
+                            Console.WriteLine("unable to find course: " + courseNumber);
+                        }
+                    }
+                }
+            }
+            catch (System.Net.WebException we)
+            {
+                Console.WriteLine("Error getting sections from maui: " + we.Message);
             }
             catch (Exception e)// TODO: BAD!
             {
-                Console.Error.WriteLine("Error getting sections from maui: " + e.Message);
+                Console.WriteLine("Error getting sections from maui: " + e.Message);
             }
 
             return prereq;
         }
 
-        private static bool createPrereqEdge(string main, string reference, bool optional)
+        private static bool createPrereqEdge(Course parent, Course child, bool isRequired, DataContext db)
         {
+            PreqEdge edge = new PreqEdge()
+            {
+                Parent = parent,
+                Child = child,
+                IsRequired = isRequired
+            };
+
+            if (!db.PreqEdges.Any(c => c.Parent == edge.Parent && c.Child == edge.Child))
+            {
+                db.PreqEdges.Add(edge);
+                //MauiSection.createPrerequesties(course);
+            }
+            //db.PreqEdges.Add(new PreqEdge { Parent = main, Child = reference, IsRequired = !(optional) });
+            //List<Course> courses = db.Courses.Where(c => c.CourseNumber == "055:1742").ToList();
+            db.SaveChanges();
+
             return true;
         }
 
