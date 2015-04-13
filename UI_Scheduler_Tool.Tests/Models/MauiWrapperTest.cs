@@ -222,5 +222,215 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
             Assert.IsTrue(firstTest);
             Assert.IsTrue(thirdTest);
         }
+
+        [TestMethod]
+        public void GetUpdatedSection()
+        {
+            string result = MauiWrapper.GetSections(59, "CS", "3330");
+            Assert.IsTrue(result.Contains("Algorithms"),
+                          "Unable to locate 'Algorithms' in resulting GetSection JSON");
+            MauiCourse dummy = new MauiCourse()
+            {
+                title = "Algorithms",
+                catalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                lastTaught = "Spring 2015",
+                lastTaughtId = 59,
+                lastTaughtCode = "20148",
+                courseNumber = "CS:3330",
+                legacyCourseNumber = "22C:031",
+                creditHours = "3"
+            };
+            var sections = MauiSection.Get(dummy);
+        }
+    
+        [TestMethod]
+        public void CheckEFAType()
+        {
+            Course dummy = new Course()
+            {
+                CourseName = "Algorithms",
+                CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "CS:3330",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void CheckTotalHoursType()
+        {
+            Course dummy = new Course()
+            {
+                CourseName = "Algorithms",
+                CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "CS:3330",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+            bool result;
+            if (dummy.CreditHours.Equals("3"))
+            {
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void CheckCourseName()
+        {
+            Course dummy = new Course()
+            {
+                CourseName = "Algorithms",
+                CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "CS:3330",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+            bool result;
+            if (dummy.CourseName.Equals("Algorithms"))
+            {
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void CheckCourseNumber()
+        {
+            Course dummy = new Course()
+            {
+                CourseName = "Algorithms",
+                CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "CS:3330",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+            bool result;
+            if (dummy.CourseNumber.Equals("CS:3330"))
+            {
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void CheckBackwardsPrerequesites()
+        {
+
+             Course dummy = new Course()
+            {
+                CourseName = "Algorithms",
+                CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "CS:3330",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+
+            Course dummy2 = new Course()
+            {
+                CourseName = "Introduction to Digital Design",
+                CatalogDescription = "Modern design and analysis of digital switching circuits; combinational logic; sequential circuits and system controllers; interfacing and busing techniques; design methodologies using medium- and large-scale integrated circuits; lab arranged. ",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "ECE:3320",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+
+
+            PreqEdge dummyEdge = new PreqEdge()
+            {
+               Parent = dummy,
+               Child = dummy2,
+               IsRequired = true
+            };
+            bool result;
+            if (dummyEdge.Child == dummy2)
+            {
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void CheckForwardsPrerequesites()
+        {
+
+            Course dummy = new Course()
+            {
+                CourseName = "Algorithms",
+                CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "CS:3330",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+
+            Course dummy2 = new Course()
+            {
+                CourseName = "Introduction to Digital Design",
+                CatalogDescription = "Modern design and analysis of digital switching circuits; combinational logic; sequential circuits and system controllers; interfacing and busing techniques; design methodologies using medium- and large-scale integrated circuits; lab arranged. ",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "ECE:3320",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+
+
+            PreqEdge dummyEdge = new PreqEdge()
+            {
+                Parent = dummy,
+                Child = dummy2,
+                IsRequired = true
+            };
+            bool result;
+            if (dummyEdge.Parent == dummy)
+            {
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+            Assert.IsTrue(result);
+        }
     }
 }
