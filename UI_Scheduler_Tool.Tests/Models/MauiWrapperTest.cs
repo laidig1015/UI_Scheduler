@@ -432,5 +432,99 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
             }
             Assert.IsTrue(result);
         }
+
+        [TestMethod]
+        public void CheckOptionalPrerequesites()
+        {
+
+            Course dummy = new Course()
+            {
+                CourseName = "Algorithms",
+                CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "CS:3330",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+
+            Course dummy2 = new Course()
+            {
+                CourseName = "Introduction to Digital Design",
+                CatalogDescription = "Modern design and analysis of digital switching circuits; combinational logic; sequential circuits and system controllers; interfacing and busing techniques; design methodologies using medium- and large-scale integrated circuits; lab arranged. ",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "ECE:3320",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+
+
+            PreqEdge dummyEdge = new PreqEdge()
+            {
+                Parent = dummy,
+                Child = dummy2,
+                IsRequired = false
+            };
+            bool result;
+            if (dummyEdge.IsRequired)
+            {
+                result = false;
+            }
+            else
+            {
+                result = true;
+            }
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void CheckRequiredPrerequesites()
+        {
+
+            Course dummy = new Course()
+            {
+                CourseName = "Algorithms",
+                CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "CS:3330",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+
+            Course dummy2 = new Course()
+            {
+                CourseName = "Introduction to Digital Design",
+                CatalogDescription = "Modern design and analysis of digital switching circuits; combinational logic; sequential circuits and system controllers; interfacing and busing techniques; design methodologies using medium- and large-scale integrated circuits; lab arranged. ",
+                Occurence = 2,
+                LastTaughtID = 59,
+                //lastTaughtCode = "20148",
+                CourseNumber = "ECE:3320",
+                //legacyCourseNumber = "22C:031",
+                CreditHours = "3"
+            };
+
+
+            PreqEdge dummyEdge = new PreqEdge()
+            {
+                Parent = dummy,
+                Child = dummy2,
+                IsRequired = true
+            };
+            bool result;
+            if (dummyEdge.IsRequired)
+            {
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+            Assert.IsTrue(result);
+        }
     }
 }
