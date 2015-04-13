@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Script.Serialization;
 using UI_Scheduler_Tool.Models;
+using Newtonsoft.Json.Linq;
 
 namespace UI_Scheduler_Tool.Maui
 {
@@ -20,8 +21,27 @@ namespace UI_Scheduler_Tool.Maui
                     Console.Error.WriteLine("Unable to get course from college: " + college);
                     return false;// TODO: more thorough logging
                 }
-
-                courses = new JavaScriptSerializer().Deserialize<List<Course>>(result);
+                JArray mauiCourses = null;
+                if (result[0] == '[')
+                {
+                    mauiCourses = JArray.Parse(result);
+                }
+                else
+                {
+                    mauiCourses = new JArray();
+                    mauiCourses.Add(JToken.Parse(result));
+                }
+                courses = mauiCourses.Select(t =>
+                    new Course
+                    {
+                        CourseName = (string)t["title"],
+                        CourseNumber = (string)t["courseNumber"],
+                        CreditHours = (string)t["creditHours"],
+                        LastTaughtID = t["lastTaughtId"] == null ? 0 : (int)t["lastTaughtId"],
+                        CatalogDescription = (string)t["catalogDescription"],
+                        IsOfferedInFall = true,
+                        IsOfferedInSpring = true
+                    }).ToList();
             }
             catch (Exception e)// TODO: BAD!
             {
@@ -33,22 +53,7 @@ namespace UI_Scheduler_Tool.Maui
             {
                 using (var db = new DataContext())
                 {
-                    foreach (var mauiCourse in courses)
-                    {
-                        Course course = new Course()
-                        {
-                            CourseName = mauiCourse.CourseName,
-                            CatalogDescription = mauiCourse.CatalogDescription,
-                            CourseNumber = mauiCourse.CourseNumber,
-                            CreditHours = mauiCourse.CreditHours
-                        };
-                        if(!db.Courses.Any(c => c.CourseName == course.CourseName))
-                        {
-                            db.Courses.Add(course);
-                            //MauiSection.createPrerequesties(course);
-                        }
-                    }
-                    db.SaveChanges();
+                    Course.AddIgnoreRepeats(courses, db);
                 }
             }
             catch (Exception e)// TODO: BAD!!!
@@ -59,23 +64,20 @@ namespace UI_Scheduler_Tool.Maui
             return true;
         }
 
-        public static bool addPrerequesiteInformationToAllCourses()
+        public static bool addPrerequesiteInformationToAllCourses(DataContext db)
         {
             try
             {
-                using (var db = new DataContext())
+                List<Course> courses = db.Courses.ToList();
+                foreach (Course course in courses)
                 {
-                    List<Course> courses1 = db.Courses.Where(c => c.CourseNumber != null).ToList();
-                    foreach (Course course in courses1)
-                    {
-                        MauiSection.createPrerequesties(course);
-                    }
-                    db.SaveChanges();
+                    MauiSection.createPrerequesties(course, db);
                 }
-
+                db.SaveChanges();
             }
-            catch
+            catch (Exception e)
             {
+                Console.Error.WriteLine(e.Message);
                 return false;
             }
             return true;

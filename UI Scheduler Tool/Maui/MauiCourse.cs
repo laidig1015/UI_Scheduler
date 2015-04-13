@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Script.Serialization;
+using Newtonsoft.Json.Linq;
 
 namespace UI_Scheduler_Tool.Maui
 {
@@ -21,6 +22,19 @@ namespace UI_Scheduler_Tool.Maui
         {
             string url = "https://api.maui.uiowa.edu/maui/api/pub/registrar/course/" + course;
             return MauiHelper.GetJsonFromURL(url);
+        }
+
+        public static JToken FastGetSingleCourse(string courseNumber)
+        {
+            string result = MauiWrapper.GetCourse(courseNumber);
+            if(result[0] == '[')
+            {
+                return JArray.Parse(result)[0];
+            }
+            else
+            {
+                return JToken.Parse(result);
+            }
         }
 
         public static List<MauiCourse> Get(string course)

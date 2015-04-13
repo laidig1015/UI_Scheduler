@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 
 namespace UI_Scheduler_Tool.Models
 {
@@ -17,7 +19,6 @@ namespace UI_Scheduler_Tool.Models
         public string CourseName { get; set; }
 
         [Column(TypeName = "NVARCHAR")]
-        [StringLength(256)]
         public string CatalogDescription { get; set; }
 
         [Required]
@@ -31,7 +32,9 @@ namespace UI_Scheduler_Tool.Models
         [StringLength(16)]
         public string CreditHours { get; set; }
 
-        public int Occurence { get; set; }
+        public bool IsOfferedInFall { get; set; }
+        public bool IsOfferedInSpring { get; set; }
+
         public int LastTaughtID { get; set; }
 
         public virtual ICollection<PreqEdge> Parents { get; set; }
@@ -41,6 +44,8 @@ namespace UI_Scheduler_Tool.Models
         {
             Parents = new HashSet<PreqEdge>();
             Children = new HashSet<PreqEdge>();
+            IsOfferedInFall = true;
+            IsOfferedInSpring = true;
         }
 
         public string CourseSubject
@@ -74,6 +79,37 @@ namespace UI_Scheduler_Tool.Models
             String[] parts = CourseNumber.Split(':');
             subject = parts[0];
             number = parts[1];
+        }
+
+        public static void AddIgnoreRepeats(IEnumerable<Course> courses, DataContext db)
+        {
+            // from: http://stackoverflow.com/questions/18113418/ignore-duplicate-key-insert-with-entity-framework
+            var newCourses = courses.Select(c => c.CourseNumber).Distinct().ToArray();
+            var coursesInDb = db.Courses.Where(c => newCourses.Contains(c.CourseNumber))
+                                        .Select(c => c.CourseNumber).ToArray();
+            var coursesNotInDb = courses.Where(c => !coursesInDb.Contains(c.CourseNumber));
+            var list = coursesNotInDb.ToList();
+            foreach (Course c in coursesNotInDb)
+            {
+                db.Courses.Add(c);
+            }
+            db.SaveChanges();
+        }
+
+        public static Course GetCourse(DataContext db, Course course)
+        {
+            // from: http://stackoverflow.com/questions/5377049/entity-framework-avoiding-inserting-duplicates
+            var courses = from c in db.Courses where c.CourseName.Equals(course.CourseNumber) select c;
+
+            if (courses.Count() > 0)
+            {
+                return courses.First();
+            }
+
+            // TODO: pull from cache
+
+            db.Courses.Add(course);
+            return course;
         }
     }
 }

@@ -8,7 +8,7 @@
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{79B5741A-3F79-45F7-A591-CDC605B1525D}</ProjectGuid>
-    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UI_Scheduler_Tool</RootNamespace>
@@ -217,6 +217,22 @@
     <Compile Include="DataMigrations\201504100406596_AddIndex.Designer.cs">
       <DependentUpon>201504100406596_AddIndex.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataMigrations\201504122229437_AddCurriculum.cs" />
+    <Compile Include="DataMigrations\201504122229437_AddCurriculum.Designer.cs">
+      <DependentUpon>201504122229437_AddCurriculum.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\201504130408074_AddedTrackShortName.cs" />
+    <Compile Include="DataMigrations\201504130408074_AddedTrackShortName.Designer.cs">
+      <DependentUpon>201504130408074_AddedTrackShortName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\201504130517347_AddingCurriculum.cs" />
+    <Compile Include="DataMigrations\201504130517347_AddingCurriculum.Designer.cs">
+      <DependentUpon>201504130517347_AddingCurriculum.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\201504130557471_UpdatedCatalogLength.cs" />
+    <Compile Include="DataMigrations\201504130557471_UpdatedCatalogLength.Designer.cs">
+      <DependentUpon>201504130557471_UpdatedCatalogLength.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataMigrations\Configuration.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -232,9 +248,12 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Maui\MauiWrapper.cs" />
     <Compile Include="Models\Course.cs" />
+    <Compile Include="Models\Curriculum.cs" />
+    <Compile Include="Models\JCourse.cs" />
     <Compile Include="Models\PreqEdge.cs" />
-    <Compile Include="Models\PreqNode.cs" />
+    <Compile Include="Models\JPreqNode.cs" />
     <Compile Include="Models\DataContext.cs" />
+    <Compile Include="Models\Track.cs" />
     <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Models\webpages_Membership.cs" />
     <Compile Include="Models\webpages_OAuthMembership.cs" />
@@ -301,12 +320,14 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="Content\Track.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\uiowascheduler.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Images\ajax-loading.gif" />
     <Content Include="Images\logo.png" />
+    <Content Include="Scripts\EFA.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -395,6 +416,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataMigrations\201504100406596_AddIndex.resx">
       <DependentUpon>201504100406596_AddIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504122229437_AddCurriculum.resx">
+      <DependentUpon>201504122229437_AddCurriculum.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504130408074_AddedTrackShortName.resx">
+      <DependentUpon>201504130408074_AddedTrackShortName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504130517347_AddingCurriculum.resx">
+      <DependentUpon>201504130517347_AddingCurriculum.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504130557471_UpdatedCatalogLength.resx">
+      <DependentUpon>201504130557471_UpdatedCatalogLength.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserMigrations\201504100211168_Initial.resx">
       <DependentUpon>201504100211168_Initial.cs</DependentUpon>

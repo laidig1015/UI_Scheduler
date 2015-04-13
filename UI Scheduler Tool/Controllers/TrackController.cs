@@ -26,12 +26,12 @@ namespace UI_Scheduler_Tool.Controllers
             return View();
         }
 
-        public ActionResult GetNodes(string query)
+        public ActionResult GetCurriculumNodes(string trackName)
         {
             using (var db = new DataContext())
             {
-                List<Course> courses = db.Courses.ToList();
-                PreqNode[] nodes = courses.Select(c => new PreqNode(c)).ToArray();
+                JPreqNode[] nodes = db.Tracks.Where(t => t.ShortName.Equals(trackName)).Single()
+                                     .Curricula.Select(c => new JPreqNode(c.Course) { index = c.SemesterIndex }).ToArray();
                 string result = JsonConvert.SerializeObject(nodes);
                 return Content(result);
             }
