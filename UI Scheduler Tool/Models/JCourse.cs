@@ -7,7 +7,7 @@ namespace UI_Scheduler_Tool.Models.Json
 {
     // NOTE: this is supposed to be serialied to json so we us the pascalCase convension
     // that is more common in js 
-    public class PreqNode
+    public class JCourse
     {
         public string name { get; set; }
         public string id { get; set; }
@@ -15,10 +15,8 @@ namespace UI_Scheduler_Tool.Models.Json
         public bool isOfferedInFall { get; set; }
         public bool isOfferedInSpring { get; set; }
         public string description { get; set; }
-        public string[] parents { get; set; }
-        public string[] children { get; set; }
 
-        public PreqNode(Course c)
+        public JCourse(Course c)
         {
             name = c.CourseName;
             id = c.CourseNumber;
@@ -26,8 +24,6 @@ namespace UI_Scheduler_Tool.Models.Json
             isOfferedInFall = c.IsOfferedInFall;
             isOfferedInSpring = c.IsOfferedInSpring;
             description = c.CatalogDescription;
-            parents = c.Parents.Select(p => p.Parent.CourseNumber).ToArray();
-            children = c.Children.Select(p => p.Child.CourseNumber).ToArray();
         }
     }
 }

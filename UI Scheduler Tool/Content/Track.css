@@ -11,6 +11,18 @@ ul.semester {
     background-color: #bfe176
 }
 
+ul.semester-selected {
+    display: block;
+    padding: 20px;
+    vertical-align: top;
+    display: inline-block;
+    list-style-type: none;
+    zoom: 1;
+    *display: inline;
+    _height: 30px;
+    background-color: #ffd800
+}
+
 ul.course {
     display: block;
     padding: 20px;

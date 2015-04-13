@@ -6,19 +6,43 @@ var MAX_CLASSES = 20;
 function TrackMatrix() {
     this.matrix = new Array(MAX_SEMESTERS);
     for (var i = 0; i < MAX_SEMESTERS; i++) {
-        this.matrix[i] = new Array(MAX_CLASSES);
+        this.matrix[i] = [];
     }
     this.nodes = {};
     this.errors = new Array();
     this.coursePool = new Array();
     this.totalSemsterHours = 0;
+    this.selectedSemester = 0;
+    for (var i = 0; i < MAX_SEMESTERS; i++) {
+        document.getElementById("semester-" + i).className = "semester";
+    }
+    document.getElementById("semester-" + this.selectedSemester).className = "semester-selected";
 }
 
-TrackMatrix.prototype.seedCurriculum = function (track) {
+TrackMatrix.prototype.shiftSelectedSemester = function (amount) {
+    var old = this.selectedSemester;
+    document.getElementById("semester-" + old).className = "semester";
+    this.selectedSemester = this.selectedSemester + amount;
+    if (this.selectedSemester < 0) {
+        this.selectedSemester = MAX_SEMESTERS + this.selectedSemester;
+    } else if (this.selectedSemester >= MAX_SEMESTERS) {
+        this.selectedSemester = MAX_SEMESTERS - this.selectedSemester;
+    }
+    document.getElementById("semester-" + this.selectedSemester).className = "semester-selected";
+}
+
+TrackMatrix.prototype.loadSeed = function (track) {
     var self = this;
-    $.get("/Track/GetCurriculum", "trackName=" + track, function (curriculum, status) {
-        console.log("got curriculum: %o", curriculum);
-        self.matrix = curriculum;
+    $.get("/Track/GetCurriculumNodes", "trackName=" + track, function (nodes, status) {
+        console.log("got nodes: %o", nodes);
+        var numNodes = nodes.length;
+        for (var i = 0; i < numNodes; i++) {
+            var node = nodes[i];
+            self.matrix[node.index].push(node.course);
+            if (!(node.id in self.nodes)) {
+                self.nodes[node.course.id] = node;
+            }
+        }
         self.renderMatrix();
         return true;
     }, "json").fail(function (err, status) {
@@ -27,32 +51,7 @@ TrackMatrix.prototype.seedCurriculum = function (track) {
     return false;
 }
 
-TrackMatrix.prototype.loadCourses = function (query) {
-    // load our edges from our controller and call our build
-    // function to add it to our table
-    var self = this;
-    $.get("/Track/GetNodes", "query=" + query, function (nodes, status) {
-        console.log("got nodes: %o", nodes);
-        self.addNodes(nodes);
-        return true;
-    }, "json").fail(function (err, status) {
-        console.log("error getting nodes: %s (%s)", err, status);
-    });
-    return false;
-}
-
-TrackMatrix.prototype.addNodes = function (nodes) {
-    var nodesLen = nodes.length;
-    for (var i = 0; i < nodesLen; i++) {
-        var node = nodes[i];
-        if (!(node.id in this.nodes)) {
-            this.nodes[node.id] = node;
-        }
-    }
-    console.log("updated preq: %o", this.nodes);
-}
-
-TrackMatrix.prototype.addCourse = function (semester, nodeId) {
+TrackMatrix.prototype.addCourse = function (semester, courseId) {
     // make sure we have more room in our semester
     if (this.matrix[semester].length >= MAX_CLASSES) {
         console.log("max classes reached");
@@ -60,25 +59,18 @@ TrackMatrix.prototype.addCourse = function (semester, nodeId) {
     }
 
     // first make sure we haven't taken this class already
-    var takenIn = this.hasTakenCourse(nodeId);
+    var takenIn = this.hasTakenCourse(courseId);
     if (takenIn != -1) {
         console.log("class already taken in semster %d", takenIn + 1);// offset from 0 index
         return { wasSuccessful: false, errorType: "TAKEN", takenIn: takenIn };
     }
 
-    // first find our course node in our hash
-    // if we don't have it try to update from our database
-    if (!this.resolveNode(nodeId)) {
-        console.log("failed to load %s from db", nodeId);
-        return { wasSuccessful: false, errorType: "LOAD" };
-    }
-
     // find the current node
-    var node = this.nodes[nodeId];
+    var node = this.nodes[courseId];
 
     // first check if the course is offered in this semester
-    if (TrackMatrix.courseIsOfferedIn(semester, node)) {
-        console.log("%s is not available in %s", nodeId, (semester & 1 ? "spring" : "fall"));
+    if (!TrackMatrix.courseIsOfferedIn(semester, node.course)) {
+        console.log("%s is not available in %s", courseId, (semester & 1 ? "spring" : "fall"));
         return { wasSuccessful: false, errorType: "OFFERING" };
     }
 
@@ -90,19 +82,15 @@ TrackMatrix.prototype.addCourse = function (semester, nodeId) {
     }
 
     // finally add it to our matrix
-    this.matrix[semester].push(node.id);
-    this.renderSemester(semester);
+    var index = this.indexOfCourseInPool(courseId);
+    var old = this.coursePool[index];
+    this.coursePool.splice(index, 1);
+    this.matrix[semester].push(old);
     return { wasSuccessful: true };
 }
 
-TrackMatrix.prototype.resolveNode = function (nodeId) {
-    // check if we don't have it in our hash table
-    // if we don't then try to load it from our db
-    return (!(nodeId in this.nodes) && !this.loadNodes(nodeId));
-}
-
 TrackMatrix.prototype.hasTakenCourse = function (courseId) {
-    return hasTakenCourseInPast(MAX_SEMESTERS - 1, courseId);
+    return this.hasTakenCourseInPast(MAX_SEMESTERS - 1, courseId);
 }
 
 TrackMatrix.prototype.hasTakenCourseInPast = function(semester, courseId) {
@@ -137,7 +125,7 @@ TrackMatrix.prototype.checkPreq = function (semester, node) {
 
         // first check if we have taken this class from the semester we are stupposed to
         // start checking it from
-        var takenAt = this.hasTakenCourseInPast(currFrame.index, currFrame.node.id);
+        var takenAt = this.hasTakenCourseInPast(currFrame.index, currFrame.node.course.id);
         if (takenAt == -1) {
             // if we didnt' take it then mark it as dirty
             dirty.push(currFrame);
@@ -147,30 +135,24 @@ TrackMatrix.prototype.checkPreq = function (semester, node) {
             // from the index we found the class at
             var numParents = currFrame.node.parents.length;
             for (var i = 0; i < numParents; i++) {
-                stack.push({ node: this.nodes[currFrame.parents[i]], index: takenAt });
+                stack.push({ node: this.nodes[currFrame.node.parents[i]], index: takenAt });
             }
         }
     }
     return dirty;// return an array of our dirty nodes
 }
 
-TrackMatrix.courseIsOfferedIn = function (semsterId, course) {
-    var isSpring = semsterId & 1;// is odd and we assume we start in fall
-    return ((isSpring && course.isOfferedInSpring) || (!isSpring && course.isOfferedInFall));
+TrackMatrix.courseIsOfferedIn = function (semester, course) {
+    var isSpring = semester & 1;// is odd and we assume we start in fall
+    return (isSpring && course.isOfferedInSpring) || (!isSpring && course.isOfferedInFall);
 }
 
-TrackMatrix.prototype.removeCourse = function (semster, courseId) {
+TrackMatrix.prototype.removeCourse = function (semester, courseId) {
     // find out where it is in our current semester
     var index = this.indexOfCourse(semester, courseId);
     if (index == -1) {
         console.log("course not in matrix");
         return { wasSuccessful: false, errorType: "NOT_FOUND_IN_SEMESTER" };
-    }
-
-    // make sure we have the node information
-    if (!(courseId in this.nodes)) {
-        console.log("coures not found in hash! %s", courseId);
-        return { wasSuccessful: false, errorType: "NOT_FOUND_IN_HASH" }; 
     }
 
     // check its immediate children for conflicts
@@ -181,7 +163,7 @@ TrackMatrix.prototype.removeCourse = function (semster, courseId) {
         var child = this.nodes[node.children[i]];
         // if we have one of our children taken in the future don't let us remove
         // this from the matrix
-        var takenAt = this.hasTakenCourseInFuture(semster, child.id);
+        var takenAt = this.hasTakenCourseInFuture(semester, child.course.id);
         if (takenAt != -1) {
             conflicts.push({ node: child, index: takenAt });
         }
@@ -193,8 +175,9 @@ TrackMatrix.prototype.removeCourse = function (semster, courseId) {
         return { wasSuccessful: false, errorType: "CONFLICTS", conflicts: conflicts };
     }
 
-    this.matrix[semster].splice(index, 1);
-    this.renderSemester(semester);
+    var old = this.matrix[semester][index];
+    this.coursePool.push(old);
+    this.matrix[semester].splice(index, 1);
     return { wasSuccessful: true };
 }
 
@@ -202,6 +185,16 @@ TrackMatrix.prototype.indexOfCourse = function (semester, courseId) {
     var numCourses = this.matrix[semester].length;
     for (var i = 0; i < numCourses; i++) {
         if (this.matrix[semester][i].id == courseId) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+TrackMatrix.prototype.indexOfCourseInPool = function (courseId) {
+    var numCourses = this.coursePool.length;
+    for (var i = 0; i < numCourses; i++) {
+        if (this.coursePool[i].id == courseId) {
             return i;
         }
     }
@@ -228,14 +221,15 @@ TrackMatrix.prototype.renderSemester = function (semester) {
         entry.onclick = function () {
             var parts = this.id.split('-');
             var s = parseInt(parts[2]);
-            var courseId = parts[1];
-            var index = self.indexOfCourse(s, courseId);
-            self.matrix[s].splice(index, 1);
-            self.renderSemester(s);
-            self.coursePool.push(courseId);
-            self.renderCourses();
+            var cid = parts[1];
+            var result = self.removeCourse(s, cid);
+            self.buildErrors(result);
+            if (result.wasSuccessful) {
+                self.renderSemester(s);
+                self.renderCourses();
+            }
         }
-        entry.appendChild(document.createTextNode(course.id));
+        entry.appendChild(document.createTextNode(course.id));//course.name + "(" + course.id + ")"));
         list.appendChild(entry);
     }
 }
@@ -252,7 +246,7 @@ TrackMatrix.prototype.buildErrors = function(result) {
             case "PREQ":
                 var numDirty = result.dirty.length;
                 for (var i = 0; i < numDirty; i++) {
-                    this.errors.push("You must take " + dirty[i].node.name + " before semester " + (dirty[i].index + 1));
+                    this.errors.push("You must take " + result.dirty[i].node.course.name + " before semester " + (result.dirty[i].index + 1));
                 }
                 break;
                 // remove errors
@@ -261,7 +255,7 @@ TrackMatrix.prototype.buildErrors = function(result) {
             case "CONFLICTS":
                 var numConflicts = result.conflicts.length;
                 for (var i = 0; i < numConflicts; i++) {
-                    this.errors.push("Removing this course would invalidate your future course " + result.conflicts[i].node.name);
+                    this.errors.push("Removing this course would invalidate your future course " + result.conflicts[i].node.course.name);
                 }
                 break;
         }
@@ -291,17 +285,19 @@ TrackMatrix.prototype.renderCourses = function () {
     }
     var numCourses = this.coursePool.length;
     for (var i = 0; i < numCourses; i++) {
-        var courseId = this.coursePool[i];
+        var courseId = this.coursePool[i].id;
         var entry = document.createElement("li");
         entry.id = "course-" + courseId;
         var self = this;
         entry.onclick = function () {
             var parts = this.id.split('-');
-            var courseId = parts[1];
-            var index = self.coursePool.indexOf(courseId);
-            self.coursePool.splice(index, 1);
-            self.matrix[3].push(self.nodes[courseId]);
-            self.renderSemester(3);
+            var cid = parts[1];
+            var result = self.addCourse(self.selectedSemester, cid);
+            self.buildErrors(result);
+            if (result.wasSuccessful) {
+                self.renderSemester(self.selectedSemester);
+                self.renderCourses();
+            }
         }
         entry.appendChild(document.createTextNode(courseId));
         list.appendChild(entry);
