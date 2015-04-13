@@ -16,9 +16,13 @@ namespace UI_Scheduler_Tool.DataMigrations
 
         protected override void Seed(UI_Scheduler_Tool.Models.DataContext context)
         {
-            //  This method will be called after migrating to the latest version.
+            AddTreeBuildTest(context);
+            AddPreqChecktest(context);
+            //AddTracksAndCurriculum(context);// TODO!!!
+        }
 
-            // basic tree test nodes
+        private void AddTreeBuildTest(UI_Scheduler_Tool.Models.DataContext context)
+        {
             // root courses
             Course rootReq = new Course { CourseName = "RootRequired", CourseNumber = "ROOT:0000", CatalogDescription = "TREE_TEST", CreditHours = "0", Occurence = 0, LastTaughtID = 0 };
             Course rootOptA = new Course { CourseName = "RootOptionalA", CourseNumber = "ROOT:1000", CatalogDescription = "TREE_TEST", CreditHours = "0", Occurence = 0, LastTaughtID = 0 };
@@ -31,6 +35,22 @@ namespace UI_Scheduler_Tool.DataMigrations
             Course advancedA = new Course { CourseName = "AdvancedA", CourseNumber = "ADV:0000", CatalogDescription = "TREE_TEST", CreditHours = "0", Occurence = 0, LastTaughtID = 0 };
             Course advancedB = new Course { CourseName = "AdvancedB", CourseNumber = "ADV:0001", CatalogDescription = "TREE_TEST", CreditHours = "0", Occurence = 0, LastTaughtID = 0 };
 
+            context.SaveChanges();
+
+            context.PreqEdges.AddOrUpdate(
+                // add level 0 edges
+                new PreqEdge { Parent = rootReq, Child = easy, IsRequired = true },
+                new PreqEdge { Parent = rootOptA, Child = easy, IsRequired = false },
+                new PreqEdge { Parent = rootOptB, Child = easy, IsRequired = false },
+
+                // add level 1 edges
+                new PreqEdge { Parent = easy, Child = advancedA, IsRequired = true },
+                new PreqEdge { Parent = easy, Child = advancedB, IsRequired = true }
+                );
+        }
+
+        private void AddPreqChecktest(UI_Scheduler_Tool.Models.DataContext context)
+        {
             // basic preq check nodes
             // level 0
             Course N0A = new Course { CourseName = "N0A", CourseNumber = "N0:0001", CatalogDescription = "PREQ_TEST", CreditHours = "0", Occurence = 0, LastTaughtID = 0 };
@@ -44,11 +64,6 @@ namespace UI_Scheduler_Tool.DataMigrations
             Course N2A = new Course { CourseName = "N2A", CourseNumber = "N2:0001", CatalogDescription = "PREQ_TEST", CreditHours = "0", Occurence = 0, LastTaughtID = 0 };
 
             context.Courses.AddOrUpdate(
-                // tree test
-                rootReq, rootOptA, rootOptB,
-                easy,
-                advancedA, advancedB,
-                // preq checks
                 N0A, N0B, N0C,
                 N1A, N1B, N1C,
                 N2A
@@ -59,17 +74,6 @@ namespace UI_Scheduler_Tool.DataMigrations
             context.SaveChanges();
 
             context.PreqEdges.AddOrUpdate(
-                // tree test
-                // add level 0 edges
-                new PreqEdge { Parent = rootReq, Child = easy, IsRequired = true },
-                new PreqEdge { Parent = rootOptA, Child = easy, IsRequired = false },
-                new PreqEdge { Parent = rootOptB, Child = easy, IsRequired = false },
-
-                // add level 1 edges
-                new PreqEdge { Parent = easy, Child = advancedA, IsRequired = true },
-                new PreqEdge { Parent = easy, Child = advancedB, IsRequired = true },
-
-                // preq check
                 // add level 0 edges
                 new PreqEdge { Parent = N0A, Child = N1A, IsRequired = true },
                 new PreqEdge { Parent = N0B, Child = N1A, IsRequired = true },
@@ -79,17 +83,14 @@ namespace UI_Scheduler_Tool.DataMigrations
                 new PreqEdge { Parent = N1B, Child = N2A, IsRequired = false },
                 new PreqEdge { Parent = N1C, Child = N2A, IsRequired = true }
                 );
+        }
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+        private void AddTracksAndCurriculum(UI_Scheduler_Tool.Models.DataContext context)
+        {
+            context.Tracks.AddOrUpdate(
+                new Track { Name = "TEST" }
+                );
+            context.SaveChanges();
         }
     }
 }

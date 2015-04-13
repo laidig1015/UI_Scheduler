@@ -31,7 +31,9 @@ namespace UI_Scheduler_Tool.Models
         [StringLength(16)]
         public string CreditHours { get; set; }
 
-        public int Occurence { get; set; }
+        public bool IsOfferedInFall { get; set; }
+        public bool IsOfferedInSpring { get; set; }
+
         public int LastTaughtID { get; set; }
 
         public virtual ICollection<PreqEdge> Parents { get; set; }

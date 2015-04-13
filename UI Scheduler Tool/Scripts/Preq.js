@@ -88,13 +88,12 @@ TrackMatrix.prototype.hasTakenSince = function(semester, nodeId) {
 }
 
 TrackMatrix.prototype.checkPreq = function (semester, node) {
-    // go through all parents of our nodes
     var dirty = new Array();
     var stack = new Array();
     var numInitialParents = node.parents.length;
     // start by pushing our initial nodes parents to the stack
     for (var i = 0; i < numInitialParents; i++) {
-        stack.push({ node: this.nodes[node.parents[i]], index: semsterId });
+        stack.push({ node: this.nodes[node.parents[i]], index: semester });
     }
 
     while (stack.length > 0) {// while we have no more nodes to check
