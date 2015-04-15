@@ -425,7 +425,7 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
             {
                 CourseName = "Algorithms",
                 CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
-                Occurence = 2,
+                //Occurence = 2,
                 LastTaughtID = 59,
                 //lastTaughtCode = "20148",
                 CourseNumber = "CS:3330",
@@ -437,7 +437,7 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
             {
                 CourseName = "Introduction to Digital Design",
                 CatalogDescription = "Modern design and analysis of digital switching circuits; combinational logic; sequential circuits and system controllers; interfacing and busing techniques; design methodologies using medium- and large-scale integrated circuits; lab arranged. ",
-                Occurence = 2,
+                //Occurence = 2,
                 LastTaughtID = 59,
                 //lastTaughtCode = "20148",
                 CourseNumber = "ECE:3320",
@@ -472,7 +472,7 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
             {
                 CourseName = "Algorithms",
                 CatalogDescription = "Algorithm design techniques (e.g., greedy algorithms, divide-and-conquer, dynamic programming, randomization); fundamental algorithms (e.g., basic graph algorithms); techniques for efficiency analysis; computational intractability and NP-completeness.",
-                Occurence = 2,
+                //Occurence = 2,
                 LastTaughtID = 59,
                 //lastTaughtCode = "20148",
                 CourseNumber = "CS:3330",
@@ -484,7 +484,7 @@ namespace UI_Scheduler_Tool.Tests.WrapperTests
             {
                 CourseName = "Introduction to Digital Design",
                 CatalogDescription = "Modern design and analysis of digital switching circuits; combinational logic; sequential circuits and system controllers; interfacing and busing techniques; design methodologies using medium- and large-scale integrated circuits; lab arranged. ",
-                Occurence = 2,
+                //Occurence = 2,
                 LastTaughtID = 59,
                 //lastTaughtCode = "20148",
                 CourseNumber = "ECE:3320",
