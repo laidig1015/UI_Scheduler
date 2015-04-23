@@ -53,7 +53,7 @@ namespace UI_Scheduler_Tool.Maui
             {
                 using (var db = new DataContext())
                 {
-                    Course.AddIgnoreRepeats(courses, db);
+                    Course.AddIgnoreRepeats(db, courses);
                 }
             }
             catch (Exception e)// TODO: BAD!!!

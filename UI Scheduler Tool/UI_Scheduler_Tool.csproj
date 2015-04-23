@@ -261,6 +261,7 @@
     <Compile Include="Maui\MauiWrapper.cs" />
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\Curriculum.cs" />
+    <Compile Include="Models\DbExtensions.cs" />
     <Compile Include="Models\EFA.cs" />
     <Compile Include="Models\EFACourses.cs" />
     <Compile Include="Models\EFAType.cs" />

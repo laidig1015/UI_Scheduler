@@ -7,6 +7,7 @@ namespace UI_Scheduler_Tool.DataMigrations
     using System.Data.Entity.Validation;
     using System.Linq;
     using UI_Scheduler_Tool.Models;
+    using UI_Scheduler_Tool.Models.Extensions;
     using UI_Scheduler_Tool.Maui;
     using Newtonsoft.Json.Linq;
 
@@ -27,7 +28,7 @@ namespace UI_Scheduler_Tool.DataMigrations
         {
             if (System.Diagnostics.Debugger.IsAttached == false)
                 System.Diagnostics.Debugger.Launch();
-            //AddTracksAndCurriculum(context);
+            AddTracksAndCurriculum(context);
             AddTrackEFACourses(context);
             //Maui.MauiScripts.addPrerequesiteInformationToAllCourses(context);
         }
@@ -36,7 +37,8 @@ namespace UI_Scheduler_Tool.DataMigrations
         {
             Track ece = new Track { ShortName = "ECE", Name = "Computer Electrical Engineering" };
             Track ee = new Track { ShortName = "EE", Name = "Electrical Engineering" };
-            context.Tracks.AddOrUpdate(ece, ee);
+            ece.Add(context);
+            ee.Add(context);
             context.SaveChanges();
 
             #region ECE Track Courses
@@ -174,14 +176,7 @@ namespace UI_Scheduler_Tool.DataMigrations
             BuildTrackRules(context, new Track[]{ eeTrack, eceTrack }, EFAType.UPPER, sharedUpperRule);
             BuildTrackRules(context, new Track[]{ eeTrack, eceTrack }, EFAType.TECHNICAL, sharedTechnicalRule);
 
-            try
-            {
-                context.SaveChanges();
-            }
-            catch (DbEntityValidationException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            context.SaveChanges();
         }
 
         private static void BuildCurriculum(DataContext context, Track t, string[] matrix)
@@ -189,9 +184,9 @@ namespace UI_Scheduler_Tool.DataMigrations
             for (int i = 0; i < matrix.Length; i++)
             {
                 string[] courseStrs = matrix[i].Split('|');
-                for (int c = 0; c < courseStrs.Length; c++)
+                for (int j = 0; j < courseStrs.Length; j++)
                 {
-                    string[] parts = courseStrs[c].Split(',');
+                    string[] parts = courseStrs[j].Split(',');
                     JToken mauiCourse = MauiCourse.FastGetSingleCourse(parts[0]);// first part is the coures number
                     Course course = new Course
                     {
@@ -203,9 +198,14 @@ namespace UI_Scheduler_Tool.DataMigrations
                         IsOfferedInFall = (parts[1][0] == 'T'),
                         IsOfferedInSpring = (parts[2][0] == 'T')
                     };
-                    Course realCourse = Course.GetCourse(context, course);
-                    context.Courses.Add(realCourse);// gets or adds course
-                    context.Curricula.Add(new Curriculum() { Course = realCourse, Track = t, SemesterIndex = i });
+                    course = course.Add(context);
+                    Curriculum curriculum = new Curriculum
+                    {
+                        Course = course,
+                        Track = t,
+                        SemesterIndex = i
+                    };
+                    curriculum.Add(context);
                 }
             }
         }
@@ -232,10 +232,16 @@ namespace UI_Scheduler_Tool.DataMigrations
                     IsOfferedInFall = true,// TODO FIX
                     IsOfferedInSpring = true
                 };
-                context.Courses.Add(course);
+                course = course.Add(context);
                 foreach (Track t in tracks)
                 {
-                    context.TrackCourses.Add(new TrackCourses() { Track = t, Course = course, EFAType = (int)type });
+                    TrackCourses trackCourse = new TrackCourses
+                    {
+                        Track = t,
+                        Course = course,
+                        EFAType = (int)type
+                    };
+                    trackCourse.Add(context);
                 }
             }
             context.SaveChanges();

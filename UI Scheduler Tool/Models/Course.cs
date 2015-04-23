@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using UI_Scheduler_Tool.Models.Extensions;
+using System.Data.Entity.Migrations;
 
 namespace UI_Scheduler_Tool.Models
 {
@@ -81,7 +83,7 @@ namespace UI_Scheduler_Tool.Models
             number = parts[1];
         }
 
-        public static void AddIgnoreRepeats(IEnumerable<Course> courses, DataContext db)
+        public static void AddIgnoreRepeats(DataContext db, IEnumerable<Course> courses)
         {
             // from: http://stackoverflow.com/questions/18113418/ignore-duplicate-key-insert-with-entity-framework
             var newCourses = courses.Select(c => c.CourseNumber).Distinct().ToArray();
@@ -96,55 +98,15 @@ namespace UI_Scheduler_Tool.Models
             db.SaveChanges();
         }
 
-        public static Course GetCourse(DataContext db, Course course)
+        public Course Get(DataContext db)
         {
-            // from: http://stackoverflow.com/questions/5377049/entity-framework-avoiding-inserting-duplicates
+            return db.Courses.UniqueWhere(this, c => c.CourseNumber.Equals(CourseNumber));
+        }
 
-            //var cachedCourse = ((IObjectContextAdapter)db).ObjectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Added)
-            //        .Where(ose => ose.EntitySet == db.Courses)
-            //        .Select(ose => ose.Entity)
-            //        .Cast<Course>()
-            //        .Where(c => c.CourseNumber.Equals(course.CourseNumber))
-            //        .SingleOrDefault();
-    //        inventoryItem = context.ObjectStateManager.GetObjectStateEntries(EntityState.Added)
-    //.Where(ose => ose.EntitySet == context.InventoryItems.EntitySet)
-    //.Select(ose => ose.Entity)
-    //.Cast<InventoryItem>()
-    //.Where(equalityPredicate.Compile())
-    //.SingleOrDefault();
-
-    //        if (inventoryItem != null)
-    //        {
-    //            return inventoryItem;
-    //        }
-
-            //var courses = from c in db.Courses where c.CourseName.Equals(course.CourseNumber) select c;
-            //if (courses.Count() > 0)
-            //{
-            //    return courses.First();
-            //}
-
-            //var cachedCourses = ((IObjectContextAdapter)db).ObjectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Added)
-            //    .Where(ose => ose.EntitySet == db.Courses.Local)
-            //    .Select(ose => ose.Entity)
-            //    .Cast<Course>().Where(c => c.CourseNumber.Equals(course.CourseNumber));
-            //if(cachedCourses.Count() != 0)
-            //{
-            //    return cachedCourses.First();
-            //}
-
-            //var cachedCourses = db.ObjectStateManager.GetObjectStateEntries(EntityState.Added).
-            //Where(ose => ose.EntitySet == db.Tags.EntitySet).
-            //Select(ose => ose.Entity).
-            //Cast<Course>().Where(c => c.CourseNumber.Equals(course.CourseName));
-            //if (cachedCourses.Count() != 0)
-            //{
-            //    return cachedCourses.First();
-            //}
-
-            // TODO: pull from cache
-
-            db.Courses.Add(course);
+        public Course Add(DataContext db)
+        {
+            Course course = Get(db);
+            db.Courses.AddOrUpdate(course);
             return course;
         }
     }

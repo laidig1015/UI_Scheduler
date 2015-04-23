@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using UI_Scheduler_Tool.Models.Extensions;
+using System.Data.Entity.Migrations;
 
 namespace UI_Scheduler_Tool.Models
 {
@@ -24,5 +26,17 @@ namespace UI_Scheduler_Tool.Models
         public int TrackID { get; set; }
 
         public virtual Track Track { get; set; }
+
+        public EFA Get(DataContext db)
+        {
+            return db.EFAs.UniqueWhere(this, e => e.TrackID == TrackID);
+        }
+
+        public EFA Add(DataContext db)
+        {
+            EFA efa = Get(db);
+            db.EFAs.AddOrUpdate(efa);
+            return efa;
+        }
     }
 }
