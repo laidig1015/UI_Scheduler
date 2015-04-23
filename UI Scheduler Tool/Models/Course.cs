@@ -22,9 +22,9 @@ namespace UI_Scheduler_Tool.Models
         public string CatalogDescription { get; set; }
 
         [Required]
-        [Index]
         [Column(TypeName = "VARCHAR")]
         [StringLength(16)]
+        [Index]
         public string CourseNumber { get; set; }
 
         [Required]
@@ -99,12 +99,48 @@ namespace UI_Scheduler_Tool.Models
         public static Course GetCourse(DataContext db, Course course)
         {
             // from: http://stackoverflow.com/questions/5377049/entity-framework-avoiding-inserting-duplicates
-            var courses = from c in db.Courses where c.CourseName.Equals(course.CourseNumber) select c;
 
-            if (courses.Count() > 0)
-            {
-                return courses.First();
-            }
+            //var cachedCourse = ((IObjectContextAdapter)db).ObjectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Added)
+            //        .Where(ose => ose.EntitySet == db.Courses)
+            //        .Select(ose => ose.Entity)
+            //        .Cast<Course>()
+            //        .Where(c => c.CourseNumber.Equals(course.CourseNumber))
+            //        .SingleOrDefault();
+    //        inventoryItem = context.ObjectStateManager.GetObjectStateEntries(EntityState.Added)
+    //.Where(ose => ose.EntitySet == context.InventoryItems.EntitySet)
+    //.Select(ose => ose.Entity)
+    //.Cast<InventoryItem>()
+    //.Where(equalityPredicate.Compile())
+    //.SingleOrDefault();
+
+    //        if (inventoryItem != null)
+    //        {
+    //            return inventoryItem;
+    //        }
+
+            //var courses = from c in db.Courses where c.CourseName.Equals(course.CourseNumber) select c;
+            //if (courses.Count() > 0)
+            //{
+            //    return courses.First();
+            //}
+
+            //var cachedCourses = ((IObjectContextAdapter)db).ObjectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Added)
+            //    .Where(ose => ose.EntitySet == db.Courses.Local)
+            //    .Select(ose => ose.Entity)
+            //    .Cast<Course>().Where(c => c.CourseNumber.Equals(course.CourseNumber));
+            //if(cachedCourses.Count() != 0)
+            //{
+            //    return cachedCourses.First();
+            //}
+
+            //var cachedCourses = db.ObjectStateManager.GetObjectStateEntries(EntityState.Added).
+            //Where(ose => ose.EntitySet == db.Tags.EntitySet).
+            //Select(ose => ose.Entity).
+            //Cast<Course>().Where(c => c.CourseNumber.Equals(course.CourseName));
+            //if (cachedCourses.Count() != 0)
+            //{
+            //    return cachedCourses.First();
+            //}
 
             // TODO: pull from cache
 

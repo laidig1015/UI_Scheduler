@@ -8,7 +8,7 @@
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{79B5741A-3F79-45F7-A591-CDC605B1525D}</ProjectGuid>
-    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UI_Scheduler_Tool</RootNamespace>
@@ -233,6 +233,18 @@
     <Compile Include="DataMigrations\201504130557471_UpdatedCatalogLength.Designer.cs">
       <DependentUpon>201504130557471_UpdatedCatalogLength.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataMigrations\201504170305167_AddedEFATables.cs" />
+    <Compile Include="DataMigrations\201504170305167_AddedEFATables.Designer.cs">
+      <DependentUpon>201504170305167_AddedEFATables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\201504210219132_TryingToAddUniqueIndex.cs" />
+    <Compile Include="DataMigrations\201504210219132_TryingToAddUniqueIndex.Designer.cs">
+      <DependentUpon>201504210219132_TryingToAddUniqueIndex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\201504210229360_RemoveUnique.cs" />
+    <Compile Include="DataMigrations\201504210229360_RemoveUnique.Designer.cs">
+      <DependentUpon>201504210229360_RemoveUnique.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataMigrations\Configuration.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -249,11 +261,15 @@
     <Compile Include="Maui\MauiWrapper.cs" />
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\Curriculum.cs" />
+    <Compile Include="Models\EFA.cs" />
+    <Compile Include="Models\EFACourses.cs" />
+    <Compile Include="Models\EFAType.cs" />
     <Compile Include="Models\JCourse.cs" />
     <Compile Include="Models\PreqEdge.cs" />
     <Compile Include="Models\JPreqNode.cs" />
     <Compile Include="Models\DataContext.cs" />
     <Compile Include="Models\Track.cs" />
+    <Compile Include="Models\TrackCourses.cs" />
     <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Models\webpages_Membership.cs" />
     <Compile Include="Models\webpages_OAuthMembership.cs" />
@@ -428,6 +444,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataMigrations\201504130557471_UpdatedCatalogLength.resx">
       <DependentUpon>201504130557471_UpdatedCatalogLength.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504170305167_AddedEFATables.resx">
+      <DependentUpon>201504170305167_AddedEFATables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504210219132_TryingToAddUniqueIndex.resx">
+      <DependentUpon>201504210219132_TryingToAddUniqueIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504210229360_RemoveUnique.resx">
+      <DependentUpon>201504210229360_RemoveUnique.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserMigrations\201504100211168_Initial.resx">
       <DependentUpon>201504100211168_Initial.cs</DependentUpon>

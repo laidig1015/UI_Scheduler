@@ -7,10 +7,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UI_Scheduler_Tool.Models
 {
-    public class Track
+    public class EFA
     {
         public int ID { get; set; }
-        
+
         [Index]
         [Required]
         [Column(TypeName = "VARCHAR")]
@@ -21,7 +21,8 @@ namespace UI_Scheduler_Tool.Models
         [StringLength(64)]
         public string Name { get; set; }
 
-        public virtual ICollection<Curriculum> Curricula { get; set; }
-        public virtual ICollection<EFA> EFAs { get; set; }
+        public int TrackID { get; set; }
+
+        public virtual Track Track { get; set; }
     }
 }

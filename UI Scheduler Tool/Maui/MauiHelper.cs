@@ -11,12 +11,19 @@ namespace UI_Scheduler_Tool.Maui
     {
         public static string GetJsonFromURL(string url)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = WebRequestMethods.Http.Get;
-            request.Accept = "application/json";
-            using (StreamReader r = new StreamReader(request.GetResponse().GetResponseStream()))
+            try
             {
-                return r.ReadToEnd();
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = WebRequestMethods.Http.Get;
+                request.Accept = "application/json";
+                using (StreamReader r = new StreamReader(request.GetResponse().GetResponseStream()))
+                {
+                    return r.ReadToEnd();
+                }
+            }
+            catch(WebException)
+            {
+                return string.Empty;
             }
         }
 
