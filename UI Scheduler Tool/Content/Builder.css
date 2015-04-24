@@ -60,13 +60,13 @@
 
 /* Course Item */
 .course-item {
-    height: 60px;
+    height: 80px;
     width: 120px;
     position: relative;
 }
 
 .course-container {
-    height: 60px;
+    height: 80px;
     width: 120px;
     position: absolute;
     display: block;
@@ -75,7 +75,7 @@
 }
 
 .course-name {
-    height: 60px;
+    height: 80px;
     width: 120px;
     position: relative;
 }

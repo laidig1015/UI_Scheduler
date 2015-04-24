@@ -8,59 +8,26 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Block Scheduler</title>
-
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="~/Content/Track.css" />
+    <script src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.5.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/Builder.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Modal.css" />
     <script src="~/Scripts/Preq.js" type="text/javascript"></script>
     <script>
-        //$(document).ready(function (e) {
-        //    Preq.matrix = new TrackMatrix();
+        function createTrackQuery() {
+            var choices = document.getElementById("trackChoices");
+            var selection = choices.options[choices.selectedIndex].value;
 
-        //    $("#search").click(function (event) {
-        //        Preq.matrix = new TrackMatrix();
-        //        Preq.matrix.loadSeed($("#query").val());
-        //    });
-        //});
-
-        $(window).load(function () {
-            $('.course-container').hover(function () {
-                $(this).animate({
-                    width: 350,
-                    height: 190,
-                    top: -80,
-                    left: -45
-                }, 'fast');
-                $(this).animate().css('box-shadow', '0 0 5px #000');
-                $(this).css({
-                    zIndex: 100
-                });
-            }, function () {
-                $(this).animate().css('box-shadow', 'none')
-                $(this).animate({
-                    width: 120,
-                    height: 40,
-                    top: 0,
-                    left: 0
-                }, 'fast');
-                $(this).css({
-                    zIndex: 1
-                });
-            });
-
-            var semesterIds = [];
-            for (var i = 0; i < 8; i++) {
-                semesterIds.push('#course-list-' + i);
+            if (selection == "Electrical") {
+                Preq.matrix = new TrackMatrix();
+                Preq.matrix.loadSeed("ECE");
+                $('#trackModal').hide();
             }
-            var semesterSelector = semesterIds.join(',');
-            var items = $(semesterSelector);
-            items.sortable({
-                connectWith: '.course-list'
-            });
-        });
+            else {
+                //Preq.matrix = new TrackMatrix();
+                //Preq.matrix.loadSeed(COMPUTER);  //Not sure what COMPUTER needs to be here
+            }
+        }
     </script>
 </head>
 <body>
@@ -91,66 +58,39 @@
                     <div class="semester">
                         <h3>Fall</h3>
                         <ul id="course-list-@(s)" class="course-list">
-                            <li class="course-item">
-                                <div class="course-container">
-                                    <div class="course-name">
-                                        Operating Systems (055:136)
-                                    </div>
-                                    <div class="course-description">
-                                        This course provides an introduction to the design and implementation of modern operating systems.
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="course-item">
-                                <div class="course-container">
-                                    <div class="course-name">
-                                        Operating Systems (055:136)
-                                    </div>
-                                    <div class="course-description">
-                                        This course provides an introduction to the design and implementation of modern operating systems.
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="course-item">
-                                <div class="course-container">
-                                    <div class="course-name">
-                                        really really really long name
-                                    </div>
-                                    <div class="course-description">
-                                        This course provides an introduction to the design and implementation of modern operating systems.
-                                    </div>
-                                </div>
-                            </li>
                         </ul>
                     </div>
                     <div class="semester">
                         <h3>Spring</h3>
                         <ul id="course-list-@(s+1)" class="course-list">
-                            <li class="course-item">
-                                <div class="course-container">
-                                    <div class="course-name">
-                                        Introduction To Digital Design (055:0136)
-                                    </div>
-                                    <div class="course-description">
-                                        This course provides an introduction to the design and implementation of modern operating systems.
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="course-item">
-                                <div class="course-container">
-                                    <div class="course-name">
-                                        Operating Systems (055:136)
-                                    </div>
-                                    <div class="course-description">
-                                        This course provides an introduction to the design and implementation of modern operating systems.
-                                    </div>
-                                </div>
-                            </li>
                         </ul>
                     </div>
                 </div>
             }
         }
+
+        @* modal *@
+        <div class="modal hide in" id="trackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-backdrop fade in">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="myModalLabel">Select Track</h2>
+                    </div>
+                    <div class="modal-body">
+                        <select id="trackChoices">
+                            <option>Electrical</option>
+                            <option>Computer</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="trackSave" class="btn btn-primary" onclick="createTrackQuery()">Save changes</button>
+                    </div>
+                </div>
+                <button class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#trackModal').hide()">X</button>
+            </div>
+        </div>
+    </div>
     </div>
 </body>
 </html>
