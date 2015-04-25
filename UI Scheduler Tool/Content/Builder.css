@@ -90,7 +90,7 @@
     border: 8px solid #EFEFEF;
 }
 
-.course-container:hover .course-description {
+/*.course-container:hover .course-description {
     display: block;
     color: #455C4F;
 }
@@ -98,4 +98,4 @@
 .course-container:hover .course-name {
     background-color: #90FC6B;
     width: 100%;
-}
+}*/
