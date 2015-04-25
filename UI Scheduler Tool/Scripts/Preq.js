@@ -197,31 +197,27 @@ TrackMatrix.prototype.indexOfCourseInPool = function (courseId) {
 }
 
 TrackMatrix.prototype.renderSemesters = function () {
-    for (var i = 0; i < MAX_SEMESTERS; i++) {
-        this.renderSemester(i);
-    }
-}
-
-TrackMatrix.prototype.renderSemester = function (semester) {
-    var list = document.getElementById("course-list-" + semester);
-    while (list.firstChild) {
-        list.removeChild(list.firstChild);
-    }
-    // this is equivelent to htmlTemplate
-    //"<li id='semester-#{semesterId}-#{courseId}' class='course-item'>
-    //    <div class='course-container'>
-    //        <div class='course-name'>#{name}</div>
-    //        <div class='course-description'>#{description}</div>
-    //    </div>
-    //</li>"
-    var htmlTemplate =  "<li id='semester-{0}-{1}' class='course-item'><div class='course-container'><div class='course-name'>{2} ({1})</div><div class='course-description'>{3}</div></div></li>";
-    var numCourses = this.matrix[semester].length;
-    for (var i = 0; i < numCourses; i++) {
-        var course = this.matrix[semester][i];
-        var element = document.createElement('div');
-        element.innerHTML = String.format(htmlTemplate, semester, course.id, course.name, course.description);
-        while (element.children.length > 0) {
-            list.appendChild(element.children[0]);
+    for (var s = 0; s < MAX_SEMESTERS; s++) {
+        var list = document.getElementById("course-list-" + s);
+        while (list.firstChild) {
+            list.removeChild(list.firstChild);
+        }
+        // this is equivelent to htmlTemplate
+        //"<li id='semester-#{semesterId}-#{courseId}' class='course-item'>
+        //    <div class='course-container'>
+        //        <div class='course-name'>#{name}</div>
+        //        <div class='course-description'>#{description}</div>
+        //    </div>
+        //</li>"
+        var htmlTemplate = "<li id='semester-{0}-{1}' class='course-item'><div class='course-container'><div class='course-name'>{2} ({1})</div><div class='course-description'>{3}</div></div></li>";
+        var numCourses = this.matrix[s].length;
+        for (var i = 0; i < numCourses; i++) {
+            var course = this.matrix[s][i];
+            var element = document.createElement('div');
+            element.innerHTML = String.format(htmlTemplate, s, course.id, course.name, course.description);
+            while (element.children.length > 0) {
+                list.appendChild(element.children[0]);
+            }
         }
     }
     //$('.course-container').hover(function () {

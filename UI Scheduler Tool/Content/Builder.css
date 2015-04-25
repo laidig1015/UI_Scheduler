@@ -14,11 +14,11 @@
     float: left;
 }
 
-.semester:nth-child(odd) {
+.semester:nth-child(odd) h3 {
     background-color: #B1FFAD;
 }
 
-.semester:nth-child(even) {
+.semester:nth-child(even) h3 {
     background-color: #EDB579;
 }
 

@@ -13,24 +13,6 @@
     <link rel="stylesheet" type="text/css" href="~/Content/Builder.css" />
     <link rel="stylesheet" type="text/css" href="~/Content/Modal.css" />
     <script src="~/Scripts/Preq.js" type="text/javascript"></script>
-    <style>
-        #sortable1, #sortable2 {
-            border: 1px solid #eee;
-            width: 142px;
-            min-height: 20px;
-            list-style-type: none;
-            margin: 0;
-            padding: 5px 0 0 0;
-            float: left;
-            margin-right: 10px;
-        }
-        #sortable1 li, #sortable2 li {
-            margin: 0 5px 5px 5px;
-            padding: 5px;
-            font-size: 1.2em;
-            width: 120px;
-        }
-    </style>
     <script>
         function createTrackQuery() {
             var choices = document.getElementById("trackChoices");
@@ -38,18 +20,39 @@
 
             if (selection == "Electrical") {
                 Preq.matrix = new TrackMatrix();
-                //Preq.matrix.loadSeed("ECE");
+                Preq.matrix.loadSeed("ECE");
                 $('#trackModal').hide();
-            }
-            else {
+            } else {
                 //Preq.matrix = new TrackMatrix();
                 //Preq.matrix.loadSeed(COMPUTER);  //Not sure what COMPUTER needs to be here
             }
         }
-
         $(function () {
-            $("#sortable1, #sortable2").sortable({
-                connectWith: ".connectedSortable"
+            var courseLists = [];
+            for (var i = 0; i < 8; i++) {
+                courseLists.push('#course-list-' + i);
+            }
+            var courseSelector = courseLists.join(',');
+            $(courseSelector).sortable({
+                connectWith: ".course-list",
+                remove: function (event, ui) {
+                    console.log("remove: ev: %o ui: %o", event, ui);
+                },
+                receive: function (event, ui) {
+                    console.log("receive: ev: %o ui: %o", event, ui);
+                },
+                change: function (event, ui) {
+                    console.log("change: ev: %o ui: %o", event, ui);
+                },
+                start: function (event, ui) {
+                    console.log("start: ev: %o ui: %o", event, ui);
+                },
+                stop: function (event, ui) {
+                    console.log("stop: ev: %o ui: %o", event, ui);
+                },
+                update: function (event, ui) {
+                    console.log("update: ev: %o ui: %o", event, ui);
+                }
             }).disableSelection();
         });
     </script>
@@ -92,22 +95,6 @@
                 </div>
             }
         }
-
-        <ul id="sortable1" class="connectedSortable">
-          <li class="ui-state-default">Item 1</li>
-          <li class="ui-state-default">Item 2</li>
-          <li class="ui-state-default">Item 3</li>
-          <li class="ui-state-default">Item 4</li>
-          <li class="ui-state-default">Item 5</li>
-        </ul>
- 
-        <ul id="sortable2" class="connectedSortable">
-          <li class="ui-state-highlight">Item 1</li>
-          <li class="ui-state-highlight">Item 2</li>
-          <li class="ui-state-highlight">Item 3</li>
-          <li class="ui-state-highlight">Item 4</li>
-          <li class="ui-state-highlight">Item 5</li>
-        </ul>
 
         @* modal *@
         <div class="modal hide in" id="trackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
