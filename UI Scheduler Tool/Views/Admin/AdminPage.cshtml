@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "AdminPage";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Admin Page</title>
+</head>
+<body>
+    <div>
+    @Html.ActionLink("Grab ECE Courses", "GrabECECourses", "Admin", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Grab Math Courses", "GrabMathCourses", "Admin", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Grab CS Courses", "GrabCSCourses", "Admin", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Filter Old Courses", "FilterOldClasses", "Admin", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Add Prerequisites", "addPrerequistes", "Admin", null, new { @class = "btn btn-default" })
+    </div>
+</body>
+</html>

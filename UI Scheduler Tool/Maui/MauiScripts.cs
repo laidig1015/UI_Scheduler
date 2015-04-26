@@ -53,12 +53,35 @@ namespace UI_Scheduler_Tool.Maui
             {
                 using (var db = new DataContext())
                 {
-                    Course.AddIgnoreRepeats(courses, db);
+                    Course.BulkAddIgnoreRepeats(courses, db);
                 }
             }
             catch (Exception e)// TODO: BAD!!!
             {
                 Console.Error.WriteLine("Error writing db courses: " + e.Message);
+                return false;
+            }
+            return true;
+        }
+
+        public static bool filterDatabase(DataContext db)
+        {
+            try
+            {
+                List<Course> courses = db.Courses.ToList();
+                foreach (Course course in courses)
+                {
+                    if (course.CourseName.Contains("#"))
+                    {
+                        db.Courses.Remove(course);
+                        db.SaveChanges();
+                    }
+                }
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
                 return false;
             }
             return true;

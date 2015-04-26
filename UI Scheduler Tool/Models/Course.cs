@@ -96,6 +96,43 @@ namespace UI_Scheduler_Tool.Models
             db.SaveChanges();
         }
 
+        public static void BulkAddIgnoreRepeats(List<Course> courses, DataContext db)
+        {
+            List<Course> coursesInDb = db.Courses.Where(c => c.CourseNumber != null).ToList();
+            List<string> courseNumbersInDb = coursesInDb.Select(c => c.CourseNumber).Distinct().ToList();
+
+            //Make List of Course Numbers
+            //foreach(Course c in coursesInDb)
+            //{
+            //    courseNumbersInDb.Add(c.CourseNumber);
+            //}
+            bool test = courseNumbersInDb.Contains("akldfj;akljfk;ladjfk;laj");
+
+            //Clear out Duplicates
+            foreach (Course c in courses)
+            {
+                test = courseNumbersInDb.Contains(c.CourseNumber);
+                if (courseNumbersInDb.Contains(c.CourseNumber))
+                {
+                    //courses.Remove(c);
+                }
+                else
+                {
+                    try
+                    {
+                        db.Courses.Add(c);
+                        db.SaveChanges();
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+            db.SaveChanges();
+            //Add to Database
+        }
+
         public static Course GetCourse(DataContext db, Course course)
         {
             // from: http://stackoverflow.com/questions/5377049/entity-framework-avoiding-inserting-duplicates

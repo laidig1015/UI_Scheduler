@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "View All Courses";
+    
+    
+    
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body>
+    <div>
+        <table class="grid">
+            <tr>
+                <th>Course Name</th>
+                <th>Course Number</th>
+                <th>Credit Hours</th>
+            </tr>
+            @foreach (var course in ViewBag.courses)
+            {
+                <tr>
+                    <td class="left">@course.CourseName</td>
+                    <td class="left">@course.CourseNumber</td>
+                    <td class="left">@course.CreditHours</td>
+                </tr>
+            }
+        </table>
+    </div>
+</body>
+</html>
