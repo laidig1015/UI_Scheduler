@@ -234,6 +234,18 @@
     <Compile Include="DataMigrations\201504130557471_UpdatedCatalogLength.Designer.cs">
       <DependentUpon>201504130557471_UpdatedCatalogLength.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataMigrations\201504170305167_AddedEFATables.cs" />
+    <Compile Include="DataMigrations\201504170305167_AddedEFATables.Designer.cs">
+      <DependentUpon>201504170305167_AddedEFATables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\201504210219132_TryingToAddUniqueIndex.cs" />
+    <Compile Include="DataMigrations\201504210219132_TryingToAddUniqueIndex.Designer.cs">
+      <DependentUpon>201504210219132_TryingToAddUniqueIndex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataMigrations\201504210229360_RemoveUnique.cs" />
+    <Compile Include="DataMigrations\201504210229360_RemoveUnique.Designer.cs">
+      <DependentUpon>201504210229360_RemoveUnique.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataMigrations\Configuration.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -250,11 +262,16 @@
     <Compile Include="Maui\MauiWrapper.cs" />
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\Curriculum.cs" />
+    <Compile Include="Models\DbExtensions.cs" />
+    <Compile Include="Models\EFA.cs" />
+    <Compile Include="Models\EFACourses.cs" />
+    <Compile Include="Models\EFAType.cs" />
     <Compile Include="Models\JCourse.cs" />
     <Compile Include="Models\PreqEdge.cs" />
     <Compile Include="Models\JPreqNode.cs" />
     <Compile Include="Models\DataContext.cs" />
     <Compile Include="Models\Track.cs" />
+    <Compile Include="Models\TrackCourses.cs" />
     <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Models\webpages_Membership.cs" />
     <Compile Include="Models\webpages_OAuthMembership.cs" />
@@ -267,6 +284,17 @@
     <Compile Include="UserMigrations\Configuration.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Builder.css" />
+    <Content Include="Content\Modal.css" />
+    <Content Include="Content\themes\base\accordion.css" />
+    <Content Include="Content\themes\base\all.css" />
+    <Content Include="Content\themes\base\autocomplete.css" />
+    <Content Include="Content\themes\base\base.css" />
+    <Content Include="Content\themes\base\button.css" />
+    <Content Include="Content\themes\base\core.css" />
+    <Content Include="Content\themes\base\datepicker.css" />
+    <Content Include="Content\themes\base\dialog.css" />
+    <Content Include="Content\themes\base\draggable.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -295,19 +323,7 @@
     <Content Include="Content\themes\base\jquery.ui.slider.css" />
     <Content Include="Content\themes\base\jquery.ui.tabs.css" />
     <Content Include="Content\themes\base\jquery.ui.theme.css" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_flat_0_aaaaaa_40x100.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_flat_75_ffffff_40x100.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_glass_55_fbf9ee_1x400.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_glass_65_ffffff_1x400.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_dadada_1x400.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_e6e6e6_1x400.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_glass_95_fef1ec_1x400.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
-    <Content Include="Content\themes\base\minified\images\ui-icons_222222_256x240.png" />
-    <Content Include="Content\themes\base\minified\images\ui-icons_2e83ff_256x240.png" />
-    <Content Include="Content\themes\base\minified\images\ui-icons_454545_256x240.png" />
-    <Content Include="Content\themes\base\minified\images\ui-icons_888888_256x240.png" />
-    <Content Include="Content\themes\base\minified\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\menu.css" />
     <Content Include="Content\themes\base\minified\jquery-ui.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.accordion.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.autocomplete.min.css" />
@@ -321,7 +337,16 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
-    <Content Include="Content\Track.css" />
+    <Content Include="Content\themes\base\progressbar.css" />
+    <Content Include="Content\themes\base\resizable.css" />
+    <Content Include="Content\themes\base\selectable.css" />
+    <Content Include="Content\themes\base\selectmenu.css" />
+    <Content Include="Content\themes\base\slider.css" />
+    <Content Include="Content\themes\base\sortable.css" />
+    <Content Include="Content\themes\base\spinner.css" />
+    <Content Include="Content\themes\base\tabs.css" />
+    <Content Include="Content\themes\base\theme.css" />
+    <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\uiowascheduler.pubxml" />
@@ -332,6 +357,8 @@
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui-1.11.4.js" />
+    <Content Include="Scripts\jquery-ui-1.11.4.min.js" />
     <Content Include="Scripts\jquery-ui-1.8.24.js" />
     <Content Include="Scripts\jquery-ui-1.8.24.min.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
@@ -340,6 +367,13 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\JQuery\external\jquery\jquery.js" />
+    <Content Include="Scripts\JQuery\jquery-ui.css" />
+    <Content Include="Scripts\JQuery\jquery-ui.js" />
+    <Content Include="Scripts\JQuery\jquery-ui.min.css" />
+    <Content Include="Scripts\JQuery\jquery-ui.min.js" />
+    <Content Include="Scripts\JQuery\jquery-ui.structure.css" />
+    <Content Include="Scripts\JQuery\jquery-ui.structure.min.css" />
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
@@ -431,6 +465,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataMigrations\201504130557471_UpdatedCatalogLength.resx">
       <DependentUpon>201504130557471_UpdatedCatalogLength.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504170305167_AddedEFATables.resx">
+      <DependentUpon>201504170305167_AddedEFATables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504210219132_TryingToAddUniqueIndex.resx">
+      <DependentUpon>201504210219132_TryingToAddUniqueIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataMigrations\201504210229360_RemoveUnique.resx">
+      <DependentUpon>201504210229360_RemoveUnique.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserMigrations\201504100211168_Initial.resx">
       <DependentUpon>201504100211168_Initial.cs</DependentUpon>

@@ -8,45 +8,116 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Block Scheduler</title>
-    <script src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.5.js" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="~/Content/Track.css" />
+    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.8.24.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/Builder.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Modal.css" />
     <script src="~/Scripts/Preq.js" type="text/javascript"></script>
     <script>
-        $(document).ready(function (e) {
-            Preq.matrix = new TrackMatrix();
+        function createTrackQuery() {
+            var choices = document.getElementById("trackChoices");
+            var selection = choices.options[choices.selectedIndex].value;
 
-            $("#search").click(function (event) {
+            if (selection == "Electrical") {
                 Preq.matrix = new TrackMatrix();
-                Preq.matrix.loadSeed($("#query").val());
-            });
+                Preq.matrix.loadSeed("ECE");
+                $('#trackModal').hide();
+            } else {
+                //Preq.matrix = new TrackMatrix();
+                //Preq.matrix.loadSeed(COMPUTER);  //Not sure what COMPUTER needs to be here
+            }
+        }
+        $(function () {
+            var courseLists = [];
+            for (var i = 0; i < 8; i++) {
+                courseLists.push('#course-list-' + i);
+            }
+            var courseSelector = courseLists.join(',');
+            $(courseSelector).sortable({
+                connectWith: ".course-list",
+                remove: function (event, ui) {
+                    console.log("remove: ev: %o ui: %o", event, ui);
+                },
+                receive: function (event, ui) {
+                    console.log("receive: ev: %o ui: %o", event, ui);
+                },
+                change: function (event, ui) {
+                    console.log("change: ev: %o ui: %o", event, ui);
+                },
+                start: function (event, ui) {
+                    console.log("start: ev: %o ui: %o", event, ui);
+                },
+                stop: function (event, ui) {
+                    console.log("stop: ev: %o ui: %o", event, ui);
+                },
+                update: function (event, ui) {
+                    console.log("update: ev: %o ui: %o", event, ui);
+                }
+            }).disableSelection();
         });
     </script>
-
-    <script></script>
 </head>
 <body>
-    <div class="search">
-        Section: <input id="query" type="text" name="Query"/>
-        <input id="search" type="submit" value="Search">
+    <div>
+        <div class="efa-selector">
+            <h3>Track Choices</h3>
+            <select>
+                <option value="ECE">Electrical / Computer Engineering</option>
+                <option value="EE">Electrical Engineering</option>
+            </select>
+        </div>
+        <div class="efa-selector">
+            <h3>Suggested EFAs</h3>
+            <select>
+                <option value="Software-Engineering">Software Engineering</option>
+                <option value="Pre-Med">Pre-Med</option>
+            </select>
+        </div>
+        <input id="load-efa" type="submit" value="Load">
     </div>
-
-    <div id="matrix">
-        <h3>Track</h3>
-        <button onclick="Preq.matrix.shiftSelectedSemester(-1)"><</button>
-        <button onclick="Preq.matrix.shiftSelectedSemester(+1)">></button>
-        <br />
-        @for(int i = 0; i < 8; i++)
-        {
-            <ul id="semester-@(i)" class="semester"></ul> 
+    <div id="track-matrix">
+        @{
+            int startYear = DateTime.Now.Year;
+            for (int y = 0, s = 0; y < 4; y++, s+=2)
+            {
+                <div id="year-@(y)" class="year">
+                    <h3>@(startYear+y)-@(startYear+y+1)</h3>
+                    <div class="semester">
+                        <h3>Fall</h3>
+                        <ul id="course-list-@(s)" class="course-list">
+                        </ul>
+                    </div>
+                    <div class="semester">
+                        <h3>Spring</h3>
+                        <ul id="course-list-@(s+1)" class="course-list">
+                        </ul>
+                    </div>
+                </div>
+            }
         }
-    </div>
-    <div id="errors">
-        <h3>Errors</h3>
-        <ul id="error-list" class="error"></ul>
-    </div>
-    <div id="courses">
-        <h3>Courses</h3>
-        <ul id="course-pool" class="course"></ul>
+
+        @* modal *@
+        <div class="modal hide in" id="trackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-backdrop fade in">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="myModalLabel">Select Track</h2>
+                        </div>
+                        <div class="modal-body">
+                            <select id="trackChoices">
+                                <option>Electrical</option>
+                                <option>Computer</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="trackSave" class="btn btn-primary" onclick="createTrackQuery()">Save changes</button>
+                        </div>
+                    </div>
+                    <button class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#trackModal').hide()">X</button>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

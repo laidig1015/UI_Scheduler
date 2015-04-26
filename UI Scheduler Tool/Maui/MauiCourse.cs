@@ -27,6 +27,10 @@ namespace UI_Scheduler_Tool.Maui
         public static JToken FastGetSingleCourse(string courseNumber)
         {
             string result = MauiWrapper.GetCourse(courseNumber);
+            if (string.IsNullOrEmpty(result))
+            {
+                return null;
+            }
             if(result[0] == '[')
             {
                 return JArray.Parse(result)[0];

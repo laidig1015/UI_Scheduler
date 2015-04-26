@@ -1,0 +1,101 @@
+﻿/* Track Matrix */
+.year {
+    width: 25%;
+    float: left;
+}
+
+.year h3 {
+    text-align: center;
+    color: #455C4F;
+}
+
+.semester {
+    width: 50%;
+    float: left;
+}
+
+.semester:nth-child(odd) h3 {
+    background-color: #B1FFAD;
+}
+
+.semester:nth-child(even) h3 {
+    background-color: #EDB579;
+}
+
+.semester h3 {
+    text-align: center;
+    color: #455C4F;
+}
+
+.semester ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.semester li {
+    border-top: 2px solid #E2E2E2;
+    color: #455C4F;
+}
+
+/* EFA Selection */
+
+.efa-selector {
+    display: inline-block;
+}
+
+.efa-selector h3 {
+    color: #455C4F;
+}
+
+.efa-selector select {
+    background: #BBBBEF;
+    padding: 10px;
+    font-size: 12px;
+    line-height: 1;
+    border: 0;
+    border-radius: 0;
+    height: 34px;
+}
+
+/* Course Item */
+.course-item {
+    height: 80px;
+    width: 120px;
+    position: relative;
+}
+
+.course-container {
+    height: 80px;
+    width: 120px;
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+}
+
+.course-name {
+    height: 80px;
+    width: 120px;
+    position: relative;
+}
+
+.course-description {
+    display: none;
+    height: 150px;
+    overflow: auto;
+    background-color: #1E1E1E;
+    color: #2A79D3;
+    font-weight: bold;
+    border: 8px solid #EFEFEF;
+}
+
+/*.course-container:hover .course-description {
+    display: block;
+    color: #455C4F;
+}
+
+.course-container:hover .course-name {
+    background-color: #90FC6B;
+    width: 100%;
+}*/

@@ -1,5 +1,17 @@
 ﻿var Preq = {};
 
+if (!String.format) {
+    String.format = function (format) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        return format.replace(/{(\d+)}/g, function (match, number) {
+            return typeof args[number] != 'undefined'
+              ? args[number]
+              : match
+            ;
+        });
+    };
+}
+
 var MAX_SEMESTERS = 8;
 var MAX_CLASSES = 20;
 
@@ -12,23 +24,6 @@ function TrackMatrix() {
     this.errors = new Array();
     this.coursePool = new Array();
     this.totalSemsterHours = 0;
-    this.selectedSemester = 0;
-    for (var i = 0; i < MAX_SEMESTERS; i++) {
-        document.getElementById("semester-" + i).className = "semester";
-    }
-    document.getElementById("semester-" + this.selectedSemester).className = "semester-selected";
-}
-
-TrackMatrix.prototype.shiftSelectedSemester = function (amount) {
-    var old = this.selectedSemester;
-    document.getElementById("semester-" + old).className = "semester";
-    this.selectedSemester = this.selectedSemester + amount;
-    if (this.selectedSemester < 0) {
-        this.selectedSemester = MAX_SEMESTERS + this.selectedSemester;
-    } else if (this.selectedSemester >= MAX_SEMESTERS) {
-        this.selectedSemester = MAX_SEMESTERS - this.selectedSemester;
-    }
-    document.getElementById("semester-" + this.selectedSemester).className = "semester-selected";
 }
 
 TrackMatrix.prototype.loadSeed = function (track) {
@@ -43,7 +38,7 @@ TrackMatrix.prototype.loadSeed = function (track) {
                 self.nodes[node.course.id] = node;
             }
         }
-        self.renderMatrix();
+        self.renderSemesters();
         return true;
     }, "json").fail(function (err, status) {
         console.log("error getting nodes: %s (%s)", err, status);
@@ -201,37 +196,53 @@ TrackMatrix.prototype.indexOfCourseInPool = function (courseId) {
     return -1;
 }
 
-TrackMatrix.prototype.renderMatrix = function () {
-    for (var i = 0; i < MAX_SEMESTERS; i++) {
-        this.renderSemester(i);
-    }
-}
-
-TrackMatrix.prototype.renderSemester = function (semester) {
-    var list = document.getElementById("semester-" + semester);
-    while (list.firstChild) {
-        list.removeChild(list.firstChild);
-    }
-    var numCourses = this.matrix[semester].length;
-    for (var i = 0; i < numCourses; i++) {
-        var course = this.matrix[semester][i];
-        var entry = document.createElement("li");
-        entry.id = "course-" + course.id + "-" + semester;
-        var self = this;
-        entry.onclick = function () {
-            var parts = this.id.split('-');
-            var s = parseInt(parts[2]);
-            var cid = parts[1];
-            var result = self.removeCourse(s, cid);
-            self.buildErrors(result);
-            if (result.wasSuccessful) {
-                self.renderSemester(s);
-                self.renderCourses();
+TrackMatrix.prototype.renderSemesters = function () {
+    for (var s = 0; s < MAX_SEMESTERS; s++) {
+        var list = document.getElementById("course-list-" + s);
+        while (list.firstChild) {
+            list.removeChild(list.firstChild);
+        }
+        // this is equivelent to htmlTemplate
+        //"<li id='semester-#{semesterId}-#{courseId}' class='course-item'>
+        //    <div class='course-container'>
+        //        <div class='course-name'>#{name}</div>
+        //        <div class='course-description'>#{description}</div>
+        //    </div>
+        //</li>"
+        var htmlTemplate = "<li id='semester-{0}-{1}' class='course-item'><div class='course-container'><div class='course-name'>{2} ({1})</div><div class='course-description'>{3}</div></div></li>";
+        var numCourses = this.matrix[s].length;
+        for (var i = 0; i < numCourses; i++) {
+            var course = this.matrix[s][i];
+            var element = document.createElement('div');
+            element.innerHTML = String.format(htmlTemplate, s, course.id, course.name, course.description);
+            while (element.children.length > 0) {
+                list.appendChild(element.children[0]);
             }
         }
-        entry.appendChild(document.createTextNode(course.id));//course.name + "(" + course.id + ")"));
-        list.appendChild(entry);
     }
+    //$('.course-container').hover(function () {
+    //    $(this).animate({
+    //        width: 350,
+    //        height: 250,
+    //        top: -80,
+    //        left: -45
+    //    }, 'fast');
+    //    $(this).animate().css('box-shadow', '0 0 5px #000');
+    //    $(this).css({
+    //        zIndex: 100
+    //    });
+    //}, function () {
+    //    $(this).animate().css('box-shadow', 'none')
+    //    $(this).animate({
+    //        width: 120,
+    //        height: 80,
+    //        top: 0,
+    //        left: 0
+    //    }, 'fast');
+    //    $(this).css({
+    //        zIndex: 1
+    //    });
+    //});
 }
 
 TrackMatrix.prototype.buildErrors = function(result) {
