@@ -30,10 +30,17 @@ namespace UI_Scheduler_Tool.Controllers
         {
             using (var db = new DataContext())
             {
-                JPreqNode[] nodes = db.Tracks.Where(t => t.ShortName.Equals(trackName)).Single()
-                                     .Curricula.Select(c => new JPreqNode(c.Course) { index = c.SemesterIndex }).ToArray();
-                string result = JsonConvert.SerializeObject(nodes);
-                return Content(result);
+                Track track = db.Tracks.Where(t => t.ShortName.Equals(trackName)).FirstOrDefault();
+                if (track == null)
+                {
+                    return Content(string.Empty);
+                }
+                else
+                {
+                    JPreqNode[] nodes = track.Curricula.Select(c => new JPreqNode(c.Course) { index = c.SemesterIndex }).ToArray();
+                    string result = JsonConvert.SerializeObject(nodes);
+                    return Content(result);
+                }
             }
         }
     }

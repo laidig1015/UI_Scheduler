@@ -12,48 +12,22 @@
     <script src="~/Scripts/jquery-ui-1.8.24.min.js"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/Builder.css" />
     <link rel="stylesheet" type="text/css" href="~/Content/Modal.css" />
-    <script src="~/Scripts/Preq.js" type="text/javascript"></script>
+    <script src="~/Scripts/Track.js"></script>
     <script>
         function createTrackQuery() {
             var choices = document.getElementById("trackChoices");
             var selection = choices.options[choices.selectedIndex].value;
-
-            if (selection == "Electrical") {
-                Preq.matrix = new TrackMatrix();
-                Preq.matrix.loadSeed("ECE");
-                $('#trackModal').hide();
-            } else {
-                //Preq.matrix = new TrackMatrix();
-                //Preq.matrix.loadSeed(COMPUTER);  //Not sure what COMPUTER needs to be here
-            }
+            var shortNameMap = { Electrical: "EE", Computer: "ECE" };
+            var shortName = shortNameMap[selection];
+            Track.model.loadCurriculum(shortName, function (self) {
+                Track.view.render();
+            });
+            $('#trackModal').hide();
         }
-        $(function () {
-            var courseLists = [];
-            for (var i = 0; i < 8; i++) {
-                courseLists.push('#course-list-' + i);
-            }
-            var courseSelector = courseLists.join(',');
-            $(courseSelector).sortable({
-                connectWith: ".course-list",
-                remove: function (event, ui) {
-                    console.log("remove: ev: %o ui: %o", event, ui);
-                },
-                receive: function (event, ui) {
-                    console.log("receive: ev: %o ui: %o", event, ui);
-                },
-                change: function (event, ui) {
-                    console.log("change: ev: %o ui: %o", event, ui);
-                },
-                start: function (event, ui) {
-                    console.log("start: ev: %o ui: %o", event, ui);
-                },
-                stop: function (event, ui) {
-                    console.log("stop: ev: %o ui: %o", event, ui);
-                },
-                update: function (event, ui) {
-                    console.log("update: ev: %o ui: %o", event, ui);
-                }
-            }).disableSelection();
+
+        $(document).ready(function () {
+            Track.model = new TrackModel();
+            Track.view = new TrackView(Track.model);
         });
     </script>
 </head>
@@ -84,13 +58,11 @@
                     <h3>@(startYear+y)-@(startYear+y+1)</h3>
                     <div class="semester">
                         <h3>Fall</h3>
-                        <ul id="course-list-@(s)" class="course-list">
-                        </ul>
+                        <ul id="course-list-@(s)" class="course-list"></ul>
                     </div>
                     <div class="semester">
                         <h3>Spring</h3>
-                        <ul id="course-list-@(s+1)" class="course-list">
-                        </ul>
+                        <ul id="course-list-@(s+1)" class="course-list"></ul>
                     </div>
                 </div>
             }
