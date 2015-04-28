@@ -220,29 +220,6 @@ TrackMatrix.prototype.renderSemesters = function () {
             }
         }
     }
-    //$('.course-container').hover(function () {
-    //    $(this).animate({
-    //        width: 350,
-    //        height: 250,
-    //        top: -80,
-    //        left: -45
-    //    }, 'fast');
-    //    $(this).animate().css('box-shadow', '0 0 5px #000');
-    //    $(this).css({
-    //        zIndex: 100
-    //    });
-    //}, function () {
-    //    $(this).animate().css('box-shadow', 'none')
-    //    $(this).animate({
-    //        width: 120,
-    //        height: 80,
-    //        top: 0,
-    //        left: 0
-    //    }, 'fast');
-    //    $(this).css({
-    //        zIndex: 1
-    //    });
-    //});
 }
 
 TrackMatrix.prototype.buildErrors = function(result) {
