@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "View Current Prerequesite Edges";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body>
+    <div>
+        @Html.ActionLink("Admin Page", "AdminPage", "Admin", null, new { @class = "btn btn-default" })
+        <table class="grid">
+            <tr>
+                <th>Parent</th>
+                <th>Child</th>
+                <th>Is Required?</th>
+            </tr>
+            @foreach (var edge in ViewBag.edges)
+            {
+                <tr>
+                    <td class="left">@edge.Parent.CourseName</td>
+                    <td class="left">@edge.Child.CourseName</td>
+                    <td class="left">@edge.IsRequired</td>
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.ActionLink("Admin Page", "AdminPage", "Admin", null, new { @class = "btn btn-default" })
+</body>
+</html>

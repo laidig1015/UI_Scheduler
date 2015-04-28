@@ -1,8 +1,5 @@
 ﻿@{
-    ViewBag.Title = "View All Courses";
-    
-    
-    
+    ViewBag.Title = "View Current Courses";    
 }
 
 <!DOCTYPE html>
@@ -13,6 +10,7 @@
     <title></title>
 </head>
 <body>
+    @Html.ActionLink("Admin Page", "AdminPage", "Admin", null, new { @class = "btn btn-default" })
     <div>
         <table class="grid">
             <tr>
@@ -30,5 +28,6 @@
             }
         </table>
     </div>
+    @Html.ActionLink("Admin Page", "AdminPage", "Admin", null, new { @class = "btn btn-default" })
 </body>
 </html>

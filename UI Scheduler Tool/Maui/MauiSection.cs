@@ -253,7 +253,7 @@ namespace UI_Scheduler_Tool.Maui
                 Child = child,
                 IsRequired = isRequired
             };
-            db.PreqEdges.Add(edge);
+            edge.Add(db);
 
             //if (!db.PreqEdges.Any(c => c.Parent == edge.Parent && c.Child == edge.Child))
             //{

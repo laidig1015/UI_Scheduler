@@ -21,6 +21,15 @@ namespace UI_Scheduler_Tool.Controllers
             return RedirectToAction("AdminPage");
         }
 
+        public ActionResult CleanPreqEdges()
+        {
+            using (var db = new DataContext())
+            {
+                Maui.MauiScripts.cleanAllPreqEdges(db);
+            }
+            return RedirectToAction("AdminPage");
+        }
+
         public ActionResult GrabMathCourses()
         {
             Maui.MauiScripts.PopulateCourseFromCollege("MATH");
@@ -55,6 +64,23 @@ namespace UI_Scheduler_Tool.Controllers
                 List<Course> all = db.Courses.ToList();
                 //PreqTable table = new PreqTable(all);
                 ViewBag.courses = all;
+            }
+
+            return View();
+        }
+
+        public ActionResult ViewCurrentPreqEdges()
+        {
+            using (var db = new DataContext())
+            {
+                List<PreqEdge> all = db.PreqEdges.ToList();
+                //PreqTable table = new PreqTable(all);
+                ViewBag.edges = all;
+
+                PreqEdge test = all[0];
+                String x = test.Parent.CourseName;
+                String y = test.Child.CourseName;
+
             }
 
             return View();
