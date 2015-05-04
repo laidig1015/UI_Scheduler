@@ -37,12 +37,17 @@ TrackModel.prototype.loadCurriculum = function (track, callback) {
         }
         console.log("got nodes: %o", nodes);
         var numNodes = nodes.length;
+        var regexFilter = /(<([^>]+)>)/ig;
         for (var i = 0; i < numNodes; i++) {
             var node = nodes[i];
             // always trust the db source for now
             self.matrix[node.index].add({ course: node.course, preqDirty: [], isOffered: true });
             if (!(node.id in self.nodes)) {
                 self.nodes[node.course.id] = node;
+                // filter any html tags that might be embeded in our description
+                var cleanDesc = self.nodes[node.course.id].course.description;
+                cleanDesc = cleanDesc.replace(regexFilter, "");
+                self.nodes[node.course.id].course.description = cleanDesc;
             }
         }
         callback();
@@ -244,6 +249,7 @@ CourseList.prototype.remove = function (courseId) {
 function TrackView(model) {
     this.semesters = [];
     this.model = model;
+    this._uniqueId = 0;
     this._lastRemoved = null;
     for (var i = 0; i < MAX_SEMESTERS; i++) {
         this.semesters.push(document.getElementById("course-list-" + i));
@@ -284,106 +290,63 @@ TrackView.prototype.clearAll = function () {
     }
 }
 
-TrackView.createCourseElement = function (courseItem) {
-    // this is equivelent to htmlTemplate
-    //"<li id='semester-#{courseId}' class='course-item'>
-    //    <div class='course-container'>
-    //        <div class='course-name'>#{name}</div>
-    //        <div class='course-info'>#{description}</div>
-    //        <div class='course-error'>#{errors}</div>
-    //        <a href='#' class='course-button-info'>info</a>
-    //        <a href='#' class='course-button-error'>errors</a>
-    //    </div>
-    //</li>"
-    var htmlTemplate = "<li id='semester-{0}' class='course-item'><div class='course-container'><div class='course-name'>{1} ({0})</div><div class='course-info'>{2}</div><div class='course-error'>{3}</div><a href='#' class='course-button-info'>info</a><a href='#' class='course-button-error'>errors</a></div></li>";
+TrackView.createCourseElement = function (courseItem, newId) {
+    // emulating this template
+    //<li id='semester-#{courseId}' class='course-container'>
+    //    <h3 class='course-name'>#{name} (#{courseId})</h3>
+    //    <a id='course-toggle-info-#{uniqueId}' class='course-toggle info-toggle' href='#>Description</a>
+    //    <p id='course-content-info-#{uniqueId}' class='course-content'>#{description}</p>
+    //    <a id='course-toggle-error-#{uniqueId}' class='course-toggle error-toggle' href='#'>Error</a>
+    //    <p id='course-content-error-#{uniqueId}' class='course-content'>#{errors}</p>
+    //</li>
+
+    // variables are:
+    // 0: course id
+    // 1: unique course item id
+    // 2: course name
+    // 3: course description
+    // 4: error description
+    var template = "<li id='semester-{0}' class='course-container'><h3 class='course-name'>{2} ({0})</h3><a id='course-toggle-info-{1}' class='course-toggle info-toggle' href='#'>Description</a><p id='course-content-info-{1}' class='course-content'>{3}</p><a id='course-toggle-error-{1}' class='course-toggle error-toggle' href='#'>Error</a><p id='course-content-error-{1}' class='course-content'>{4}</p></li>";
     var course = courseItem.course;
     var element = document.createElement('div');
-    element.innerHTML = String.format(htmlTemplate, course.id, course.name, course.description, "AN ERROR HAS OCCURED");
+    element.innerHTML = String.format(template, course.id, newId, course.name, course.description, "AN ERROR HAS OCCURED");
     return element;
 }
 
 TrackView.prototype.render = function () {
+    var infoToggle, infoContent, errorToggle, errorContent;
+
     for (var s = 0; s < MAX_SEMESTERS; s++) {
         this.clear(s);
         var semester = this.model.matrix[s];
         for (var courseId in semester.courses) {
             var item = semester.courses[courseId];
-            var element = TrackView.createCourseElement(item);
+            var newId = this._uniqueId++;
+            var element = TrackView.createCourseElement(item, newId);
             while (element.children.length > 0) {
                 this.semesters[s].appendChild(element.children[0]);
             }
+
+            // DON'T FORGET YOUR SCOPING!!! SEE: http://stackoverflow.com/questions/8909652/adding-click-event-listeners-in-loop
+            infoToggleName = '#course-toggle-info-' + newId;
+            infoContentName = '#course-content-info-' + newId;
+            if (typeof window.addEventListener === 'function') {
+                (function (_infoContentName) {
+                    $(infoToggleName).click(function () {
+                        $(_infoContentName).slideToggle("fast");
+                    });
+                })(infoContentName);
+            }
+
+            errorToggleName = '#course-toggle-error-' + newId;
+            errorContentName = '#course-content-error-' + newId;
+            if (typeof window.addEventListener === 'function') {
+                (function (_errorContentName) {
+                    $(errorToggleName).click(function () {
+                        $(_errorContentName).slideToggle("fast");
+                    });
+                })(errorContentName);
+            }
         }
     }
-    this.addButtonEvents();
-}
-
-TrackView.prototype.addButtonEvents = function () {
-    var toggleContainerExpand = function (container) {
-        if (!container.hasClass("isExpanded")) {
-            container.children(".course-name").toggleClass("course-name-expand");
-            container.animate({
-                width: 350,
-                height: 350,
-                top: -80,
-                left: -45
-            }, 'fast');
-            container.animate().css('box-shadow', '0 0 5px #000');
-            container.css({
-                zIndex: 100
-            });
-        } else {
-            container.children(".course-name").toggleClass("course-name-expand");
-            container.animate().css('box-shadow', 'none')
-            container.animate({
-                width: 115,
-                height: 120,
-                top: 0,
-                left: 0
-            }, 'fast');
-            container.css({
-                zIndex: 1
-            });
-        }
-        container.toggleClass("isExpanded");
-    }
-
-    var lastClicked = null;
-    var onCourseButtonClick = function (context, event, type) {
-        event.preventDefault();
-        var container = context.parent();
-
-        var thisType = type;
-        var otherType = (thisType == 'info') ? 'error' : 'info';
-        var thisClass = ('.course-' + thisType);
-        var otherClass = ('.course-' + otherType);
-        var thisExpandClass = ('course-' + thisType + '-expand');
-        var otherExpandClass = ('course-' + otherType + '-expand');
-        var thisElement = container.children(thisClass);
-        var otherElement = container.children(otherClass);
-
-        if (lastClicked && !(lastClicked.is(container)) && lastClicked.hasClass('isExpanded')) {
-            lastClicked.children(thisClass).removeClass(thisExpandClass);
-            lastClicked.children(otherClass).removeClass(otherExpandClass);
-            toggleContainerExpand(lastClicked);
-        }
-
-        thisElement.toggleClass(thisExpandClass);
-
-        var containerIsExpanded = container.hasClass('isExpanded');
-        var thisIsExpanded = thisElement.hasClass(thisExpandClass);
-        var otherIsExpanded = otherElement.hasClass(otherExpandClass);
-        if ((containerIsExpanded && (!thisIsExpanded && !otherIsExpanded)) ||
-            (!containerIsExpanded && (thisIsExpanded || otherIsExpanded))) {
-            toggleContainerExpand(container);
-        }
-        lastClicked = container;
-        return false;
-    }
-
-    $('.course-button-info').click(function (event) {
-        return onCourseButtonClick($(this), event, 'info');
-    });
-    $('.course-button-error').click(function (event) {
-        return onCourseButtonClick($(this), event, 'error');
-    });
 }
