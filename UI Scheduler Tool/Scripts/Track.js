@@ -157,12 +157,11 @@ TrackModel.prototype.add = function (semester, courseItem) {
     }
 
     // update if this new item is validated for this semester
-    var newOffer = TrackModel.isOfferedIn(semester, node.course);
-    if (courseItem.isOffered != newOffer) {
+    courseItem.isOffered = TrackModel.isOfferedIn(semester, node.course);
+    if (!courseItem.isOffered) {
         console.log("class not offered!");
-        actions.push({ type: 'OFFERING_CHANGE', newState: newOffer });
+        actions.push({ type: 'NOT_OFFERED' });
     }
-    courseItem.isOffered = newOffer;
 
     // check if we have the required prequisties to take the course
     var newDirty = this.checkPreqs(semester, node);
@@ -290,7 +289,7 @@ function TrackView(model) {
 TrackView.prototype._enableSorting = function() {
     // add links to itself
     var self = this;
-    $(String.generateRange(0, MAX_SEMESTERS, '#course-list-')).sortable({
+    $('.course-list').sortable({
         connectWith: ".course-list",
         remove: function (event, ui) {
             var semesterIndex = parseInt(event.target.id.slice(-1), 10);
@@ -310,10 +309,8 @@ TrackView.prototype._enableSorting = function() {
                     case 'ALREADY_TAKEN':
                         errors.push('this class was already taken in semester ' + (takenIn + 1));
                         break;// FAIL HARD?
-                    case 'OFFERING_CHANGE':
-                        if (!action.newState) {
-                            errors.push('this class is not offered in this semester');
-                        }
+                    case 'NOT_OFFERED':
+                        errors.push('this class is not offered in this semester');
                         break;
                     case 'PREQ':
                         if (action.dirty.length > 0) {

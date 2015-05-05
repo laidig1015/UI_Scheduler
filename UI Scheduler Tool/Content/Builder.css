@@ -1,4 +1,10 @@
 ﻿/* Track Matrix */
+#track-matrix {
+    float: left;
+    width: 65%;
+    margin-right: 100px;
+}
+
 .year {
     width: 25%;
     float: left;
@@ -34,11 +40,19 @@
     min-height: 200px;
 }
 
-.semester li {
+.efa-list ul {
+    width: 25%;
+    float: left;
+    display: inline-block;
+    overflow: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+.efa-list li {
 }
 
 /* EFA Selection */
-
 .efa-selector {
     display: inline-block;
 }
@@ -67,6 +81,8 @@
 .course-container {
     min-height: 100px;
     margin-bottom: 5px;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .course-ok {
@@ -149,3 +165,4 @@
     -moz-box-shadow: 10px 10px 32px 6px rgba(0,0,0,0.29);
     box-shadow: 10px 10px 32px 6px rgba(0,0,0,0.29);
 }
+

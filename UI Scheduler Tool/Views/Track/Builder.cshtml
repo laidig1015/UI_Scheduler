@@ -57,69 +57,63 @@
                     <h3>@(startYear+y)-@(startYear+y+1)</h3>
                     <div class="semester">
                         <h3 class="semester-title">Fall</h3>
-                        <ul id="course-list-@(s)" class="course-list">
-                            @*<li class="course-container">
-                                <h3 class="course-name">Engineer Math IV: Differential Equations (MATH:2560)</h3>
-                                <a id="course-toggle-info-0" class="course-toggle info-toggle" href="#">Description</a>
-                                <p id="course-content-info-0" class="course-content">Ordinary differential equations and applications, with integrated use of computing, student projects; first-order equations; higher    </p>
-                                <a id="course-toggle-error-0" class="course-toggle error-toggle" href="#">Error</a>
-                                <p id="course-content-error-0" class="course-content">
-                                    Ordinary differential equations and applications, with integrated use of computing, student projects; first-order equations; higher order linear equations; systems of linear equations, Laplace transforms; introduction to nonlinear equations and systems, phase plane, stability.
-                                    Ordinary differential equations and applications, with integrated use of computing, student projects; first-order equations; higher order linear equations; systems of linear equations, Laplace transforms; introduction to nonlinear equations and systems, phase plane, stability.
-                                </p>
-
-                            </li>
-                            <li class="course-container">
-                                <h3 class="course-name">Engineer Math IV: Differential Equations (MATH:2560)</h3>
-                                <a id="course-toggle-info-1" class="course-toggle info-toggle" href="#">Description</a>
-                                <p id="course-content-info-1" class="course-content">Ordinary differential equations and applications, with integrated use of computing, student projects; first-order equations; higher    </p>
-                                <a id="course-toggle-error-1" class="course-toggle error-toggle" href="#">Error</a>
-                                <p id="course-content-error-1" class="course-content">
-                                    Ordinary differential equations and applications, with integrated use of computing, student projects; first-order equations; higher order linear equations; systems of linear equations, Laplace transforms; introduction to nonlinear equations and systems, phase plane, stability.
-                                    Ordinary differential equations and applications, with integrated use of computing, student projects; first-order equations; higher order linear equations; systems of linear equations, Laplace transforms; introduction to nonlinear equations and systems, phase plane, stability.
-                                </p>
-                            </li>*@
-                        </ul>
+                        <ul id="course-list-@(s)" class="course-list"></ul>
                     </div>
                     <div class="semester">
                         <h3 class="semester-title">Spring</h3>
-                        <ul id="course-list-@(s+1)" class="course-list">
-                            @*<li class="course-container">
-                                <h3 class="course-name">Engineer Math IV: Differential Equations (MATH:2560)</h3>
-                                <a id="course-toggle-info-2" class="course-toggle info-toggle" href="#">Description</a>
-                                <p id="course-content-info-2" class="course-content">Ordinary differential equations and applications, with integrated use of computing, student projects; first-order equations; higher    </p>
-                                <a id="course-toggle-error-2" class="course-toggle error-toggle" href="#">Error</a>
-                                <p id="course-content-error-2" class="course-content">
-                                    Ordinary differential equations and applications, with integrated use of computing, student projects; first-order equations; higher order linear equations; systems of linear equations, Laplace transforms; introduction to nonlinear equations and systems, phase plane, stability.
-                                    Ordinary differential equations and applications, with integrated use of computing, student projects; first-order equations; higher order linear equations; systems of linear equations, Laplace transforms; introduction to nonlinear equations and systems, phase plane, stability.
-                                </p>
-                            </li>*@
-                        </ul>
+                        <ul id="course-list-@(s+1)" class="course-list"></ul>
                     </div>
                 </div>
             }
         }
-
-        @* modal *@
-        <div class="modal hide in" id="trackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-backdrop fade in">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2 id="myModalLabel">Select Track</h2>
-                        </div>
-                        <div class="modal-body">
-                            <select id="trackChoices">
-                                <option>Electrical</option>
-                                <option>Computer</option>
-                            </select>
-                        </div>
-                        <div class="modal-footer">
-                            <button id="trackSave" class="btn btn-primary" onclick="createTrackQuery()">Save changes</button>
-                        </div>
+    </div>
+    <div id="efa-lists">
+        <div id="efa-bredth" class="efa-list">
+            <h3>Bredth (0 / 1)</h3>
+            <ul id="bredth-list" class="course-list">
+                <li id='semester-055:136' class='course-container course-ok'>
+                    <h3 class='course-name'>This is a class (055:136)</h3>
+                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
+                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
+                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
+                    <p id='course-content-error-99' class='course-error-content'></p>
+                </li>
+                <li id='semester-055:136' class='course-container course-ok'>
+                    <h3 class='course-name'>This is a class (055:136)</h3>
+                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
+                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
+                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
+                    <p id='course-content-error-99' class='course-error-content'></p>
+                </li>
+                <li id='semester-055:136' class='course-container course-ok'>
+                    <h3 class='course-name'>This is a class (055:136)</h3>
+                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
+                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
+                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
+                    <p id='course-content-error-99' class='course-error-content'></p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    @* modal *@
+    <div class="modal hide in" id="trackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-backdrop fade in">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="myModalLabel">Select Track</h2>
                     </div>
-                    <button class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#trackModal').hide()">X</button>
+                    <div class="modal-body">
+                        <select id="trackChoices">
+                            <option>Electrical</option>
+                            <option>Computer</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="trackSave" class="btn btn-primary" onclick="createTrackQuery()">Save changes</button>
+                    </div>
                 </div>
+                <button class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#trackModal').hide()">X</button>
             </div>
         </div>
     </div>
