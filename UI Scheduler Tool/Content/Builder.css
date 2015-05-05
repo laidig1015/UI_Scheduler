@@ -65,9 +65,28 @@
 }
 
 .course-container {
-    background: #8AC007;
     min-height: 100px;
     margin-bottom: 5px;
+}
+
+.course-ok {
+    background: #8AC007;
+}
+
+.course-ok > .error-toggle {
+    display: none;
+}
+
+.course-ok > .course-error-content {
+    display: none;
+}
+
+.course-warning {
+    background: #efc10c;
+}
+
+.course-error {
+    background: #fc3c3c;
 }
 
 .course-name {
@@ -111,7 +130,17 @@
     background: #fc3c3c;
 }
 
-.course-content {
+.course-info-content {
+    height: 125px;
+    overflow: auto;
+    display: none;
+    padding: 7px;
+    -webkit-box-shadow: 10px 10px 32px 6px rgba(0,0,0,0.29);
+    -moz-box-shadow: 10px 10px 32px 6px rgba(0,0,0,0.29);
+    box-shadow: 10px 10px 32px 6px rgba(0,0,0,0.29);
+}
+
+.course-error-content {
     height: 125px;
     overflow: auto;
     display: none;
