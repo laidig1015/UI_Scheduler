@@ -281,7 +281,7 @@ function TrackView(model) {
     this._uid = 0;
     this._lastRemoved = null;
     for (var i = 0; i < MAX_SEMESTERS; i++) {
-        this.semesters.push(document.getElementById("course-list-" + i));
+        this.semesters.push(document.getElementById("semester-" + i));
     }
     this._enableSorting();
 }
@@ -292,12 +292,14 @@ TrackView.prototype._enableSorting = function() {
     $('.course-list').sortable({
         connectWith: ".course-list",
         remove: function (event, ui) {
+            return;// REMOVE AFTER TESTING
             var semesterIndex = parseInt(event.target.id.slice(-1), 10);
             var courseId = ui.item.context.id.split('-')[1];
             var result = self.model.remove(semesterIndex, courseId);
             self._lastRemoved = result.item;
         },
         receive: function (event, ui) {
+            return;// REMOVE AFTER TESTING
             var semesterIndex = parseInt(event.target.id.slice(-1), 10);
             var courseId = ui.item.context.id.split('-')[1];
             var actions = self.model.add(semesterIndex, self._lastRemoved);
@@ -356,11 +358,11 @@ TrackView.prototype.clearAll = function () {
 TrackView.createCourseElement = function (courseItem, newId) {
     // NOTE: we imply ok for state by default because it will be what most states will be
     // emulating this template
-    //<li id='semester-#{courseId}' class='course-container course-ok'>
+    //<li id='semester-#{courseId}' class='course-ok'>
     //    <h3 class='course-name'>#{name} (#{courseId})</h3>
-    //    <a id='course-toggle-info-#{uniqueId}' class='course-toggle info-toggle' href='#>Description</a>
+    //    <a id='course-toggle-info-#{uniqueId}' class='info-toggle' href='#>Description</a>
     //    <p id='course-content-info-#{uniqueId}' class='course-info-content'>#{description}</p>
-    //    <a id='course-toggle-error-#{uniqueId}' class='course-toggle error-toggle' href='#'>Error</a>
+    //    <a id='course-toggle-error-#{uniqueId}' class='error-toggle' href='#'>Error</a>
     //    <p id='course-content-error-#{uniqueId}' class='course-error-content'></p>
     //</li>
 
@@ -369,7 +371,7 @@ TrackView.createCourseElement = function (courseItem, newId) {
     // 1: unique course item id
     // 2: course name
     // 3: course description
-    var template = "<li id='semester-{0}' class='course-container course-ok'><h3 class='course-name'>{2} ({0})</h3><a id='course-toggle-info-{1}' class='course-toggle info-toggle' href='#'>Description</a><p id='course-content-info-{1}' class='course-info-content'>{3}</p><a id='course-toggle-error-{1}' class='course-toggle error-toggle' href='#'>Error</a><p id='course-content-error-{1}' class='course-error-content'></p></li>";
+    var template = "<li id='semester-{0}' class='course-ok'><h3 class='course-name'>{2} ({0})</h3><a id='course-toggle-info-{1}' class='info-toggle' href='#'>Description</a><p id='course-content-info-{1}' class='course-info-content'>{3}</p><a id='course-toggle-error-{1}' class='error-toggle' href='#'>Error</a><p id='course-content-error-{1}' class='course-error-content'></p></li>";
     var course = courseItem.course;
     var element = document.createElement('div');
     element.innerHTML = String.format(template, course.id, newId, course.name, course.description);
@@ -391,7 +393,7 @@ TrackView.prototype.setCourseState = function (courseId, state) {
     };
     var element = TrackView.getElement(courseId);
     if (!element) return;
-    element.attr('class', 'course-container');
+    element.attr('class', '');
     element.addClass('course-' + state);
 }
 

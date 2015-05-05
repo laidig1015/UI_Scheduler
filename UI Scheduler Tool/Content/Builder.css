@@ -1,36 +1,20 @@
-﻿/* Track Matrix */
-#track-matrix {
-    float: left;
-    width: 65%;
-    margin-right: 100px;
-}
-
-.year {
+﻿/* General */
+.quarter {
     width: 25%;
     float: left;
 }
 
-.year h3 {
-    text-align: center;
-    color: #455C4F;
-}
-
-.semester {
+.half {
     width: 50%;
     float: left;
 }
 
-.semester:nth-child(odd) .semester-title {
+.fall {
     background-color: #B1FFAD;
 }
 
-.semester:nth-child(even) .semester-title {
+.spring {
     background-color: #EDB579;
-}
-
-.semester h3 {
-    text-align: center;
-    color: #455C4F;
 }
 
 .semester ul {
@@ -40,8 +24,12 @@
     min-height: 200px;
 }
 
-.efa-list ul {
-    width: 25%;
+.list-title {
+    text-align: center;
+    color: #455C4F;
+}
+
+.side-scroll {
     float: left;
     display: inline-block;
     overflow: auto;
@@ -49,8 +37,18 @@
     white-space: nowrap;
 }
 
-.efa-list li {
+/* Modules */
+#track-matrix {
+    float: left;
+    width: 70%;
+    margin-right: 5%;
 }
+
+#efa-lists {
+    float: right;
+    width: 25%;
+}
+
 
 /* EFA Selection */
 .efa-selector {
@@ -71,20 +69,34 @@
     height: 34px;
 }
 
-/* Course Item */
+/* Course List */
 .course-list {
+    width: 100%;
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
 
-.course-container {
+.course-list li {
     min-height: 100px;
     margin-bottom: 5px;
     display: inline-block;
     vertical-align: top;
 }
 
+.course-list a {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 2px;
+    text-align: center;
+    font-family: helvetica, sans-serif;
+    color: #303030;
+    font-size: 12px;
+    text-decoration: none;
+    padding: 0px;
+}
+
+/* Course Item */
 .course-ok {
     background: #8AC007;
 }
@@ -112,18 +124,6 @@
     text-align: center;
     letter-spacing: 1pt;
     padding: 0px 2px 2px 2px;
-}
-
-.course-toggle {
-    display: inline-block;
-    width: 100%;
-    margin-bottom: 2px;
-    text-align: center;
-    font-family: helvetica, sans-serif;
-    color: #303030;
-    font-size: 12px;
-    text-decoration: none;
-    padding: 0px;
 }
 
 .course-toggle:hover {
