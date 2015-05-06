@@ -31,7 +31,7 @@ namespace UI_Scheduler_Tool.DataMigrations
             AddTracks(context);
             AddEFAs(context);
             AddCurriculumn(context);
-            //Maui.MauiScripts.addPrerequesiteInformationToAllCourses(context);
+            Maui.MauiScripts.addPrerequesiteInformationToAllCourses(context);
         }
 
         public static void AddTracks(DataContext context)

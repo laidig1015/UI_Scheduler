@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using Newtonsoft.Json.Linq;
 using UI_Scheduler_Tool.Models;
+using System.Data.Entity.Validation;
 
 namespace UI_Scheduler_Tool.Maui
 {
@@ -174,6 +175,7 @@ namespace UI_Scheduler_Tool.Maui
             {
                 return null;
             }
+            Course child = course;
 
             try
             {
@@ -183,6 +185,7 @@ namespace UI_Scheduler_Tool.Maui
                 if (String.IsNullOrEmpty(result))
                 {
                     Console.WriteLine("Unable to get section from course (sessionId: {0} {1}:{2})", course.LastTaughtID, subject, number);
+                    return null;
                 }
                 JToken token = JObject.Parse(result)["payload"].FirstOrDefault();
                 if (token == null || token["prerequisite"] == null)
@@ -190,27 +193,20 @@ namespace UI_Scheduler_Tool.Maui
                     return null;// root class with no preqs
                 }
                 string preqStr = (string)token["prerequisite"];
-                List<string> nodes = preqStr.Split(' ').Where(s => s[0] != '(').ToList();// ignore legacy numbers
-
-                List<Tuple<string, bool>> requirments = new List<Tuple<string, bool>>();
+                List<string> nodes = preqStr.Split(' ').Where(s => s[0] != '(').ToList();// ignore legacy numbers (OLD NUMBER)
+                List<Tuple<string, bool>> requirments = new List<Tuple<string, bool>>();// (item, isRequired)
                 
-                // go through all odd nodes (only courses on odd nodes)
+                // go through all odd nodes (only courses on odd nodes) item 'and/or' item ect...
                 for(int i = 0; i < nodes.Count; i+=2)
                 {
-                    if(i + 1 >= nodes.Count && i - 1 < 0)
-                    {
-                        requirments.Add(new Tuple<string, bool>(nodes[i], true));
-                        continue;
-                    }
-
-                    int toCheck = (i + 1 < nodes.Count) ? i + 1 : i - 1;
-                    if(nodes[toCheck].StartsWith("and"))// if we have an and its requried
+                    if(i + 1 >= nodes.Count && i - 1 < 0)// if we only have one item implied required
                     {
                         requirments.Add(new Tuple<string, bool>(nodes[i], true));
                     }
-                    else// otherwise optional
+                    else
                     {
-                        requirments.Add(new Tuple<string, bool>(nodes[i], false));
+                        int toCheck = (i + 1 < nodes.Count) ? i + 1 : i - 1;
+                        requirments.Add(new Tuple<string, bool>(nodes[i], nodes[toCheck].StartsWith("and")));// if it starts with and its requried
                     }
                 }
 
@@ -220,15 +216,19 @@ namespace UI_Scheduler_Tool.Maui
                     {
                         string courseNumber = requirments[i].Item1;
                         bool isRequired = requirments[i].Item2;
-                        try
+                        Course parent = db.Courses.Where(c => c.CourseNumber.Equals(courseNumber)).SingleOrDefault();
+                        if (parent == null)
                         {
-                            Course parent = db.Courses.Where(c => c.CourseNumber.Equals(courseNumber)).First();
-                            createPrereqEdge(parent, course, isRequired, db);
+                            Console.WriteLine("PREQ STRING ERROR FOR: " + child.CourseNumber);
+                            continue;
                         }
-                        catch(Exception)
+                        PreqEdge edge = new PreqEdge()
                         {
-                            Console.WriteLine("unable to find course: " + courseNumber);
-                        }
+                            Parent = parent,
+                            Child = child,
+                            IsRequired = isRequired
+                        };
+                        edge.Add(db);
                     }
                     db.SaveChanges();
                 }
@@ -236,6 +236,10 @@ namespace UI_Scheduler_Tool.Maui
             catch (System.Net.WebException we)
             {
                 Console.WriteLine("Error getting sections from maui: " + we.Message);
+            }
+            catch (DbEntityValidationException dev)
+            {
+                Console.WriteLine("Error getting sections from maui: " + dev.Message);
             }
             catch (Exception e)// TODO: BAD!
             {

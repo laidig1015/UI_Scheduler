@@ -119,17 +119,11 @@ namespace UI_Scheduler_Tool.Maui
 
         public static bool addPrerequesiteInformationToAllCourses(DataContext db)
         {
-
-            List<PreqEdge> allEdges = db.PreqEdges.Where(c => c.Parent != null).ToList();
-            List<Course> all = db.Courses.Where(c => c.CourseName != null).ToList();
-            //int x = 0;
             try
             {
                 List<Course> courses = db.Courses.ToList();
                 foreach (Course course in courses)
-                {
                     MauiSection.createPrerequesties(course, db);
-                }
                 db.SaveChanges();
             }
             catch (Exception e)
