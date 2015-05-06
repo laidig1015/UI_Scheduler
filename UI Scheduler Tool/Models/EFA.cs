@@ -29,7 +29,7 @@ namespace UI_Scheduler_Tool.Models
 
         public EFA Get(DataContext db)
         {
-            return db.EFAs.UniqueWhere(this, e => e.TrackID == TrackID);
+            return db.EFAs.UniqueWhere(this, e => e.TrackID == TrackID && e.ShortName.Equals(ShortName));
         }
 
         public EFA Add(DataContext db)
