@@ -26,11 +26,12 @@ namespace UI_Scheduler_Tool.DataMigrations
 
         protected override void Seed(DataContext context)
         {
-            //if (System.Diagnostics.Debugger.IsAttached == false)
-            //    System.Diagnostics.Debugger.Launch();
-            AddTracks(context);
-            AddEFAs(context);
-            AddCurriculumn(context);
+            if (System.Diagnostics.Debugger.IsAttached == false)
+                System.Diagnostics.Debugger.Launch();
+            //AddTracks(context);
+            //AddEFAs(context);
+            //AddCurriculumn(context);
+            AddEFACourses(context);
             Maui.MauiScripts.addPrerequesiteInformationToAllCourses(context);
         }
 
@@ -181,6 +182,66 @@ namespace UI_Scheduler_Tool.DataMigrations
             }
         }
 
+        public static void AddEFACourses(DataContext context)
+        {
+            #region Software Engineering
+            EFA swEFA = context.EFAs.Where(e => e.ShortName == "SOFTE").Single();
+            string[] swEFAData = { 
+                                "ECE:3540",// bredth
+                                "ECE:5800|ECE:5810",// depth
+                                "ECE:5820|ECE:5830|ECE:5320",// 100-level
+                                "CS:2230|MATH:3800|CS:3620|CS:4400|CS:3980|ECE:5330|ECE:5300",// technical
+                            };
+            #endregion
+
+            #region Power Systems
+            EFA psEFA = context.EFAs.Where(e => e.ShortName == "PWRS").Single();
+            string[] psEFAData = { 
+                                "ECE:3330|ECE:3360|ECE:3540",// bredth
+                                "ECE:5410|ECE:5460|ECE:5600|ECE:5640",// depth
+                                "ECE:5420|ECE:5430|ECE:5620|ECE:5630",// 100-level
+                                "MATH:4200",// technical
+                            };
+            #endregion
+
+            BuildEFACourses(context, swEFA, swEFAData);
+            BuildEFACourses(context, psEFA, psEFAData);
+            context.SaveChanges();
+        }
+
+        public static void BuildEFACourses(DataContext context, EFA efa, string[] data)
+        {
+            for(int i = 0; i < data.Length; i++)
+            {
+                string[] courseIds = data[i].Split('|');
+                foreach(var id in courseIds)
+                {
+                    JToken token = Maui.MauiCourse.FastGetSingleCourse(id);
+                    if (token == null)
+                        continue;
+
+                    Course course = new Course
+                    {
+                        CourseName = (string)token["title"],
+                        CatalogDescription = (string)token["catalogDescription"],
+                        CourseNumber = id,
+                        CreditHours = (string)token["creditHours"],
+                        LastTaughtID = (int)token["lastTaughtId"],
+                        IsOfferedInFall = true,// TODO FIX
+                        IsOfferedInSpring = true
+                    };
+                    course = course.Add(context);
+                    EFACourses efaCourse = new EFACourses
+                    {
+                        Course = course,
+                        EFA = efa,
+                        EFAType = i
+                    };
+                    efaCourse.Add(context);
+                }
+            }
+        }
+
         public static void AddTrackEFACourses(DataContext context)
         {
             Track eceTrack = context.Tracks.Where(t => t.ShortName.Equals("ECE")).Single();
@@ -282,8 +343,7 @@ namespace UI_Scheduler_Tool.DataMigrations
             string[] coursesNumbers = courses.Split('|');
             foreach (string courseStr in coursesNumbers)
             {
-                char[] ignore = { '\r', '\n', ' '};
-                string number = courseStr.Trim(ignore);
+                string number = courseStr.Trim(new char[] { '\r', '\n', ' '});
                 JToken token = Maui.MauiCourse.FastGetSingleCourse(number);
                 if(token == null)
                 {

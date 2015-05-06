@@ -30,18 +30,36 @@ namespace UI_Scheduler_Tool.Controllers
             }
         }
 
-        public ActionResult GetCurriculumNodes(string trackName)
+        public ActionResult GetEFANodes(int efaId)
         {
             using (var db = new DataContext())
             {
-                Track track = db.Tracks.Where(t => t.ShortName.Equals(trackName)).FirstOrDefault();
+                EFA efa = db.EFAs.Where(e => e.ID == efaId).FirstOrDefault();
+                if (efa == null)
+                {
+                    return Content(string.Empty);
+                }
+                else
+                {
+                    List<JNode> nodes = db.EFACourses.Where(e => e.EFAID == efa.ID).Select(e => new JNode(e.Course) { type = e.EFAType }).ToList();
+                    string result = JsonConvert.SerializeObject(nodes);
+                    return Content(result);
+                }
+            }
+        }
+
+        public ActionResult GetTrackNodes(int trackId)
+        {
+            using (var db = new DataContext())
+            {
+                Track track = db.Tracks.Where(t => t.ID == trackId).FirstOrDefault();
                 if (track == null)
                 {
                     return Content(string.Empty);
                 }
                 else
                 {
-                    JPreqNode[] nodes = track.Curricula.Select(c => new JPreqNode(c.Course) { index = c.SemesterIndex }).ToArray();
+                    List<JNode> nodes = track.Curricula.Select(c => new JNode(c.Course) { index = c.SemesterIndex }).ToList();
                     string result = JsonConvert.SerializeObject(nodes);
                     return Content(result);
                 }

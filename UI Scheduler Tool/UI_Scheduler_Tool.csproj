@@ -267,9 +267,8 @@
     <Compile Include="Models\EFACourses.cs" />
     <Compile Include="Models\JEFASeedData.cs" />
     <Compile Include="Models\EFAType.cs" />
-    <Compile Include="Models\JCourse.cs" />
     <Compile Include="Models\PreqEdge.cs" />
-    <Compile Include="Models\JPreqNode.cs" />
+    <Compile Include="Models\JNode.cs" />
     <Compile Include="Models\DataContext.cs" />
     <Compile Include="Models\Track.cs" />
     <Compile Include="Models\TrackCourses.cs" />

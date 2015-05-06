@@ -25,10 +25,17 @@
         }
 
         $(document).ready(function () {
-            Track.efa = new EFA();
-            Track.efa.loadSeed();
             Track.model = new TrackModel();
             Track.view = new TrackView(Track.model);
+            Track.efa = new EFA(
+            function (trackId) {
+                Track.model.loadTrack(trackId, function () {
+                    Track.view.render();
+                });
+            },
+            function (efaId) {
+
+            });
         });
     </script>
 </head>
@@ -42,7 +49,7 @@
             <h3>Suggested EFAs</h3>
             <select id="efa-select"></select>
         </div>
-        <input id="load-efa" type="submit" value="Load">
+        <input id="efa-load" type="submit" value="Load">
     </div>
     <div id="track-matrix">
         @{

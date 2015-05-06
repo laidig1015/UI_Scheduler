@@ -25,6 +25,23 @@ if (!String.generateRange) {
     }
 }
 
+Track.loadNodes = function(route, args, context, callback) {
+    $.get(route, args, function (nodes, status) {
+        if (!nodes) {
+            console.log("error getting nodes for %s", route);
+            return false;
+        }
+        console.log('nodes for %s: %o', route, nodes);
+        var regexFilter = /(<([^>]+)>)/ig;// remove any html tags we might find in the desc
+        for(var i = 0; i < nodes.length; i++) {
+            nodes[i].course.description = nodes[i].course.description.replace(regexFilter, '');
+        }
+        callback(context, nodes);
+    }, "json").fail(function (err, status) {
+        console.log("error getting nodes for %s: %s (%s)", route, err, status);
+    });
+}
+
 // CONSTATNTS //
 var MAX_SEMESTERS = 8;
 var MAX_COURSES = 20;
@@ -49,32 +66,22 @@ TrackModel.prototype.find = function(courseId) {
     return null;
 }
 
-TrackModel.prototype.loadCurriculum = function (track, callback) {
-    var self = this;
-    $.get("/Track/GetCurriculumNodes", "trackName=" + track, function (nodes, status) {
-        if (!nodes) {
-            console.log("error getting nodes!");
-            return false;
-        }
-        console.log("got nodes: %o", nodes);
-        var numNodes = nodes.length;
-        var regexFilter = /(<([^>]+)>)/ig;// remove any html tags we might find in the desc
-        for (var i = 0; i < numNodes; i++) {
-            var node = nodes[i];
-            // always trust the db source for now
-            self.matrix[node.index].add(new CourseItem(node.course));
-            if (!(node.id in self.nodes)) {
-                self.nodes[node.course.id] = node;
-                // filter any html tags that might be embeded in our description
-                var cleanDesc = self.nodes[node.course.id].course.description;
-                cleanDesc = cleanDesc.replace(regexFilter, "");
-                self.nodes[node.course.id].course.description = cleanDesc;
-            }
-        }
+TrackModel.prototype.loadTrack = function (trackId, callback) {
+    Track.loadNodes('/Track/GetTrackNodes', "trackId=" + trackId, this, function (self, nodes) {
+        self.addNodes(nodes);
         callback();
-    }, "json").fail(function (err, status) {
-        console.log("error getting nodes: %s (%s)", err, status);
     });
+}
+
+TrackModel.prototype.addNodes = function (nodes) {
+    for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        // always trust the db source for now
+        this.matrix[node.index].add(new CourseItem(node.course));
+        if (!(node.id in this.nodes)) {
+            this.nodes[node.course.id] = node;
+        }
+    }
 }
 
 TrackModel.prototype.hasCourse = function (courseId) {
@@ -217,6 +224,10 @@ TrackModel.prototype.remove = function (semester, courseId) {
 
 // COURSE LIST //
 function CourseList() {
+    this.clear();
+}
+
+CourseList.prototype.clear = function () {
     this.courses = {};
     this.numSemesterHours = 0;
     this.numCourses = 0;
@@ -436,9 +447,33 @@ TrackView.prototype.render = function () {
 }
 
 // EFA //
-function EFA() {
+function EFA(trackCallback, efaCallback) {
     this.tracks = null;
     this.efas = null;
+    this.lastTrackId = -1;
+    this.lastEFAId = -1;
+    this.onTrack = trackCallback;
+    this.onEFA = efaCallback;
+    var load = $('#efa-load');
+    load.prop('disabled', true);
+
+    var self = this;
+    load.click(function () {
+        var trackId = parseInt($('#track-select').val());
+        if (trackId != self.lastTrackId) {
+            console.log('loading new track: %d', trackId);
+            self.onTrack(trackId);
+        }
+        self.lastTrackId = trackId;
+
+        var efaId = parseInt($('#efa-select').val());
+        if (efaId != self.lastEFAId) {
+            console.log('loading new efas: %d', efaId);
+            self.onEFA(efaId);
+        }
+        self.lastEFAId = efaId;
+    });
+    this.loadSeed();
 }
 
 EFA.prototype.loadSeed = function () {
@@ -456,6 +491,7 @@ EFA.prototype.loadSeed = function () {
         });
         self.renderTracks();
         self.renderEFAS(0);
+        $('#efa-load').prop('disabled', false);
     }, "json").fail(function (err, status) {
         console.log("error getting nodes: %s (%s)", err, status);
     });
