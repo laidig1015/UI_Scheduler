@@ -75,6 +75,7 @@
     list-style-type: none;
     margin: 0;
     padding: 0;
+    min-height: 100px;
 }
 
 .course-list li {
@@ -175,7 +176,7 @@
     color: #ff6a00;
 }
 
-.efa-100 {
+.efa-upper {
     color: #efc10c;
 }
 

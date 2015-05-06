@@ -13,28 +13,19 @@
     <link rel="stylesheet" type="text/css" href="~/Content/Modal.css" />
     <script src="~/Scripts/Track.js"></script>
     <script>
-        function createTrackQuery() {
-            var choices = document.getElementById("trackChoices");
-            var selection = choices.options[choices.selectedIndex].value;
-            var shortNameMap = { Electrical: "EE", Computer: "ECE" };
-            var shortName = shortNameMap[selection];
-            Track.model.loadCurriculum(shortName, function (self) {
-                Track.view.render();
-            });
-            $('#trackModal').hide();
-        }
-
         $(document).ready(function () {
-            Track.model = new TrackModel();
-            Track.view = new TrackView(Track.model);
-            Track.efa = new EFA(
+            Track.trackModel = new TrackModel();
+            Track.view = new TrackView(Track.trackModel);
+            Track.efaModel = new EFAModel(
             function (trackId) {
-                Track.model.loadTrack(trackId, function () {
+                Track.trackModel.loadTrack(trackId, function () {
                     Track.view.render();
                 });
             },
             function (efaId) {
+                Track.efaModel.loadEFA(efaId, function () {
 
+                });
             });
         });
     </script>
@@ -71,158 +62,22 @@
         }
     </div>
     <div id="efa-lists">
-        <div id="efa-bredth">
+        <div>
             <h3 class="list-title efa-bredth">Bredth (0 / 1)</h3>
-            <ul id="bredth-list" class="course-list side-scroll">
-                <li id="course-CS:3320" class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-                <li class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-                <li class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-            </ul>
+            <ul id="bredth-list" class="course-list side-scroll"></ul>
         </div>
-        <div id="efa-bredth">
+        <div>
             <h3 class="list-title efa-depth">Depth (0 / 1)</h3>
-            <ul id="bredth-list" class="course-list side-scroll">
-                <li id="course-CS:3320" class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-                <li class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-                <li class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-            </ul>
+            <ul id="depth-list" class="course-list side-scroll"></ul>
         </div>
-        <div id="efa-bredth">
-            <h3 class="list-title efa-100">100-Level (0 / 2)</h3>
-            <ul id="bredth-list" class="course-list side-scroll">
-                <li id="course-CS:3320" class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-                <li class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-                <li class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-            </ul>
+        <div>
+            <h3 class="list-title efa-upper">Upper-Level (0 / 2)</h3>
+            <ul id="upper-list" class="course-list side-scroll"></ul>
         </div>
-        <div id="efa-bredth">
+        <div>
             <h3 class="list-title efa-technical">Technical (0 / 3)</h3>
-            <ul id="bredth-list" class="course-list side-scroll">
-                <li id="course-CS:3320" class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-                <li class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-                <li class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-            </ul>
-        </div>
-        <div id="efa-bredth">
-            <h3 class="list-title efa-general">General (0 / 2)</h3>
-            <ul id="bredth-list" class="course-list side-scroll">
-                <li id="course-CS:3320" class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-                <li class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-                <li class='course-ok'>
-                    <h3 class='course-name'>This is a class (055:136)</h3>
-                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
-                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
-                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
-                    <p id='course-content-error-99' class='course-error-content'></p>
-                </li>
-            </ul>
+            <ul id="technical-list" class="course-list side-scroll"></ul>
         </div>
     </div>
-    @* modal *@
-    @*<div class="modal hide in" id="trackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-backdrop fade in">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2 id="myModalLabel">Select Track</h2>
-                    </div>
-                    <div class="modal-body">
-                        <select id="trackChoices">
-                            <option>Electrical</option>
-                            <option>Computer</option>
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="trackSave" class="btn btn-primary" onclick="createTrackQuery()">Save changes</button>
-                    </div>
-                </div>
-                <button class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#trackModal').hide()">X</button>
-            </div>
-        </div>
-    </div>*@
 </body>
 </html>

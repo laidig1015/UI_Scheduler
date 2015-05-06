@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace UI_Scheduler_Tool.Models
+namespace UI_Scheduler_Tool.Models.Json
 {
     public class JTrack
     {

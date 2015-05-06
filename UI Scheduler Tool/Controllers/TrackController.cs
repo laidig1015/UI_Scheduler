@@ -41,8 +41,8 @@ namespace UI_Scheduler_Tool.Controllers
                 }
                 else
                 {
-                    List<JNode> nodes = db.EFACourses.Where(e => e.EFAID == efa.ID).Select(e => new JNode(e.Course) { type = e.EFAType }).ToList();
-                    string result = JsonConvert.SerializeObject(nodes);
+                    JEFAData data = new JEFAData(db.EFACourses.Where(e => e.EFAID == efa.ID).ToList());
+                    string result = JsonConvert.SerializeObject(data);
                     return Content(result);
                 }
             }

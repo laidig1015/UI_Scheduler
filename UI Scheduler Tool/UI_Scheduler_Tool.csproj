@@ -265,6 +265,7 @@
     <Compile Include="Models\DbExtensions.cs" />
     <Compile Include="Models\EFA.cs" />
     <Compile Include="Models\EFACourses.cs" />
+    <Compile Include="Models\JEFAData.cs" />
     <Compile Include="Models\JEFASeedData.cs" />
     <Compile Include="Models\EFAType.cs" />
     <Compile Include="Models\PreqEdge.cs" />

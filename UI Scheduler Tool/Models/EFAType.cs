@@ -10,8 +10,8 @@ namespace UI_Scheduler_Tool.Models
         // NOTE: HARDCODE THE CODES BECAUSE THEY COME OUT DIRECTLY FROM DB AS
         // RAW AND WE NEED TO MAKE SURE WE ARE EXPLICIT
         BREDTH = 0,
-        UPPER = 1,
-        DEPTH = 2,
+        DEPTH = 1,
+        UPPER = 2,
         TECHNICAL = 3,
         OTHER = 4
     }

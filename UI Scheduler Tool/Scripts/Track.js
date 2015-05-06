@@ -1,6 +1,49 @@
 ﻿// NAMESPACE //
 var Track = {};
 
+Track.__UID = 0;
+Track.addNewElementTo = function (list, course, state, type) {
+    // NOTE: we imply ok for state by default because it will be what most states will be
+    // emulating this template
+    //<li id='semester-#{courseId}' class='course-ok'>
+    //    <h3 class='course-name'>#{name} (#{courseId})</h3>
+    //    <a id='course-toggle-info-#{uniqueId}' class='info-toggle' href='#>Description</a>
+    //    <p id='course-content-info-#{uniqueId}' class='course-info-content'>#{description}</p>
+    //    <a id='course-toggle-error-#{uniqueId}' class='error-toggle' href='#'>Error</a>
+    //    <p id='course-content-error-#{uniqueId}' class='course-error-content'></p>
+    //</li>
+    var template = "<li id='course-{0}' class='{4}'><h3 class='course-name'>{2} ({0})</h3><a id='course-toggle-info-{1}' class='info-toggle' href='#'>Description</a><p id='course-content-info-{1}' class='course-info-content'>{3}</p><a id='course-toggle-error-{1}' class='error-toggle' href='#'>Error</a><p id='course-content-error-{1}' class='course-error-content'></p></li>";
+    var element = document.createElement('div');
+    element.innerHTML = String.format(template,
+                    course.id,
+                    Track.__UID,
+                    course.name,
+                    course.description,
+                    'course-' + state + ' course-' + type);
+    list.append(element.innerHTML);
+    var uid = Track.__UID++;
+    // DON'T FORGET SCOPING!!! http://stackoverflow.com/questions/8909652/adding-click-event-listeners-in-loop
+    infoToggleName = '#course-toggle-info-' + uid;
+    infoContentName = '#course-content-info-' + uid;
+    if (typeof window.addEventListener === 'function') {
+        (function (_infoContentName) {
+            $(infoToggleName).click(function () {
+                $(_infoContentName).slideToggle("fast");
+            });
+        })(infoContentName);
+    }
+
+    errorToggleName = '#course-toggle-error-' + uid;
+    errorContentName = '#course-content-error-' + uid;
+    if (typeof window.addEventListener === 'function') {
+        (function (_errorContentName) {
+            $(errorToggleName).click(function () {
+                $(_errorContentName).slideToggle("fast");
+            });
+        })(errorContentName);
+    }
+}
+
 // UTIL //
 if (!String.format) {
     String.format = function (format) {
@@ -68,6 +111,10 @@ TrackModel.prototype.find = function(courseId) {
 
 TrackModel.prototype.loadTrack = function (trackId, callback) {
     Track.loadNodes('/Track/GetTrackNodes', "trackId=" + trackId, this, function (self, nodes) {
+        for (var i = 0; i < MAX_SEMESTERS; i++) {
+            self.matrix[i].clear();
+            $('#semester-' + i).empty();
+        }
         self.addNodes(nodes);
         callback();
     });
@@ -287,77 +334,98 @@ function CourseItem(course) {
 
 // TRACK VIEW //
 function TrackView(model) {
-    this.semesters = [];
     this.model = model;
-    this._uid = 0;
     this._lastRemoved = null;
-    for (var i = 0; i < MAX_SEMESTERS; i++) {
-        this.semesters.push(document.getElementById("semester-" + i));
-    }
     this._enableSorting();
 }
 
 TrackView.prototype._enableSorting = function() {
     // add links to itself
     var self = this;
-    $('.course-list').sortable({
-        connectWith: ".course-list",
+    var allSemesters = String.generateRange(0, MAX_SEMESTERS, '#semester-');
+    $(allSemesters).sortable({
+        connectWith: allSemesters,
         remove: function (event, ui) {
-            return;// REMOVE AFTER TESTING
             var semesterIndex = parseInt(event.target.id.slice(-1), 10);
             var courseId = ui.item.context.id.split('-')[1];
-            var result = self.model.remove(semesterIndex, courseId);
-            self._lastRemoved = result.item;
+            self.onTrackRemove(semesterIndex, courseId);
         },
         receive: function (event, ui) {
-            return;// REMOVE AFTER TESTING
             var semesterIndex = parseInt(event.target.id.slice(-1), 10);
             var courseId = ui.item.context.id.split('-')[1];
-            var actions = self.model.add(semesterIndex, self._lastRemoved);
+            self.onTrackAdd(semesterIndex, courseId);
+        }
+    }).disableSelection();
 
-            var errors = [];
-            for (var i = 0; i < actions.length; i++) {
-                var action = actions[i];
-                switch (action.type) {
-                    case 'ALREADY_TAKEN':
-                        errors.push('this class was already taken in semester ' + (takenIn + 1));
-                        break;// FAIL HARD?
-                    case 'NOT_OFFERED':
-                        errors.push('this class is not offered in this semester');
-                        break;
-                    case 'PREQ':
-                        if (action.dirty.length > 0) {
-                            var dirtyErrors = [];
-                            for (var j = 0; j < action.dirty.length; j++) {
-                                dirtyErrors.push(action.dirty[i].node.course.name);
-                            }
-                            errors.push('you must take these classes first: ' + dirtyErrors.join(', '));
-                        }
-                        break;
-                    default:
-                        console.log('unknown error: %s', action.type);
-                        continue;
-                }
-            }
-            self.setCourseState(courseId, errors.length > 0 ? 'error' : 'ok');
-            var element = $(TrackView.escapeQuery('#semester-' + courseId + ' > .course-error-content'));
-            if (errors.length > 0) {
-                element.html(errors.join('\n\n'));
-            } else {
-                element.html('');
-                if (!element.is(':hidden')) {
-                    element.slideToggle('fast');
-                }
-            }
+    $('#bredth-list').sortable({
+        connectWith: allSemesters,
+        remove: function (event, ui) {
+            var semesterIndex = parseInt(event.target.id.slice(-1), 10);
+            var courseId = ui.item.context.id.split('-')[1];
+            //self.onTrackRemove(semesterIndex, courseId);
+        },
+        receive: function (event, ui) {
+            var semesterIndex = parseInt(event.target.id.slice(-1), 10);
+            var courseId = ui.item.context.id.split('-')[1];
+            //self.onTrackAdd(semesterIndex, courseId);
         }
     }).disableSelection();
 }
 
-TrackView.prototype.clear = function (semesterIndex) {
-    var list = this.semesters[semesterIndex];
-    while (list.firstChild) {
-        list.removeChild(list.firstChild);
+TrackView.prototype.onTrackRemove = function (semester, courseId) {
+    var result = this.model.remove(semester, courseId);
+    this._lastRemoved = result.item;
+}
+
+TrackView.prototype.onTrackAdd = function (semester, courseId) {
+    var actions = this.model.add(semester, this._lastRemoved);
+
+    var errors = [];
+    for (var i = 0; i < actions.length; i++) {
+        var action = actions[i];
+        switch (action.type) {
+            case 'ALREADY_TAKEN':
+                errors.push('this class was already taken in semester ' + (takenIn + 1));
+                break;// FAIL HARD?
+            case 'NOT_OFFERED':
+                errors.push('this class is not offered in this semester');
+                break;
+            case 'PREQ':
+                if (action.dirty.length > 0) {
+                    var dirtyErrors = [];
+                    for (var j = 0; j < action.dirty.length; j++) {
+                        dirtyErrors.push(action.dirty[i].node.course.name);
+                    }
+                    errors.push('you must take these classes first: ' + dirtyErrors.join(', '));
+                }
+                break;
+            default:
+                console.log('unknown error: %s', action.type);
+                continue;
+        }
     }
+    this.setCourseState(courseId, errors.length > 0 ? 'error' : 'ok');
+    var element = $(TrackView.escapeQuery('#course-' + courseId + ' > .course-error-content'));
+    if (errors.length > 0) {
+        element.html(errors.join('\n\n'));
+    } else {
+        element.html('');
+        if (!element.is(':hidden')) {
+            element.slideToggle('fast');
+        }
+    }
+}
+
+TrackView.prototype.onEFARemove = function (semester, courseId, type) {
+
+}
+
+TrackView.prototype.onEFAAdd = function (semester, courseId, type) {
+
+}
+
+TrackView.prototype.clear = function (semesterIndex) {
+    $('#semester-' + semesterIndex).empty();
 }
 
 TrackView.prototype.clearAll = function () {
@@ -366,31 +434,8 @@ TrackView.prototype.clearAll = function () {
     }
 }
 
-TrackView.createCourseElement = function (courseItem, newId) {
-    // NOTE: we imply ok for state by default because it will be what most states will be
-    // emulating this template
-    //<li id='semester-#{courseId}' class='course-ok'>
-    //    <h3 class='course-name'>#{name} (#{courseId})</h3>
-    //    <a id='course-toggle-info-#{uniqueId}' class='info-toggle' href='#>Description</a>
-    //    <p id='course-content-info-#{uniqueId}' class='course-info-content'>#{description}</p>
-    //    <a id='course-toggle-error-#{uniqueId}' class='error-toggle' href='#'>Error</a>
-    //    <p id='course-content-error-#{uniqueId}' class='course-error-content'></p>
-    //</li>
-
-    // variables are:
-    // 0: course id
-    // 1: unique course item id
-    // 2: course name
-    // 3: course description
-    var template = "<li id='semester-{0}' class='course-ok'><h3 class='course-name'>{2} ({0})</h3><a id='course-toggle-info-{1}' class='info-toggle' href='#'>Description</a><p id='course-content-info-{1}' class='course-info-content'>{3}</p><a id='course-toggle-error-{1}' class='error-toggle' href='#'>Error</a><p id='course-content-error-{1}' class='course-error-content'></p></li>";
-    var course = courseItem.course;
-    var element = document.createElement('div');
-    element.innerHTML = String.format(template, course.id, newId, course.name, course.description);
-    return element;
-}
-
 TrackView.getElement = function (courseId) {
-    return $('#semester-' + courseId.replace(':', '\\:'));// escape colon in jquery
+    return $('#course-' + courseId.replace(':', '\\:'));// escape colon in jquery
 }
 
 TrackView.escapeQuery = function (selector) {
@@ -416,38 +461,13 @@ TrackView.prototype.render = function () {
         var semester = this.model.matrix[s];
         for (var courseId in semester.courses) {
             var item = semester.courses[courseId];
-            var uid = this._uid++;
-            var element = TrackView.createCourseElement(item, uid);
-            while (element.children.length > 0) {
-                this.semesters[s].appendChild(element.children[0]);
-            }
-
-            // DON'T FORGET SCOPING!!! http://stackoverflow.com/questions/8909652/adding-click-event-listeners-in-loop
-            infoToggleName = '#course-toggle-info-' + uid;
-            infoContentName = '#course-content-info-' + uid;
-            if (typeof window.addEventListener === 'function') {
-                (function (_infoContentName) {
-                    $(infoToggleName).click(function () {
-                        $(_infoContentName).slideToggle("fast");
-                    });
-                })(infoContentName);
-            }
-
-            errorToggleName = '#course-toggle-error-' + uid;
-            errorContentName = '#course-content-error-' + uid;
-            if (typeof window.addEventListener === 'function') {
-                (function (_errorContentName) {
-                    $(errorToggleName).click(function () {
-                        $(_errorContentName).slideToggle("fast");
-                    });
-                })(errorContentName);
-            }
+            Track.addNewElementTo($('#semester-' + s), item.course, 'ok', 'other');
         }
     }
 }
 
 // EFA //
-function EFA(trackCallback, efaCallback) {
+function EFAModel(trackCallback, efaCallback) {
     this.tracks = null;
     this.efas = null;
     this.lastTrackId = -1;
@@ -473,10 +493,10 @@ function EFA(trackCallback, efaCallback) {
         }
         self.lastEFAId = efaId;
     });
-    this.loadSeed();
+    this.loadOptions();
 }
 
-EFA.prototype.loadSeed = function () {
+EFAModel.prototype.loadOptions = function () {
     var self = this;
     $.get("/Track/GetEFASeed", '', function (seed, status) {
         if (!seed) {
@@ -487,17 +507,32 @@ EFA.prototype.loadSeed = function () {
         self.tracks = seed.tracks;
         self.efas = seed.efas;
         $("#track-select").change(function () {
-            self.renderEFAS(this.selectedIndex);
+            self.renderEFAOptions(this.selectedIndex);
         });
-        self.renderTracks();
-        self.renderEFAS(0);
+        self.renderTrackOptions();
+        self.renderEFAOptions(0);
         $('#efa-load').prop('disabled', false);
     }, "json").fail(function (err, status) {
         console.log("error getting nodes: %s (%s)", err, status);
     });
 }
 
-EFA.prototype.renderTracks = function () {
+EFAModel.prototype.loadEFA = function (efaId, callback) {
+    Track.loadNodes('/Track/GetEFANodes', "efaId=" + efaId, this, function (self, nodes) {
+        var names = ['bredth', 'depth', 'upper', 'technical'];
+        for (var i = 0; i < names.length; i++) {
+            var pool = $('#' + names[i] + '-list');
+            pool.empty();
+            var items = nodes[names[i]];
+            for (var j = 0; j < items.length; j++) {
+                var node = items[j];
+                Track.addNewElementTo(pool, node.course, 'ok', names[node.type]);
+            }
+        }
+    });
+}
+
+EFAModel.prototype.renderTrackOptions = function () {
     var options = $("#track-select");
     for (var i = 0; i < this.tracks.length; i++) {
         var track = this.tracks[i];
@@ -505,11 +540,24 @@ EFA.prototype.renderTracks = function () {
     }
 }
 
-EFA.prototype.renderEFAS = function (index) {
+EFAModel.prototype.renderEFAOptions = function (index) {
     var options = $('#efa-select');
     options.empty();
     for (var i = 0; i < this.efas[index].length; i++) {
         var efa = this.efas[index][i];
         options.append($("<option />").val(efa.id).text(efa.name));
     }
+}
+
+// EFA VIEW //
+var NUM_EFAS = 4
+function EFAView(model) {
+    this.pools = [];
+    this.model = model;
+    this._uid = 0;
+    this._lastRemoved = null;
+    for (var i = 0; i < MAX_SEMESTERS; i++) {
+        this.semesters.push(document.getElementById("semester-" + i));
+    }
+    this._enableSorting();
 }
