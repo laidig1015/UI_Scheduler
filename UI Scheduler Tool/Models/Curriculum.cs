@@ -19,7 +19,7 @@ namespace UI_Scheduler_Tool.Models
 
         public Curriculum Get(DataContext db)
         {
-            return db.Curricula.UniqueWhere(this, c => c.Course.CourseNumber.Equals(Course.CourseNumber));
+            return db.Curricula.UniqueWhere(this, c => c.CourseID == CourseID && c.TrackID == TrackID);
         }
 
         public Curriculum Add(DataContext db)

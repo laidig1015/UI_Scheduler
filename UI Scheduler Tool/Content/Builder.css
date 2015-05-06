@@ -166,3 +166,23 @@
     box-shadow: 10px 10px 32px 6px rgba(0,0,0,0.29);
 }
 
+/* EFA Colors*/
+.efa-bredth {
+    color: #b216f1;
+}
+
+.efa-depth {
+    color: #ff6a00;
+}
+
+.efa-100 {
+    color: #efc10c;
+}
+
+.efa-technical {
+    color: #00ff90;
+}
+
+.efa-general {
+    color: #303030;
+}

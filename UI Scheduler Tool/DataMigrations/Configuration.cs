@@ -28,18 +28,85 @@ namespace UI_Scheduler_Tool.DataMigrations
         {
             //if (System.Diagnostics.Debugger.IsAttached == false)
             //    System.Diagnostics.Debugger.Launch();
-            AddTracksAndCurriculum(context);
-            //AddTrackEFACourses(context);
-            Maui.MauiScripts.addPrerequesiteInformationToAllCourses(context);
+            AddTracks(context);
+            AddEFAs(context);
+            AddCurriculumn(context);
+            //Maui.MauiScripts.addPrerequesiteInformationToAllCourses(context);
         }
 
-        public static void AddTracksAndCurriculum(DataContext context)
+        public static void AddTracks(DataContext context)
         {
-            Track ece = new Track { ShortName = "ECE", Name = "Computer Electrical Engineering" };
+            Track ece = new Track { ShortName = "ECE", Name = "Computer Engineering" };
             Track ee = new Track { ShortName = "EE", Name = "Electrical Engineering" };
             ece.Add(context);
             ee.Add(context);
             context.SaveChanges();
+        }
+
+        public static void AddEFAs(DataContext context)
+        {
+            Track ece = context.Tracks.Where(t => t.ShortName == "ECE").Single();
+            Track ee = context.Tracks.Where(t => t.ShortName == "EE").Single();
+
+            #region ECE
+            // ECE efas
+            EFA[] eceEFAs =
+            {
+                new EFA { Name = "Bioinformatics", ShortName = "BIO", TrackID = ece.ID },
+                new EFA { Name = "Business", ShortName = "BIZ", TrackID = ece.ID },
+                new EFA { Name = "Computer Hardware", ShortName = "CHARD", TrackID = ece.ID },
+                new EFA { Name = "Computer Networks", ShortName = "COMPNET", TrackID = ece.ID },
+                new EFA { Name = "Computer Bredth", ShortName = "CBREDTH", TrackID = ece.ID },
+
+                new EFA { Name = "Data Mining", ShortName = "DATMINE", TrackID = ece.ID },
+                new EFA { Name = "Entrepreneurship", ShortName = "EPNSHP", TrackID = ece.ID },
+                new EFA { Name = "Integrated Circuits", ShortName = "IC", TrackID = ece.ID },
+                new EFA { Name = "Pre-Law", ShortName = "LAW", TrackID = ece.ID },
+                new EFA { Name = "Pre-Medicine", ShortName = "MED", TrackID = ece.ID },
+
+                new EFA { Name = "Signal & Image Processing", ShortName = "SIGIMGP", TrackID = ece.ID },
+                new EFA { Name = "Software Enginerring", ShortName = "SOFTE", TrackID = ece.ID },
+                new EFA { Name = "Sustainablity", ShortName = "SUST", TrackID = ece.ID }
+            };
+            #endregion
+
+            #region EE
+            // ee efas
+            EFA[] eeEFAs =
+            {
+                new EFA { Name = "Applied Physics", ShortName = "PHYS", TrackID = ee.ID },
+                new EFA { Name = "Business", ShortName = "BIZ", TrackID = ee.ID },
+                new EFA { Name = "Communication Systems", ShortName = "COMMS", TrackID = ee.ID },
+                new EFA { Name = "Computer Hardware", ShortName = "CHARD", TrackID = ee.ID },
+                new EFA { Name = "Control Systems", ShortName = "CTRLS", TrackID = ee.ID },
+
+                new EFA { Name = "Electrical Bredth", ShortName = "EBREDTH", TrackID = ee.ID },
+                new EFA { Name = "Electronic Circuits", ShortName = "ECIRC", TrackID = ee.ID },
+                new EFA { Name = "Entrepreneurship", ShortName = "EPNSHP", TrackID = ee.ID },
+                new EFA { Name = "Integrated Circuits", ShortName = "IC", TrackID = ee.ID },
+
+                new EFA { Name = "Photonic Systems", ShortName = "PHOTOS", TrackID = ee.ID },
+                new EFA { Name = "Power Systems", ShortName = "PWRS", TrackID = ee.ID },
+                new EFA { Name = "Pre-Law", ShortName = "LAW", TrackID = ee.ID },
+                new EFA { Name = "Pre-Medicine", ShortName = "MED", TrackID = ee.ID },
+
+                new EFA { Name = "Semiconductor Devices", ShortName = "SEMIDEV", TrackID = ee.ID },
+                new EFA { Name = "Signal & Image Processing", ShortName = "SIGIMGP", TrackID = ee.ID },
+                new EFA { Name = "Sustainablity", ShortName = "SUST", TrackID = ee.ID }
+            };
+            #endregion
+
+            foreach (var item in eceEFAs)
+                item.Add(context);
+            foreach (var item in eeEFAs)
+                item.Add(context);
+            context.SaveChanges();
+        }
+
+        public static void AddCurriculumn(DataContext context)
+        {
+            Track ece = context.Tracks.Where(t => t.ShortName == "ECE").Single();
+            Track ee = context.Tracks.Where(t => t.ShortName == "EE").Single();
 
             #region ECE Track Courses
             string[] eceMatrix = 
@@ -79,8 +146,39 @@ namespace UI_Scheduler_Tool.DataMigrations
 
             BuildCurriculum(context, ece, eceMatrix);
             BuildCurriculum(context, ee, eeMatrix);
-
             context.SaveChanges();
+        }
+
+        private static void BuildCurriculum(DataContext context, Track t, string[] matrix)
+        {
+            // TODO FIX DUPLICATES ON CURRICULUM
+            for (int i = 0; i < matrix.Length; i++)
+            {
+                string[] courseStrs = matrix[i].Split('|');
+                for (int j = 0; j < courseStrs.Length; j++)
+                {
+                    string[] parts = courseStrs[j].Split(',');
+                    JToken mauiCourse = MauiCourse.FastGetSingleCourse(parts[0]);// first part is the course number
+                    Course course = new Course
+                    {
+                        CourseName = (string)mauiCourse["title"],
+                        CatalogDescription = (string)mauiCourse["catalogDescription"],
+                        CourseNumber = parts[0],
+                        CreditHours = (string)mauiCourse["creditHours"],
+                        LastTaughtID = (int)mauiCourse["lastTaughtId"],
+                        IsOfferedInFall = (parts[1][0] == 'T'),
+                        IsOfferedInSpring = (parts[2][0] == 'T')
+                    };
+                    course = course.Add(context);
+                    Curriculum curriculum = new Curriculum
+                    {
+                        Course = course,
+                        Track = t,
+                        SemesterIndex = i
+                    };
+                    curriculum.Add(context);
+                }
+            }
         }
 
         public static void AddTrackEFACourses(DataContext context)
@@ -177,37 +275,6 @@ namespace UI_Scheduler_Tool.DataMigrations
             BuildTrackRules(context, new Track[]{ eeTrack, eceTrack }, EFAType.TECHNICAL, sharedTechnicalRule);
 
             context.SaveChanges();
-        }
-
-        private static void BuildCurriculum(DataContext context, Track t, string[] matrix)
-        {
-            for (int i = 0; i < matrix.Length; i++)
-            {
-                string[] courseStrs = matrix[i].Split('|');
-                for (int j = 0; j < courseStrs.Length; j++)
-                {
-                    string[] parts = courseStrs[j].Split(',');
-                    JToken mauiCourse = MauiCourse.FastGetSingleCourse(parts[0]);// first part is the coures number
-                    Course course = new Course
-                    {
-                        CourseName = (string)mauiCourse["title"],
-                        CatalogDescription = (string)mauiCourse["catalogDescription"],
-                        CourseNumber = parts[0],
-                        CreditHours = (string)mauiCourse["creditHours"],
-                        LastTaughtID = (int)mauiCourse["lastTaughtId"],
-                        IsOfferedInFall = (parts[1][0] == 'T'),
-                        IsOfferedInSpring = (parts[2][0] == 'T')
-                    };
-                    course = course.Add(context);
-                    Curriculum curriculum = new Curriculum
-                    {
-                        Course = course,
-                        Track = t,
-                        SemesterIndex = i
-                    };
-                    curriculum.Add(context);
-                }
-            }
         }
 
         private static void BuildTrackList(DataContext context, Track[] tracks, EFAType type, string courses)
