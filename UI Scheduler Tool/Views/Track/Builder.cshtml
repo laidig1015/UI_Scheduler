@@ -25,6 +25,8 @@
         }
 
         $(document).ready(function () {
+            Track.efa = new EFA();
+            Track.efa.loadSeed();
             Track.model = new TrackModel();
             Track.view = new TrackView(Track.model);
         });
@@ -34,17 +36,11 @@
     <div>
         <div class="efa-selector">
             <h3>Track Choices</h3>
-            <select>
-                <option value="ECE">Electrical / Computer Engineering</option>
-                <option value="EE">Electrical Engineering</option>
-            </select>
+            <select id="track-select"></select>
         </div>
         <div class="efa-selector">
             <h3>Suggested EFAs</h3>
-            <select>
-                <option value="Software-Engineering">Software Engineering</option>
-                <option value="Pre-Med">Pre-Med</option>
-            </select>
+            <select id="efa-select"></select>
         </div>
         <input id="load-efa" type="submit" value="Load">
     </div>
@@ -200,7 +196,7 @@
         </div>
     </div>
     @* modal *@
-    <div class="modal hide in" id="trackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    @*<div class="modal hide in" id="trackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-backdrop fade in">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -220,6 +216,6 @@
                 <button class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#trackModal').hide()">X</button>
             </div>
         </div>
-    </div>
+    </div>*@
 </body>
 </html>

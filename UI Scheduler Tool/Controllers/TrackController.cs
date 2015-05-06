@@ -11,19 +11,23 @@ namespace UI_Scheduler_Tool.Controllers
 {
     public class TrackController : Controller
     {
-        public ActionResult Select()
-        {
-            return View();
-        }
-
-        public ActionResult EFA()
-        {
-            return View();
-        }
-
         public ActionResult Builder()
         {
             return View();
+        }
+
+        public ActionResult GetEFASeed()
+        {
+            JEFASeedData seed = new JEFASeedData();
+            if (!seed.Load())
+            {
+                return Content(string.Empty);
+            }
+            else
+            {
+                string result = JsonConvert.SerializeObject(seed);
+                return Content(result);
+            }
         }
 
         public ActionResult GetCurriculumNodes(string trackName)

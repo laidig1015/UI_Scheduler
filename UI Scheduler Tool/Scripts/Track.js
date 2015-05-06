@@ -434,3 +434,46 @@ TrackView.prototype.render = function () {
         }
     }
 }
+
+// EFA //
+function EFA() {
+    this.tracks = null;
+    this.efas = null;
+}
+
+EFA.prototype.loadSeed = function () {
+    var self = this;
+    $.get("/Track/GetEFASeed", '', function (seed, status) {
+        if (!seed) {
+            console.log("error getting seed!");
+            return false;
+        }
+        console.log("got seed: %o", seed);
+        self.tracks = seed.tracks;
+        self.efas = seed.efas;
+        $("#track-select").change(function () {
+            self.renderEFAS(this.selectedIndex);
+        });
+        self.renderTracks();
+        self.renderEFAS(0);
+    }, "json").fail(function (err, status) {
+        console.log("error getting nodes: %s (%s)", err, status);
+    });
+}
+
+EFA.prototype.renderTracks = function () {
+    var options = $("#track-select");
+    for (var i = 0; i < this.tracks.length; i++) {
+        var track = this.tracks[i];
+        options.append($("<option />").val(track.id).text(track.name));
+    }
+}
+
+EFA.prototype.renderEFAS = function (index) {
+    var options = $('#efa-select');
+    options.empty();
+    for (var i = 0; i < this.efas[index].length; i++) {
+        var efa = this.efas[index][i];
+        options.append($("<option />").val(efa.id).text(efa.name));
+    }
+}

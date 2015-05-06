@@ -265,6 +265,7 @@
     <Compile Include="Models\DbExtensions.cs" />
     <Compile Include="Models\EFA.cs" />
     <Compile Include="Models\EFACourses.cs" />
+    <Compile Include="Models\JEFASeedData.cs" />
     <Compile Include="Models\EFAType.cs" />
     <Compile Include="Models\JCourse.cs" />
     <Compile Include="Models\PreqEdge.cs" />
@@ -377,7 +378,6 @@
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
-    <Content Include="Scripts\Preq.js" />
     <Content Include="Scripts\Track.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -424,8 +424,6 @@
     <Content Include="Views\Course\_CoursesPartial.cshtml" />
     <Content Include="Views\Course\BlockSchedueler.cshtml" />
     <Content Include="Views\Course\_CourseSectionPartial.cshtml" />
-    <Content Include="Views\Track\Select.cshtml" />
-    <Content Include="Views\Track\EFA.cshtml" />
     <Content Include="Views\Track\Builder.cshtml" />
     <Content Include="Views\Admin\ViewCurrentCourses.cshtml" />
     <Content Include="Views\Admin\AdminPage.cshtml" />
