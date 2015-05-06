@@ -6,7 +6,6 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
     <title>Block Scheduler</title>
     <script src="~/Scripts/jquery-1.8.2.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.8.24.min.js"></script>
@@ -52,42 +51,69 @@
     <div id="track-matrix">
         @{
             int startYear = DateTime.Now.Year;
-            for (int y = 0, s = 0; y < 4; y++, s+=2)
+            for (int y = 0, s = 0; y < 4; y++, s += 2)
             {
-                <div id="year-@(y)" class="year">
-                    <h3>@(startYear+y)-@(startYear+y+1)</h3>
-                    <div class="semester">
-                        <h3>Fall</h3>
-                        <ul id="course-list-@(s)" class="course-list"></ul>
+                <div id="year-@(y)" class="quarter">
+                    <h3 class='list-title'>@(startYear + y)-@(startYear + y + 1)</h3>
+                    <div class="half">
+                        <h3 class="list-title fall">Fall</h3>
+                        <ul id="semester-@(s)" class="course-list"></ul>
                     </div>
-                    <div class="semester">
-                        <h3>Spring</h3>
-                        <ul id="course-list-@(s+1)" class="course-list"></ul>
+                    <div class="half">
+                        <h3 class="list-title spring">Spring</h3>
+                        <ul id="semester-@(s+1)" class="course-list"></ul>
                     </div>
                 </div>
             }
         }
-
-        @* modal *@
-        <div class="modal hide in" id="trackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-backdrop fade in">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2 id="myModalLabel">Select Track</h2>
-                        </div>
-                        <div class="modal-body">
-                            <select id="trackChoices">
-                                <option>Electrical</option>
-                                <option>Computer</option>
-                            </select>
-                        </div>
-                        <div class="modal-footer">
-                            <button id="trackSave" class="btn btn-primary" onclick="createTrackQuery()">Save changes</button>
-                        </div>
+    </div>
+    <div id="efa-lists">
+        <div id="efa-bredth">
+            <h3 class="list-title">Bredth (0 / 1)</h3>
+            <ul id="bredth-list" class="course-list side-scroll">
+                <li id="course-CS:3320" class='course-ok'>
+                    <h3 class='course-name'>This is a class (055:136)</h3>
+                    <a id='course-toggle-info-99' class='info-toggle' href='#'>Description</a>
+                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
+                    <a id='course-toggle-error-99' class='error-toggle' href='#'>Error</a>
+                    <p id='course-content-error-99' class='course-error-content'></p>
+                </li>
+                <li class='course-ok'>
+                    <h3 class='course-name'>This is a class (055:136)</h3>
+                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
+                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
+                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
+                    <p id='course-content-error-99' class='course-error-content'></p>
+                </li>
+                <li class='course-ok'>
+                    <h3 class='course-name'>This is a class (055:136)</h3>
+                    <a id='course-toggle-info-99' class='course-toggle info-toggle' href='#'>Description</a>
+                    <p id='course-content-info-99' class='course-info-content'>Some Description</p>
+                    <a id='course-toggle-error-99' class='course-toggle error-toggle' href='#'>Error</a>
+                    <p id='course-content-error-99' class='course-error-content'></p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    @* modal *@
+    <div class="modal hide in" id="trackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-backdrop fade in">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="myModalLabel">Select Track</h2>
                     </div>
-                    <button class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#trackModal').hide()">X</button>
+                    <div class="modal-body">
+                        <select id="trackChoices">
+                            <option>Electrical</option>
+                            <option>Computer</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="trackSave" class="btn btn-primary" onclick="createTrackQuery()">Save changes</button>
+                    </div>
                 </div>
+                <button class="close" data-dismiss="modal" aria-hidden="true" onclick="$('#trackModal').hide()">X</button>
             </div>
         </div>
     </div>

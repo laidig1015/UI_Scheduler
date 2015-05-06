@@ -14,6 +14,17 @@ if (!String.format) {
     };
 }
 
+if (!String.generateRange) {
+    String.generateRange = function (begin, end, prefix, delim) {
+        if(typeof(delim) === 'undefined') delim = ',';
+        var list = [];
+        for (var i = begin; i < end; i++) {
+            list.push(prefix + i);
+        }
+        return list.join(',');
+    }
+}
+
 // CONSTATNTS //
 var MAX_SEMESTERS = 8;
 var MAX_COURSES = 20;
@@ -28,6 +39,16 @@ function TrackModel() {
     this.totalSemesterHours = 0;
 }
 
+TrackModel.prototype.find = function(courseId) {
+    for(var i = 0; i < MAX_SEMESTERS; i++) {
+        var item = this.matrix[i].find(courseId);
+        if(item) {
+            return item;
+        }
+    }
+    return null;
+}
+
 TrackModel.prototype.loadCurriculum = function (track, callback) {
     var self = this;
     $.get("/Track/GetCurriculumNodes", "trackName=" + track, function (nodes, status) {
@@ -37,12 +58,17 @@ TrackModel.prototype.loadCurriculum = function (track, callback) {
         }
         console.log("got nodes: %o", nodes);
         var numNodes = nodes.length;
+        var regexFilter = /(<([^>]+)>)/ig;// remove any html tags we might find in the desc
         for (var i = 0; i < numNodes; i++) {
             var node = nodes[i];
             // always trust the db source for now
-            self.matrix[node.index].add({ course: node.course, preqDirty: [], isOffered: true });
+            self.matrix[node.index].add(new CourseItem(node.course));
             if (!(node.id in self.nodes)) {
                 self.nodes[node.course.id] = node;
+                // filter any html tags that might be embeded in our description
+                var cleanDesc = self.nodes[node.course.id].course.description;
+                cleanDesc = cleanDesc.replace(regexFilter, "");
+                self.nodes[node.course.id].course.description = cleanDesc;
             }
         }
         callback();
@@ -83,13 +109,13 @@ TrackModel.isOfferedIn = function (semesterIndex, course) {
     return (isSpring && course.isOfferedInSpring) || (!isSpring && course.isOfferedInFall);
 }
 
-TrackModel.prototype.checkPreqs = function (semesterIndex, node) {
+TrackModel.prototype.checkPreqs = function (semester, node) {
     var dirty = new Array();
     var stack = new Array();
     var numInitialParents = node.parents.length;
     // start by pushing our initial nodes parents to the stack
     for (var i = 0; i < numInitialParents; i++) {
-        stack.push({ node: this.nodes[node.parents[i]], index: semesterIndex });
+        stack.push({ node: this.nodes[node.parents[i]], index: semester });
     }
 
     while (stack.length > 0) {// while we have no more nodes to check
@@ -116,8 +142,8 @@ TrackModel.prototype.checkPreqs = function (semesterIndex, node) {
     return dirty;// return an array of our dirty nodes
 }
 
-TrackModel.prototype.add = function (semesterIndex, courseItem) {
-    var result = { wasAdded: false, errors: [] };
+TrackModel.prototype.add = function (semester, courseItem) {
+    var actions = [];
     var course = courseItem.course;
 
     // find the current node
@@ -127,32 +153,33 @@ TrackModel.prototype.add = function (semesterIndex, courseItem) {
     var takenIn = this.hasCourse(course.id);
     if (takenIn != -1) {
         console.log("class already taken in: %d", takenIn);
-        result.errors.push({ type: "ALREADY_EXISTS", takenIn: takenIn });
+        actions.push({ type: 'ALREADY_TAKEN', takenIn: takenIn });
     }
 
     // update if this new item is validated for this semester
-    courseItem.isOffered = TrackModel.isOfferedIn(semesterIndex, node.course);
+    courseItem.isOffered = TrackModel.isOfferedIn(semester, node.course);
     if (!courseItem.isOffered) {
         console.log("class not offered!");
+        actions.push({ type: 'NOT_OFFERED' });
     }
 
     // check if we have the required prequisties to take the course
-    courseItem.preqDirty = this.checkPreqs(semesterIndex, node);
-    if (courseItem.preqDirty.length > 0) {
-        console.log("preq error when adding course, dirty %o", courseItem.preqDirty);
-        result.errors.push({ type: "PREQ", dirty: courseItem.preqDirty });
+    var newDirty = this.checkPreqs(semester, node);
+    if(newDirty.length > 0) {
+        console.log('preq errors: %o', newDirty);
     }
+    actions.push({ type: 'PREQ', dirty: newDirty });// always add errors
+    courseItem.preqDirty = newDirty;
 
-    this.matrix[semesterIndex].add(courseItem)
-    result.wasAdded = true;
-    return result;
+    this.matrix[semester].add(courseItem);
+    return actions;
 }
 
-TrackModel.prototype.remove = function (semesterIndex, courseId) {
+TrackModel.prototype.remove = function (semester, courseId) {
     var result = { wasRemoved: false, errors: [], item: null };
 
     // make sure we have the course in this semester
-    if (!this.matrix[semesterIndex].hasCourse(courseId)) {
+    if (!this.matrix[semester].hasCourse(courseId)) {
         console.log("course not in matrix");
         result.errors.push({ type: "DOES_NOT_EXIST" });
         return result;
@@ -169,7 +196,7 @@ TrackModel.prototype.remove = function (semesterIndex, courseId) {
         }
         // if we have one of our children taken in the future don't let us remove
         // this from the matrix
-        var takenAt = this.willTake(semesterIndex, child.course.id);
+        var takenAt = this.willTake(semester, child.course.id);
         if (takenAt > -1) {
             // invalidate this course in our matrix
             this.matrix[takenAt].courses[child.course.id].hasPreqErrors = true;
@@ -183,7 +210,7 @@ TrackModel.prototype.remove = function (semesterIndex, courseId) {
         result.errors.push({ type: "PREQ_CONFLICTS", conflict: conflicts });
     }
 
-    result.item = this.matrix[semesterIndex].remove(courseId);
+    result.item = this.matrix[semester].remove(courseId);
     result.wasRemoved = true;
     return result;
 }
@@ -240,33 +267,77 @@ CourseList.prototype.remove = function (courseId) {
     return courseItem;
 }
 
+// COURSE ITEM //
+function CourseItem(course) {
+    this.course = course;
+    this.preqDirty = [];
+    this.isOffered = true;
+}
+
 // TRACK VIEW //
 function TrackView(model) {
     this.semesters = [];
     this.model = model;
+    this._uid = 0;
     this._lastRemoved = null;
     for (var i = 0; i < MAX_SEMESTERS; i++) {
-        this.semesters.push(document.getElementById("course-list-" + i));
+        this.semesters.push(document.getElementById("semester-" + i));
     }
+    this._enableSorting();
+}
+
+TrackView.prototype._enableSorting = function() {
     // add links to itself
-    var courseLists = [];
-    for (var i = 0; i < 8; i++) {
-        courseLists.push('#course-list-' + i);
-    }
-    var courseSelector = courseLists.join(',');
     var self = this;
-    $(courseSelector).sortable({
+    $('.course-list').sortable({
         connectWith: ".course-list",
         remove: function (event, ui) {
+            return;// REMOVE AFTER TESTING
             var semesterIndex = parseInt(event.target.id.slice(-1), 10);
             var courseId = ui.item.context.id.split('-')[1];
             var result = self.model.remove(semesterIndex, courseId);
             self._lastRemoved = result.item;
         },
         receive: function (event, ui) {
+            return;// REMOVE AFTER TESTING
             var semesterIndex = parseInt(event.target.id.slice(-1), 10);
             var courseId = ui.item.context.id.split('-')[1];
-            var result = self.model.add(semesterIndex, self._lastRemoved);
+            var actions = self.model.add(semesterIndex, self._lastRemoved);
+
+            var errors = [];
+            for (var i = 0; i < actions.length; i++) {
+                var action = actions[i];
+                switch (action.type) {
+                    case 'ALREADY_TAKEN':
+                        errors.push('this class was already taken in semester ' + (takenIn + 1));
+                        break;// FAIL HARD?
+                    case 'NOT_OFFERED':
+                        errors.push('this class is not offered in this semester');
+                        break;
+                    case 'PREQ':
+                        if (action.dirty.length > 0) {
+                            var dirtyErrors = [];
+                            for (var j = 0; j < action.dirty.length; j++) {
+                                dirtyErrors.push(action.dirty[i].node.course.name);
+                            }
+                            errors.push('you must take these classes first: ' + dirtyErrors.join(', '));
+                        }
+                        break;
+                    default:
+                        console.log('unknown error: %s', action.type);
+                        continue;
+                }
+            }
+            self.setCourseState(courseId, errors.length > 0 ? 'error' : 'ok');
+            var element = $(TrackView.escapeQuery('#semester-' + courseId + ' > .course-error-content'));
+            if (errors.length > 0) {
+                element.html(errors.join('\n\n'));
+            } else {
+                element.html('');
+                if (!element.is(':hidden')) {
+                    element.slideToggle('fast');
+                }
+            }
         }
     }).disableSelection();
 }
@@ -284,106 +355,82 @@ TrackView.prototype.clearAll = function () {
     }
 }
 
-TrackView.createCourseElement = function (courseItem) {
-    // this is equivelent to htmlTemplate
-    //"<li id='semester-#{courseId}' class='course-item'>
-    //    <div class='course-container'>
-    //        <div class='course-name'>#{name}</div>
-    //        <div class='course-info'>#{description}</div>
-    //        <div class='course-error'>#{errors}</div>
-    //        <a href='#' class='course-button-info'>info</a>
-    //        <a href='#' class='course-button-error'>errors</a>
-    //    </div>
-    //</li>"
-    var htmlTemplate = "<li id='semester-{0}' class='course-item'><div class='course-container'><div class='course-name'>{1} ({0})</div><div class='course-info'>{2}</div><div class='course-error'>{3}</div><a href='#' class='course-button-info'>info</a><a href='#' class='course-button-error'>errors</a></div></li>";
+TrackView.createCourseElement = function (courseItem, newId) {
+    // NOTE: we imply ok for state by default because it will be what most states will be
+    // emulating this template
+    //<li id='semester-#{courseId}' class='course-ok'>
+    //    <h3 class='course-name'>#{name} (#{courseId})</h3>
+    //    <a id='course-toggle-info-#{uniqueId}' class='info-toggle' href='#>Description</a>
+    //    <p id='course-content-info-#{uniqueId}' class='course-info-content'>#{description}</p>
+    //    <a id='course-toggle-error-#{uniqueId}' class='error-toggle' href='#'>Error</a>
+    //    <p id='course-content-error-#{uniqueId}' class='course-error-content'></p>
+    //</li>
+
+    // variables are:
+    // 0: course id
+    // 1: unique course item id
+    // 2: course name
+    // 3: course description
+    var template = "<li id='semester-{0}' class='course-ok'><h3 class='course-name'>{2} ({0})</h3><a id='course-toggle-info-{1}' class='info-toggle' href='#'>Description</a><p id='course-content-info-{1}' class='course-info-content'>{3}</p><a id='course-toggle-error-{1}' class='error-toggle' href='#'>Error</a><p id='course-content-error-{1}' class='course-error-content'></p></li>";
     var course = courseItem.course;
     var element = document.createElement('div');
-    element.innerHTML = String.format(htmlTemplate, course.id, course.name, course.description, "AN ERROR HAS OCCURED");
+    element.innerHTML = String.format(template, course.id, newId, course.name, course.description);
     return element;
 }
 
+TrackView.getElement = function (courseId) {
+    return $('#semester-' + courseId.replace(':', '\\:'));// escape colon in jquery
+}
+
+TrackView.escapeQuery = function (selector) {
+    return selector.replace(':', '\\:');
+}
+
+TrackView.prototype.setCourseState = function (courseId, state) {
+    switch (state) {
+    case 'ok': case 'warning': case 'error': break;
+    default: return;
+    };
+    var element = TrackView.getElement(courseId);
+    if (!element) return;
+    element.attr('class', '');
+    element.addClass('course-' + state);
+}
+
 TrackView.prototype.render = function () {
+    var infoToggle, infoContent, errorToggle, errorContent;
+
     for (var s = 0; s < MAX_SEMESTERS; s++) {
         this.clear(s);
         var semester = this.model.matrix[s];
         for (var courseId in semester.courses) {
             var item = semester.courses[courseId];
-            var element = TrackView.createCourseElement(item);
+            var uid = this._uid++;
+            var element = TrackView.createCourseElement(item, uid);
             while (element.children.length > 0) {
                 this.semesters[s].appendChild(element.children[0]);
             }
+
+            // DON'T FORGET SCOPING!!! http://stackoverflow.com/questions/8909652/adding-click-event-listeners-in-loop
+            infoToggleName = '#course-toggle-info-' + uid;
+            infoContentName = '#course-content-info-' + uid;
+            if (typeof window.addEventListener === 'function') {
+                (function (_infoContentName) {
+                    $(infoToggleName).click(function () {
+                        $(_infoContentName).slideToggle("fast");
+                    });
+                })(infoContentName);
+            }
+
+            errorToggleName = '#course-toggle-error-' + uid;
+            errorContentName = '#course-content-error-' + uid;
+            if (typeof window.addEventListener === 'function') {
+                (function (_errorContentName) {
+                    $(errorToggleName).click(function () {
+                        $(_errorContentName).slideToggle("fast");
+                    });
+                })(errorContentName);
+            }
         }
     }
-    this.addButtonEvents();
-}
-
-TrackView.prototype.addButtonEvents = function () {
-    var toggleContainerExpand = function (container) {
-        if (!container.hasClass("isExpanded")) {
-            container.children(".course-name").toggleClass("course-name-expand");
-            container.animate({
-                width: 350,
-                height: 350,
-                top: -80,
-                left: -45
-            }, 'fast');
-            container.animate().css('box-shadow', '0 0 5px #000');
-            container.css({
-                zIndex: 100
-            });
-        } else {
-            container.children(".course-name").toggleClass("course-name-expand");
-            container.animate().css('box-shadow', 'none')
-            container.animate({
-                width: 115,
-                height: 120,
-                top: 0,
-                left: 0
-            }, 'fast');
-            container.css({
-                zIndex: 1
-            });
-        }
-        container.toggleClass("isExpanded");
-    }
-
-    var lastClicked = null;
-    var onCourseButtonClick = function (context, event, type) {
-        event.preventDefault();
-        var container = context.parent();
-
-        var thisType = type;
-        var otherType = (thisType == 'info') ? 'error' : 'info';
-        var thisClass = ('.course-' + thisType);
-        var otherClass = ('.course-' + otherType);
-        var thisExpandClass = ('course-' + thisType + '-expand');
-        var otherExpandClass = ('course-' + otherType + '-expand');
-        var thisElement = container.children(thisClass);
-        var otherElement = container.children(otherClass);
-
-        if (lastClicked && !(lastClicked.is(container)) && lastClicked.hasClass('isExpanded')) {
-            lastClicked.children(thisClass).removeClass(thisExpandClass);
-            lastClicked.children(otherClass).removeClass(otherExpandClass);
-            toggleContainerExpand(lastClicked);
-        }
-
-        thisElement.toggleClass(thisExpandClass);
-
-        var containerIsExpanded = container.hasClass('isExpanded');
-        var thisIsExpanded = thisElement.hasClass(thisExpandClass);
-        var otherIsExpanded = otherElement.hasClass(otherExpandClass);
-        if ((containerIsExpanded && (!thisIsExpanded && !otherIsExpanded)) ||
-            (!containerIsExpanded && (thisIsExpanded || otherIsExpanded))) {
-            toggleContainerExpand(container);
-        }
-        lastClicked = container;
-        return false;
-    }
-
-    $('.course-button-info').click(function (event) {
-        return onCourseButtonClick($(this), event, 'info');
-    });
-    $('.course-button-error').click(function (event) {
-        return onCourseButtonClick($(this), event, 'error');
-    });
 }
