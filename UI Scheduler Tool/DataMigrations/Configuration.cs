@@ -26,11 +26,11 @@ namespace UI_Scheduler_Tool.DataMigrations
 
         protected override void Seed(DataContext context)
         {
-            if (System.Diagnostics.Debugger.IsAttached == false)
-                System.Diagnostics.Debugger.Launch();
-            //AddTracks(context);
-            //AddEFAs(context);
-            //AddCurriculumn(context);
+            //if (System.Diagnostics.Debugger.IsAttached == false)
+            //    System.Diagnostics.Debugger.Launch();
+            AddTracks(context);
+            AddEFAs(context);
+            AddCurriculumn(context);
             AddEFACourses(context);
             Maui.MauiScripts.addPrerequesiteInformationToAllCourses(context);
         }

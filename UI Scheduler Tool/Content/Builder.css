@@ -187,3 +187,23 @@
 .efa-general {
     color: #303030;
 }
+
+.course-bredth {
+    border: 2px solid #b216f1;
+}
+
+.course-depth {
+    border: 2px solid #ff6a00;
+}
+
+.course-upper {
+    border: 2px solid #efc10c;
+}
+
+.course-technical {
+    border: 2px solid #00ff90;
+}
+
+.course-general {
+    border: 2px solid #303030;
+}

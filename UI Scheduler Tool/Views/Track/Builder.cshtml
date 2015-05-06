@@ -12,8 +12,12 @@
     <link rel="stylesheet" type="text/css" href="~/Content/Builder.css" />
     <link rel="stylesheet" type="text/css" href="~/Content/Modal.css" />
     <script src="~/Scripts/Track.js"></script>
+    @*<script src="~/Scripts/TrackLogic.js"></script>*@
     <script>
         $(document).ready(function () {
+            //UI.model = new Track();
+            //UI.model.init();
+
             Track.trackModel = new TrackModel();
             Track.view = new TrackView(Track.trackModel);
             Track.efaModel = new EFAModel(
@@ -26,7 +30,8 @@
                 Track.efaModel.loadEFA(efaId, function () {
 
                 });
-            });
+            },
+            Track.trackModel);
         });
     </script>
 </head>

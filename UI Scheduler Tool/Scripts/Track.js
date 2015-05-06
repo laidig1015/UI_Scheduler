@@ -124,9 +124,13 @@ TrackModel.prototype.addNodes = function (nodes) {
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i];
         // always trust the db source for now
-        this.matrix[node.index].add(new CourseItem(node.course));
+        if (node.index >= 0) {
+            this.matrix[node.index].add(new CourseItem(node.course));
+        }
         if (!(node.id in this.nodes)) {
             this.nodes[node.course.id] = node;
+            this.nodes[node.course.id].isOffered = true;
+            this.nodes[node.course.id].preqDirty = [];
         }
     }
 }
@@ -264,7 +268,9 @@ TrackModel.prototype.remove = function (semester, courseId) {
         result.errors.push({ type: "PREQ_CONFLICTS", conflict: conflicts });
     }
 
-    result.item = this.matrix[semester].remove(courseId);
+    this.matrix[semester].remove(courseId);
+    result.item = this.nodes[courseId];
+    //result.item = this.matrix[semester].remove(courseId);
     result.wasRemoved = true;
     return result;
 }
@@ -343,85 +349,65 @@ TrackView.prototype._enableSorting = function() {
     // add links to itself
     var self = this;
     var allSemesters = String.generateRange(0, MAX_SEMESTERS, '#semester-');
-    $(allSemesters).sortable({
-        connectWith: allSemesters,
+    $('.course-list').sortable({
+        connectWith: '.course-list',
         remove: function (event, ui) {
-            var semesterIndex = parseInt(event.target.id.slice(-1), 10);
-            var courseId = ui.item.context.id.split('-')[1];
-            self.onTrackRemove(semesterIndex, courseId);
+            console.log('remove: target: %s item: %s', event.target.id, ui.item.context.id);
+            var targetParts = event.target.id.split('-');
+            if (targetParts[0] == 'semester') {
+                var semester = parseInt(targetParts[1], 10);
+                var courseId = ui.item.context.id.split('-')[1];
+                var result = self.model.remove(semester, courseId);
+                self._lastRemoved = result.item;
+            } else {
+                self._lastRemove = null;
+            }
         },
         receive: function (event, ui) {
-            var semesterIndex = parseInt(event.target.id.slice(-1), 10);
-            var courseId = ui.item.context.id.split('-')[1];
-            self.onTrackAdd(semesterIndex, courseId);
-        }
-    }).disableSelection();
+            console.log('receive: target: %s item: %s', event.target.id, ui.item.context.id);
+            var targetParts = event.target.id.split('-');
+            if (targetParts[0] == 'semester') {
+                var semester = parseInt(targetParts[1], 10);
+                var courseId = ui.item.context.id.split('-')[1];
 
-    $('#bredth-list').sortable({
-        connectWith: allSemesters,
-        remove: function (event, ui) {
-            var semesterIndex = parseInt(event.target.id.slice(-1), 10);
-            var courseId = ui.item.context.id.split('-')[1];
-            //self.onTrackRemove(semesterIndex, courseId);
-        },
-        receive: function (event, ui) {
-            var semesterIndex = parseInt(event.target.id.slice(-1), 10);
-            var courseId = ui.item.context.id.split('-')[1];
-            //self.onTrackAdd(semesterIndex, courseId);
-        }
-    }).disableSelection();
-}
-
-TrackView.prototype.onTrackRemove = function (semester, courseId) {
-    var result = this.model.remove(semester, courseId);
-    this._lastRemoved = result.item;
-}
-
-TrackView.prototype.onTrackAdd = function (semester, courseId) {
-    var actions = this.model.add(semester, this._lastRemoved);
-
-    var errors = [];
-    for (var i = 0; i < actions.length; i++) {
-        var action = actions[i];
-        switch (action.type) {
-            case 'ALREADY_TAKEN':
-                errors.push('this class was already taken in semester ' + (takenIn + 1));
-                break;// FAIL HARD?
-            case 'NOT_OFFERED':
-                errors.push('this class is not offered in this semester');
-                break;
-            case 'PREQ':
-                if (action.dirty.length > 0) {
-                    var dirtyErrors = [];
-                    for (var j = 0; j < action.dirty.length; j++) {
-                        dirtyErrors.push(action.dirty[i].node.course.name);
+                var actions = self.model.add(semester, self.model.nodes[courseId])//self._lastRemoved);
+                var errors = [];
+                for (var i = 0; i < actions.length; i++) {
+                    var action = actions[i];
+                    switch (action.type) {
+                        case 'ALREADY_TAKEN':
+                            errors.push('this class was already taken in semester ' + (takenIn + 1));
+                            break;// FAIL HARD?
+                        case 'NOT_OFFERED':
+                            errors.push('this class is not offered in this semester');
+                            break;
+                        case 'PREQ':
+                            if (action.dirty.length > 0) {
+                                var dirtyErrors = [];
+                                for (var j = 0; j < action.dirty.length; j++) {
+                                    dirtyErrors.push(action.dirty[i].node.course.name);
+                                }
+                                errors.push('you must take these classes first: ' + dirtyErrors.join(', '));
+                            }
+                            break;
+                        default:
+                            console.log('unknown error: %s', action.type);
+                            continue;
                     }
-                    errors.push('you must take these classes first: ' + dirtyErrors.join(', '));
                 }
-                break;
-            default:
-                console.log('unknown error: %s', action.type);
-                continue;
+                self.setCourseState(courseId, errors.length > 0 ? 'error' : 'ok');
+                var element = $(TrackView.escapeQuery('#course-' + courseId + ' > .course-error-content'));
+                if (errors.length > 0) {
+                    element.html(errors.join('\n\n'));
+                } else {
+                    element.html('');
+                    if (!element.is(':hidden')) {
+                        element.slideToggle('fast');
+                    }
+                }
+            }
         }
-    }
-    this.setCourseState(courseId, errors.length > 0 ? 'error' : 'ok');
-    var element = $(TrackView.escapeQuery('#course-' + courseId + ' > .course-error-content'));
-    if (errors.length > 0) {
-        element.html(errors.join('\n\n'));
-    } else {
-        element.html('');
-        if (!element.is(':hidden')) {
-            element.slideToggle('fast');
-        }
-    }
-}
-
-TrackView.prototype.onEFARemove = function (semester, courseId, type) {
-
-}
-
-TrackView.prototype.onEFAAdd = function (semester, courseId, type) {
-
+    }).disableSelection();
 }
 
 TrackView.prototype.clear = function (semesterIndex) {
@@ -467,9 +453,10 @@ TrackView.prototype.render = function () {
 }
 
 // EFA //
-function EFAModel(trackCallback, efaCallback) {
+function EFAModel(trackCallback, efaCallback, model) {
     this.tracks = null;
     this.efas = null;
+    this.model = model;
     this.lastTrackId = -1;
     this.lastEFAId = -1;
     this.onTrack = trackCallback;
@@ -524,6 +511,7 @@ EFAModel.prototype.loadEFA = function (efaId, callback) {
             var pool = $('#' + names[i] + '-list');
             pool.empty();
             var items = nodes[names[i]];
+            self.model.addNodes(items);
             for (var j = 0; j < items.length; j++) {
                 var node = items[j];
                 Track.addNewElementTo(pool, node.course, 'ok', names[node.type]);
@@ -547,17 +535,4 @@ EFAModel.prototype.renderEFAOptions = function (index) {
         var efa = this.efas[index][i];
         options.append($("<option />").val(efa.id).text(efa.name));
     }
-}
-
-// EFA VIEW //
-var NUM_EFAS = 4
-function EFAView(model) {
-    this.pools = [];
-    this.model = model;
-    this._uid = 0;
-    this._lastRemoved = null;
-    for (var i = 0; i < MAX_SEMESTERS; i++) {
-        this.semesters.push(document.getElementById("semester-" + i));
-    }
-    this._enableSorting();
 }
